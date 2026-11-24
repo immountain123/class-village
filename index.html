@@ -333,7 +333,7 @@ function itemSpr(id){if(IMG[id])return IMG[id];if(id.startsWith('pet_'))return p
 function ico(id){if(ASSET_FILES[id]&&IMG[id])return ASSET_FILES[id];return toURL('i_'+id,()=>itemSpr(id))}
 function pat(id){if(ASSET_FILES[id]&&IMG[id])return ASSET_FILES[id];return toURL('p_'+id,()=>{const c=document.createElement('canvas');c.width=c.height=16;drawItem(c.getContext('2d'),id);return c})}
 const STEP=[0,1,0,2];
-function charSpr(av,top,hat,dir,fr){return sprHi(`k${av.skin}${av.hs}${av.hc}_${top}_${hat}_${dir}${fr||0}`,C25W,C25H,x=>{if(dir==='r'){x.translate(C25W,0);x.scale(-1,1)}drawChar25(x,av,top,hat,dir==='r'?'l':dir,fr||0)})}
+function charSpr(av,top,hat,dir,fr){const k=`c4${av.skin}${av.hs}${av.hc}_${top}_${hat}_${dir}${fr||0}`;return CACHE[k]||(CACHE[k]=drawChar4(av,top,hat,dir,fr||0))}
 function charURL(st){const av=st.av,top=st.wear.top,hat=st.wear.hat;return toURL(`u${av.skin}${av.hs}${av.hc}_${top}_${hat}`,()=>charSpr(av,top,hat,'d',0))}
 const DEF_TAV={skin:0,hs:0,hc:0,top:'top_green',gl:true};
 const tav=()=>Object.assign({},DEF_TAV,(typeof S!=='undefined'&&S&&S.cls.set.tav)||{});
@@ -514,6 +514,466 @@ function petSpr(t){return sprHi('pet_'+t,32,28,x=>{const R=(c,a,b,w=1,h=1)=>{x.f
 /* --- 2.5D characters: 40x60 art px (2 art px per world px), 3/4 view, ~2.5 heads tall --- */
 const C25W=40,C25H=60;
 function ellCc(x,cx,cy,rx,ry,base,hi,sd,dk,maxY){for(let yy=Math.floor(cy-ry);yy<=Math.min(maxY,Math.ceil(cy+ry));yy++)for(let xx=Math.floor(cx-rx);xx<=Math.ceil(cx+rx);xx++){const nx=(xx+.5-cx)/rx,ny=(yy+.5-cy)/ry,d=nx*nx+ny*ny;if(d>1)continue;const l=nx*.55+ny*.8;x.fillStyle=(dk&&l>.68)?dk:l>.28?sd:(l<-.42&&d<.8)?hi:base;x.fillRect(xx,yy,1,1)}}
+/* ===== v4 2D chibi characters: hand-placed pixel templates (32x49 art px, crisp integer scaling) ===== */
+const C4W=32,C4H=49,C4OY=6,C4RES=1.5;
+const C4TPL=`[body_d]
+4 11:SSSSSSSSSS
+5 9:SSSSSSSSSSSSSS
+6 8:SSSSSSSSSSSSSSSs
+7 7:SSSSSSSSSSSSSSSSSs
+8 6:SSSSSSSSSSSSSSSSSSss
+9 6:SSSSSSSSSSSSSSSSSSss
+10 5:SSSSSSSSSSSSSSSSSSSSss
+11 5:SSSSSSSSSSSSSSSSSSSSss
+12 5:ssssssssssssssssssssss
+13 4:sSSSoooo 12:SSSSSSSS 20:ooooSss 27:s
+14 4:sSSSSEEiSSSSSSSSEEiSSsss
+15 4:sSSSSEEESSSSSSSSEEESSsss
+16 4:sSSSSeEESSSSSSSSeEESSsss
+17 5:SSSSeeeSSSSSSSSeeeSSss
+18 6:SrrSSSSSSSSSSSSSSrrs
+19 6:SSSSSSSSSmmSSSSSSSss
+20 7:SSSSSSSSSSSSSSSSss
+21 9:SSSSSSSSSSSSss
+22 11:ssssssssss
+23 13:ssssss
+24 7:U 8:UUTTTossssoTTTTt 24:t
+25 6:UT 8:UTTTTTossoTTTTTt 24:tt
+26 5:UTT 8:TTTTTTTooTTTTTTt 24:ttt
+27 5:UTT 8:o 9:TTTTTTTTTTTTTt 23:o 24:Ttt
+28 5:UTT 8:o 9:TTTTTTTTTTTTTt 23:o 24:Ttt
+29 5:ttt 8:o 9:TTTTTTTTTTTTTt 23:o 24:ttt
+30 5:SSs 8:o 9:TTTTTTTTTTTTTt 23:o 24:SSs
+31 5:SSs 8:o 9:TTTTTTTTTTTTTt 23:o 24:SSs
+32 5:SSs 8:o 9:tTTTTTTTTTTTtt 23:o 24:SSs
+33 5:SSs 8:o 9:tttttttttttttt 23:o 24:SSs
+34 5:sss 9:QPPPPPPPPPPPPp 24:sss
+35 9:QPPPPPPPPPPPPp
+[legs_d0]
+36 9:QPPPPp 17:PPPPPp
+37 9:QPPPPp 17:PPPPPp
+38 9:QPPPPp 17:PPPPPp
+39 9:PPPPPp 17:PPPPPp
+40 8:BBBBBBn 17:BBBBBBn
+41 8:nnnnnnn 17:nnnnnnn
+[legs_d1]
+36 9:QPPPPp 17:PPPPPp
+37 9:QPPPPp 17:PPPPPp
+38 9:QPPPPp 17:PPPPPp
+39 8:BBBBBBn 17:PPPPPp
+40 8:nnnnnnn 17:BBBBBBn
+41 17:nnnnnnn
+[legs_d2]
+36 9:QPPPPp 17:PPPPPp
+37 9:QPPPPp 17:PPPPPp
+38 9:QPPPPp 17:PPPPPp
+39 9:PPPPPp 17:BBBBBBn
+40 8:BBBBBBn 17:nnnnnnn
+41 8:nnnnnnn
+[hair0_d_over]
+0 ...........d....dd.............
+1 ..........dHd..dHHd..d.........
+2 ........ddHHHddHHHHddHd........
+3 .......dHHLLHHHHHHHHHHHd.......
+4 ......dHHLLLLHHHHHHHHHHHd......
+5 .....dHHLLLHHHHHHHHHHHHHhd.....
+6 ....dHHHHLHHHHHHHHHHHHHHHhd....
+7 ...dHHHHHHHHHHHHHHHHHHHHHHhd...
+8 ...dHHHHHHHHHHHHHHHHHHHHHHhh...
+9 ..dhHHHHhHHHHHHHhHHHHHHHHHhhd..
+10 ..dhHHHhhHHHHHHhhHHHHHHhHHhhhd.
+11 .dhhHHhhHhHHHHhhHhHHHHhhhHhhhd.
+12 ..dhHhh...hHHhh.hHHh....hhhhd..
+13 ..dhh.......hh...h.......hhd...
+14 ..dh......................hhd..
+15 ...d.......................hd..
+16 ............................d..
+[hair0_u_over]
+0 ...........d....dd.............
+1 ..........dHd..dHHd..d.........
+2 ........ddHHHddHHHHddHd........
+3 .......dHHLLHHHHHHHHHHHd.......
+4 ......dHHLLLLHHHHHHHHHHHd......
+5 .....dHHLLLHHHHHHHHHHHHHhd.....
+6 ....dHHHHLHHHHHHHHHHHHHHHhd....
+7 ...dHHHHHHHHHHHHHHHHHHHHHHhd...
+8 ...dHHHHHHHHHHHHHHHHHHHHHHhh...
+9 ..dhHHHHhHHHHHHHhHHHHHHHHHhhd..
+10 ..dhHHHhhHHHHHHhhHHHHHHhHHhhhd.
+11 ..dhHHHhHHHHhHHHHhHHHHhHHHhhd...
+12 ..dhHHHhHHHHhHHHHhHHHHhHHHhhd...
+13 ..dhHHhhHHHhhHHHhhHHHhhHHhhhd...
+14 ..dhHHHhHHHHhHHHHhHHHHhHHHhhd...
+15 ..dhHHhhHHHhhHHHhhHHHhhHHhhhd...
+16 ...dhHHhHHHhHHHhHHHhHHHhHhhd....
+17 ....dhHhHHhHHHhHHHhHHhHHhhd.....
+18 .....dhhHhhHHhhHHhhHhhHhhd......
+19 ......dh.dhh.dhhd.dhh.dhd.......
+20 .......d..d....d....d..d........
+[hair0_l_over]
+0 ..........d...dd................
+1 .........dHd.dHHd..d............
+2 .......ddHHHddHHHHddHd..........
+3 ......dHHLLHHHHHHHHHHHHd........
+4 .....dHLLLLHHHHHHHHHHHHHd.......
+5 ....dHHLLLHHHHHHHHHHHHHHhd......
+6 ...dHHHHLHHHHHHHHHHHHHHHHhd.....
+7 ...dHHHHHHHHHHHHHHHHHHHHHHhd....
+8 ..dHHHHHHHHHHHHHHHHHHHHHHHhhd...
+9 ..dhHHhHHHHHHHHHHHHHHHHHHHhhd...
+10 ...hHhhHHHhHHHHHHHHHHHhHHHhhd...
+11 ...dhh.hHhhHHHHHHHHHHhhHHHhhd...
+12 ....dh..hh.hHHHHHHHHhhHHHHhhd...
+13 12:hHHHHHHHHhhHHHhhd
+14 13:hH 15:sSs 18:HHHhhHHhhd
+15 13:hH 15:sSS 18:HHhHHHhhhd
+16 13:h 15:ssS 18:HhHHHHhhd
+17 16:ss 18:HhHHHhhd
+18 18:hHHHhhd
+19 18:dhdhhd
+20 19:d.d
+[longtop_d]
+1 11:dddddddddd
+2 9:ddHHHHHHHHHHdd
+3 8:dHHLLHHHHHHHHHhd
+4 7:dHLLLLHHHHHHHHHHhd
+5 6:dHHLLHHHHHHHHHHHHHhd
+6 5:dHHHHHHHHHHHHHHHHHHHhd
+7 4:dHHHHHHHHHHHHHHHHHHHHHhd
+8 4:dHHHHHHHHHHHHHHHHHHHHHhd
+9 3:dHHHHHHHHHHHHHHHHHHHHHHhhd
+10 3:dHHHhHHHHhHHHHHhHHHHhHHhhd
+11 3:dHHhhHHHhhHHHHhhHHHhhHHhhd
+[hair1_d_over]
+12 3:dHHdhhhhhhh.hhhhhhhhhhdHhd
+13 3:dHHd 25:dHhd
+14 3:dHHd 25:dHhd
+15 3:dHHd 25:dHhd
+16 3:dHHd 25:dHhd
+17 3:dHHd 25:dHhd
+18 3:dHHd 25:dHhd
+19 3:dHHd 25:dHhd
+20 3:dHHd 25:dHhd
+21 2:dHHHd 25:dHHhd
+22 2:dHHHd 25:dHHhd
+23 2:dHHhd 25:dhHhd
+24 2:dhhd 26:dhhd
+25 2:d.d 27:d.d
+[hair1_d_under]
+8 2:hhhhhhhhhhhhhhhhhhhhhhhhhhhh
+9 2:hhhhhhhhhhhhhhhhhhhhhhhhhhhh
+10 2:hhhhhhhhhhhhhhhhhhhhhhhhhhhh
+11 2:hhhhhhhhhhhhhhhhhhhhhhhhhhhh
+12 2:hhhhhhhhhhhhhhhhhhhhhhhhhhhh
+13 2:hhhhhhhhhhhhhhhhhhhhhhhhhhhh
+14 2:hhhhhhhhhhhhhhhhhhhhhhhhhhhh
+15 2:hhhhhhhhhhhhhhhhhhhhhhhhhhhh
+16 2:hhhhhhhhhhhhhhhhhhhhhhhhhhhh
+17 2:hhhhhhhhhhhhhhhhhhhhhhhhhhhh
+18 2:hhhhhhhhhhhhhhhhhhhhhhhhhhhh
+19 2:hhhhhhhhhhhhhhhhhhhhhhhhhhhh
+20 2:hhhhhhhhhhhhhhhhhhhhhhhhhhhh
+21 2:hhhhhhhhhhhhhhhhhhhhhhhhhhhh
+22 2:hhhhhhhhhhhhhhhhhhhhhhhhhhhh
+23 2:hhhhhhhhhhhhhhhhhhhhhhhhhhhh
+24 2:hhhhhhhhhhhhhhhhhhhhhhhhhhhh
+25 2:hhhhhhhhhhhhhhhhhhhhhhhhhhhh
+26 2:hhhhhhhhhhhhhhhhhhhhhhhhhhhh
+27 2:hhhhhhhhhhhhhhhhhhhhhhhhhhhh
+28 2:hhhhhhhhhhhhhhhhhhhhhhhhhhhh
+29 2:hhhhhhhhhhhhhhhhhhhhhhhhhhhh
+30 2:dhhhhhhhhhhhhhhhhhhhhhhhhhhd
+31 2:dhd 27:dhd
+[hair1_u_over]
+12 3:dHHhHHHHhHHHHhHHHHhHHHHhhd
+13 3:dHHhHHHHhHHHHhHHHHhHHHHhhd
+14 3:dHHhHHHHhHHHHhHHHHhHHHHhhd
+15 3:dHHhHHHHhHHHHhHHHHhHHHHhhd
+16 3:dHHhHHHHhHHHHhHHHHhHHHHhhd
+17 3:dHHhHHHHhHHHHhHHHHhHHHHhhd
+18 3:dHHhHHHHhHHHHhHHHHhHHHHhhd
+19 3:dHHhHHHHhHHHHhHHHHhHHHHhhd
+20 3:dHHhHHHHhHHHHhHHHHhHHHHhhd
+21 3:dHHhHHHHhHHHHhHHHHhHHHHhhd
+22 3:dHHhHHHHhHHHHhHHHHhHHHHhhd
+23 3:dhHhHHHHhHHHHhHHHHhHHHHhhd
+24 3:dhHhHHHHhHHHHhHHHHhHHHHhhd
+25 3:dhHhHHHHhHHHHhHHHHhHHHHhhd
+26 3:dhHhHHHHhHHHHhHHHHhHHHHhhd
+27 3:dhhhHHHhhHHHhhHHHhhHHHhhhd
+28 3:dhhdhhhdhhhdhhhhdhhhdhhhhd
+29 4:d...d...d....d...d....d
+[bun_top]
+-5 13:HHHHHH
+-4 12:HLLHHHHh
+-3 12:HLHHHHhh
+-2 12:HHHHHhhh
+-1 13:hhhhhh
+0 13:RRRRRR
+[hair2_d_over]
+12 3:dHHdhhhhhhh.hhhhhhhhhhdHhd
+13 3:dHhd 25:dhhd
+14 3:dhd 26:dhd
+15 4:d 27:d
+[hair2_u_over]
+12 3:dHHhHHHHhHHHHhHHHHhHHHHhhd
+13 3:dHHhHHHHhHHHHhHHHHhHHHHhhd
+14 3:dHHhHHHHhHHHHhHHHHhHHHHhhd
+15 3:dhHhHHHHhHHHHhHHHHhHHHHhhd
+16 4:dhhHHHhHHHHhHHHHhHHHhhd
+17 5:dhhHhHHHHhHHHHhHHhhd
+18 6:dhhhhhhhhhhhhhhhhhhd
+[longtop_l]
+1 11:dddddddd
+2 9:ddHHHHHHHHdd
+3 8:dHHLLHHHHHHHHHd
+4 7:dHLLLLHHHHHHHHHHd
+5 6:dHHLLHHHHHHHHHHHHd
+6 5:dHHHHHHHHHHHHHHHHHHd
+7 4:dHHHHHHHHHHHHHHHHHHHhd
+8 4:dHHHHHHHHHHHHHHHHHHHHhhd
+9 3:dHHHHhHHHHHHHHHHHHHHHHhhd
+10 3:dHHhhHHHhHHHHHHHHHHHHHhhhd
+11 3:dHHhHHHhHHhHHHHHHHHHHHhhd
+12 4:dhhhhhhhhhHHHHHHHHHHhhd
+13 12:hHHHHHHHHHHHhhd
+14 12:hHH 15:HHH 18:HHHHHHhhd
+15 12:hHH 15:HHH 18:HHHHHHhhd
+16 12:hHH 15:hHH 18:HHHHHHhhd
+17 12:hHHH 16:HH 18:HHHHHHhhd
+[hair1_l_over]
+18 16:hHHHHHHHHhhd
+19 16:hHHHHHHHHhhd
+20 16:hHHHHHHHHhhd
+21 16:hHHHHHHHHhhd
+22 16:hHHHHHHHHhhd
+[hair1_l_under]
+23 17:hhhhhhhhhhd
+24 17:hhhhhhhhhhd
+25 17:hhhhhhhhhhd
+26 17:hhhhhhhhhhd
+27 17:hhhhhhhhhhd
+28 17:hhhhhhhhhhd
+29 17:hhhhhhhhhhd
+30 17:hhhhhhhhhhd
+31 17:hhhhhhhhhhd
+32 17:d.dd.d.dd
+[hair2_l_over]
+18 17:hhHHHhhd
+19 18:dhhhd
+[bun_side]
+-3 21:HHHH
+-2 20:HLLHHh
+-1 20:HLHHHhh
+0 20:HHHHhhh
+1 21:hhhhh
+2 21:RRR
+[body_u]
+4 11:SSSSSSSSSS
+5 9:SSSSSSSSSSSSSS
+6 8:SSSSSSSSSSSSSSSs
+7 7:SSSSSSSSSSSSSSSSSs
+8 6:SSSSSSSSSSSSSSSSSSss
+9 6:SSSSSSSSSSSSSSSSSSss
+10 5:SSSSSSSSSSSSSSSSSSSSss
+11 5:SSSSSSSSSSSSSSSSSSSSss
+12 5:SSSSSSSSSSSSSSSSSSSSss
+13 4:sSSSSSSSSSSSSSSSSSSSSsss
+14 4:sSSSSSSSSSSSSSSSSSSSSsss
+15 4:sSSSSSSSSSSSSSSSSSSSSsss
+16 4:sSSSSSSSSSSSSSSSSSSSSsss
+17 5:SSSSSSSSSSSSSSSSSSSSss
+18 6:SSSSSSSSSSSSSSSSSSss
+19 6:SSSSSSSSSSSSSSSSSSss
+20 7:SSSSSSSSSSSSSSSSss
+21 9:SSSSSSSSSSSSss
+22 11:SSSSSSSSss
+23 13:Sssss
+24 7:U 8:UUTTTTTTTTTTTTTt 24:t
+25 6:UT 8:UTTTTTTTTTTTTTTt 24:tt
+26 5:UTT 8:TTTTTTTTTTTTTTTt 24:ttt
+27 5:UTT 8:o 9:TTTTTTTTTTTTTt 23:o 24:Ttt
+28 5:UTT 8:o 9:TTTTTTtTTTTTTt 23:o 24:Ttt
+29 5:ttt 8:o 9:TTTTTTtTTTTTTt 23:o 24:ttt
+30 5:SSs 8:o 9:TTTTTTtTTTTTTt 23:o 24:SSs
+31 5:SSs 8:o 9:TTTTTTtTTTTTTt 23:o 24:SSs
+32 5:SSs 8:o 9:tTTTTTtTTTTTtt 23:o 24:SSs
+33 5:SSs 8:o 9:tttttttttttttt 23:o 24:SSs
+34 5:sss 9:QPPPPPPPPPPPPp 24:sss
+35 9:QPPPPPPPPPPPPp
+[body_l]
+4 11:SSSSSSSSSS
+5 9:SSSSSSSSSSSSSS
+6 8:SSSSSSSSSSSSSSSs
+7 7:SSSSSSSSSSSSSSSSSs
+8 6:SSSSSSSSSSSSSSSSSSss
+9 6:SSSSSSSSSSSSSSSSSSss
+10 5:SSSSSSSSSSSSSSSSSSSss
+11 5:SSSSSSSSSSSSSSSSSSSss
+12 5:sssssssssssssssssssss
+13 5:SSooooSSSSSSSSSSSSSss
+14 5:SSSEiSSSSSSSSSSSSSSss
+15 5:SSSEESSSSSSSSSSSSSSss
+16 4:sSSSeESSSSSSSSSSSSSSss
+17 5:SSSeeSSSSSSSSSSSSSSss
+18 5:SSSSSrrSSSSSSSSSSSss
+19 5:SmSSSSSSSSSSSSSSSSss
+20 6:SSSSSSSSSSSSSSSSss
+21 8:SSSSSSSSSSSSss
+22 10:ssssssssss
+23 13:sssss
+24 10:UTTTTTTTTTTt
+25 10:UTTTTTTTTTTt
+26 10:UTTTTTTTTTTt
+27 10:UTTTTTTTTTTt
+28 10:UTTTTTTTTTTt
+29 10:UTTTTTTTTTTt
+30 10:UTTTTTTTTTTt
+31 10:UTTTTTTTTTTt
+32 10:ttttttttttTt
+33 10:tttttttttttt
+34 11:QPPPPPPPPp
+35 11:QPPPPPPPPp
+[arm_l]
+25 13:UTTTt
+26 12:oUTTTto
+27 12:oUTTTto
+28 12:oUTTTto
+29 12:ottttto
+30 12:oSSSSso
+31 12:oSSSSso
+32 12:ossssso
+33 13:ooooo
+[legs_l0]
+36 12:QPPPPPp
+37 12:QPPPPPp
+38 12:QPPPPPp
+39 12:QPPPPPp
+40 10:BBBBBBBBn
+41 10:nnnnnnnnn
+[legs_l1]
+36 11:QPPPp 17:PPPPp
+37 10:QPPPp 18:PPPPp
+38 9:QPPPp 19:PPPPp
+39 8:QPPPp 20:PPPPp
+40 6:BBBBBBn 20:BBBBBn
+41 6:nnnnnnn 20:nnnnnn
+[legs_l2]
+36 12:QPPPPPp
+37 11:QPPPp 16:pPPPp
+38 10:QPPPp 17:pPPPp
+39 9:QPPPp 18:pPPPp
+40 7:BBBBBBn 18:BBBBBn
+41 7:nnnnnnn 18:nnnnnn
+[cap_d]
+1 11:CCCCCCCCCC
+2 9:CVVCCCCCCCCCcc
+3 8:CVVVCCCwwCCCCCcc
+4 7:CVVCCCCwwCCCCCCCcc
+5 6:CCCCCCCCCCCCCCCCCCcc
+6 5:CCCCCCCCCCCCCCCCCCCCcc
+7 5:CCCCCCCCCCCCCCCCCCCCcc
+8 4:cccccccccccccccccccccccc
+9 4:VVVVVVVVVVVVVVVVVVVVVVVV
+10 5:cccccccccccccccccccccc
+[cap_u]
+1 11:CCCCCCCCCC
+2 9:CVVCCCCCCCCCcc
+3 8:CVVVCCCCCCCCCCcc
+4 7:CVVCCCCCCCCCCCCCcc
+5 6:CCCCCCCCCCCCCCCCCCcc
+6 5:CCCCCCCCCCCCCCCCCCCCcc
+7 5:CCCCCCCCCCCCCCCCCCCCcc
+8 4:cccccccccccccccccccccccc
+9 13:ccccc
+[cap_l]
+1 11:CCCCCCCCCC
+2 9:CVVCCCCCCCCCcc
+3 8:CVVVCCCwwCCCCCcc
+4 7:CVVCCCCwwCCCCCCCcc
+5 6:CCCCCCCCCCCCCCCCCCcc
+6 5:CCCCCCCCCCCCCCCCCCCCcc
+7 5:CCCCCCCCCCCCCCCCCCCCcc
+8 4:cccccccccccccccccccccccc
+9 1:VVVVVVVVVVc
+10 1:ccccccccc
+[ribbon]
+0 18:CCc 24:CCc
+1 17:CVCCc 23:CVCCc
+2 17:CVCCCcVcCCCc
+3 18:ccc 22:cc 24:ccc
+4 21:Cc 24:Cc
+5 21:c 25:c
+[beanie]
+-4 14:wwww
+-3 13:wwwwww
+-2 14:wwww
+-1 11:CCCCCCCCCC
+0 9:CVVCcCCcCCcCCc
+1 8:CVVCcCCcCCcCCcCc
+2 7:CVCCcCCcCCcCCcCCcc
+3 6:CVCCcCCcCCcCCcCCcCcc
+4 5:CCCCcCCcCCcCCcCCcCCcCc
+5 5:CCCCcCCcCCcCCcCCcCCcCc
+6 4:CCCCCcCCcCCcCCcCCcCCcCcc
+7 4:wwwwwwwwwwwwwwwwwwwwwwww
+8 4:wwwwwwwwwwwwwwwwwwwwwwww
+9 4:WWWWWWWWWWWWWWWWWWWWWWWW
+[crown]
+-3 10:V 15:VV 21:V
+-2 10:CC 15:CC 20:CC
+-1 10:CVC 14:CVCc 19:CCc
+0 10:CVCCCCCCCCCc
+1 10:CVCgCCRRCgCc
+2 10:cccccccccccc
+[flower]
+7 24:ww
+8 22:wwYYww
+9 22:WwYYwW
+10 24:WW
+[glasses_d]
+13 8:kkkkk 19:kkkkk
+14 8:k 12:kkkkkkkk 23:k
+15 8:k 12:k 19:k 23:k
+16 8:k 12:k 19:k 23:k
+17 8:kkkkk 19:kkkkk
+[glasses_l]
+13 6:kkkkk
+14 6:k 10:kkkkkk
+15 6:k 10:k
+16 6:k 10:k
+17 6:kkkkk
+`;
+const C4T=(()=>{const T={};let cur=null;for(const ln of C4TPL.split('\n')){const l=ln.trim();if(!l)continue;const m=l.match(/^\[(.+)\]$/);if(m){cur=T[m[1]]={};continue}
+ const p=l.split(/\s+/),r=+p[0],row=cur[r]||(cur[r]={});for(const s of p.slice(1)){let c=0,st=s;const i=s.indexOf(':');if(i>0){c=+s.slice(0,i);st=s.slice(i+1)}for(let k=0;k<st.length;k++)if(st[k]!=='.')row[c+k]=st[k]}}return T})();
+const c4hx=h=>{const n=parseInt(h.slice(1),16);return [n>>16,n>>8&255,n&255]};
+const c4mix=(a,b,t)=>a.map((v,i)=>Math.round(v+(b[i]-v)*t));
+const C4SH=c4hx('#3a2350'),C4HL=c4hx('#fff4d6');
+const c4tone=(c,k)=>{c=typeof c==='string'?c4hx(c):c;return k<0?c4mix(c,C4SH,-k):c4mix(c,C4HL,k)};
+const C4SKIN=['#f7d3b3','#e2a97c','#a8714a'],C4HAIR=['#4a3226','#8a5530','#e0b04a','#c9573f','#34477a'],C4IRIS=['#7a4a2a','#4a2e22','#a5762a','#9a3a28','#30508f'];
+const C4TOPS={top_red:'#e0604c',top_blue:'#4a84da',top_yellow:'#f2c64e',top_green:'#5fb35a',top_purple:'#9d6bd0',top_white:'#f4f2ee'};
+const C4HATC={cap:'#4a84da',ribbon:'#f08aa8',beanie:'#5fb35a',crown:'#f5c542'};
+function c4pal(av,top,hat){const s=C4SKIN[av.skin]||C4SKIN[0],h=C4HAIR[av.hc]||C4HAIR[0],t=C4TOPS[top]||TOPS[top]||'#e0604c',ir=C4IRIS[av.hc]||C4IRIS[0],hc=C4HATC[hat]||'#888888',X=c4hx;
+ return {o:X('#24161e'),S:X(s),s:c4tone(s,-.22),K:c4tone(s,.35),H:X(h),h:c4tone(h,-.3),d:c4tone(h,-.55),L:c4tone(h,.32),E:c4tone(ir,-.6),e:c4tone(ir,.1),i:[255,255,255],
+  r:c4mix(X(s),X('#ff7a8a'),.45),m:X('#b0463f'),T:X(t),t:c4tone(t,-.28),U:c4tone(t,.3),P:X('#3f4f7d'),p:c4tone('#3f4f7d',-.3),Q:c4tone('#3f4f7d',.2),B:X('#6b4632'),n:c4tone('#6b4632',-.4),
+  R:X('#e8546a'),w:[250,248,244],W:X('#d6d0c6'),Y:X('#f5c542'),g:X('#5d8fd9'),k:X('#5a3626'),C:X(hc),c:c4tone(hc,-.3),V:c4tone(hc,.35)}}
+function c4layers(av,dir,fr,hat){const hs=av.hs|0,hk='hair'+hs,f=fr|0;
+ const tops={0:[],1:['longtop_d'],2:['longtop_d','bun_top']}[hs]||[],topl={0:[],1:['longtop_l'],2:['longtop_l','bun_side']}[hs]||[];
+ let L;
+ if(dir==='d')L=[hk+'_d_under','body_d',['legs_d0','legs_d1','legs_d0','legs_d2'][f]].concat(tops,[hk+'_d_over']);
+ else if(dir==='u')L=['body_u',['legs_d0','legs_d1','legs_d0','legs_d2'][f]].concat(hs?['longtop_d']:[],[hk+'_u_over'],hs===2?['bun_top']:[]);
+ else L=[hk+'_l_under','body_l',['legs_l0','legs_l1','legs_l0','legs_l2'][f],'arm_l'].concat(topl,[hk+'_l_over']);
+ const k=dir==='d'?'d':dir==='u'?'u':'l',hid=hat?String(hat).replace('hat_',''):null;
+ const HM={cap:{d:'cap_d',u:'cap_u',l:'cap_l'},ribbon:{d:'ribbon',u:'ribbon~',l:'ribbon'},beanie:{d:'beanie',u:'beanie',l:'beanie'},crown:{d:'crown',u:'crown',l:'crown'},flower:{d:'flower',u:'flower~',l:'flower'},glasses:{d:'glasses_d',l:'glasses_l'}};
+ if(hid&&HM[hid]&&HM[hid][k])L.push(HM[hid][k]);return L}
+function drawChar4(av,top,hat,dir,fr){const pal=c4pal(av,top,hat&&hat.replace('hat_','')),g=Array.from({length:C4H},()=>new Array(C4W).fill(null));
+ for(let name of c4layers(av,dir,fr,hat)){const mir=name.endsWith('~');if(mir)name=name.slice(0,-1);const t=C4T[name];if(!t)continue;
+  for(const r in t){const rr=+r+C4OY;if(rr<0||rr>=C4H)continue;const row=t[r];for(const c in row){let cc=+c;if(mir)cc=C4W-1-cc;if(cc>=0&&cc<C4W)g[rr][cc]=row[c]}}}
+ const cv=document.createElement('canvas');cv.width=C4W;cv.height=C4H;const x=cv.getContext('2d'),im=x.createImageData(C4W,C4H),a=im.data,flip=dir==='r';
+ for(let y=0;y<C4H;y++)for(let i=0;i<C4W;i++){let ch=g[y][i];
+  if(!ch){if((y+1<C4H&&g[y+1][i])||(y>0&&g[y-1][i])||(i>0&&g[y][i-1])||(i+1<C4W&&g[y][i+1]))ch='o';else continue}
+  const col=pal[ch]||pal.o,X=flip?C4W-1-i:i,o=(y*C4W+X)*4;a[o]=col[0];a[o+1]=col[1];a[o+2]=col[2];a[o+3]=255}
+ x.putImageData(im,0,0);cv.res=C4RES;cv.crisp=true;return cv}
 function drawChar25(x,av,top,hat,dir,fr){
  const R=(c,a,b,w=1,h=1)=>{x.fillStyle=c;x.fillRect(a,b,w,h)};
  const sk=SKIN[av.skin],skL=shade(sk,14),skS=shade(sk,-26),skD=shade(sk,-46),
@@ -867,13 +1327,13 @@ function draw(t){
  if(S)for(const p of plates){let txt=p.t;if(p.k==='house'){const st=S.students.find(s=>s.no===p.no);if(!st)continue;txt=st.no===ME_NO&&mode==='village'?'우리 집':(st.created?nickOf(st):`${st.no}번 빈 집`)}
   const mine=p.k==='house'&&p.no===ME_NO&&mode==='village';plate(txt,(p.x-cx)*S_,(p.y-cy)*S_,fs,mine);
   if(mode==='village'&&((p.k==='mission'&&flags.mission)||(p.k==='library'&&flags.library)))bubbleIcon('exclaim',(p.x-cx)*S_,(p.y-cy)*S_-fs-6-Math.abs(Math.sin(t/250))*4)}
- if((mode==='village'||mode==='tview')&&P.bubble)bubble(P.bubble,(P.x-cx)*S_,(P.y-34-cy)*S_,fs);
- if(mode!=='tview'){plate(guideName(),(tori.x-cx)*S_,(tori.y+6-cy)*S_+fs/2,Math.max(11,fs-2),true);if(tori.bubble)bubble(tori.bubble,(tori.x-cx)*S_,(tori.y-34-cy)*S_,fs)}
+ if((mode==='village'||mode==='tview')&&P.bubble)bubble(P.bubble,(P.x-cx)*S_,(P.y-44-cy)*S_,fs);
+ if(mode!=='tview'){plate(guideName(),(tori.x-cx)*S_,(tori.y+6-cy)*S_+fs/2,Math.max(11,fs-2),true);if(tori.bubble)bubble(tori.bubble,(tori.x-cx)*S_,(tori.y-44-cy)*S_,fs)}
  else plate(guideName(),(P.x-cx)*S_,(P.y+6-cy)*S_+fs/2,Math.max(11,fs-2),true);
- for(const f of friends)if(f.bubble)bubble(f.bubble,(f.x-cx)*S_,(f.y-34-cy)*S_,fs);
+ for(const f of friends)if(f.bubble)bubble(f.bubble,(f.x-cx)*S_,(f.y-44-cy)*S_,fs);
  if(mode==='tview'&&S)for(const f of friends){const st=S.students.find(s=>s.no===f.no);if(st)plate(nickOf(st),(f.x-cx)*S_,(f.y+6-cy)*S_+fs/2,Math.max(11,fs-2),f.live)}
 }
-function dS(img,wx,wy,bob=0,flip=false){const S_=V.S,k=S_/(img.res||1),w=img.width*k,h=img.height*k;const x=Math.round((wx-V.cx)*S_-w/2),y=Math.round((wy-V.cy)*S_-h+k-bob*S_);
+function dS(img,wx,wy,bob=0,flip=false){const S_=V.S,k=img.crisp?Math.max(1,Math.round(S_/img.res)):S_/(img.res||1),w=img.width*k,h=img.height*k;const x=Math.round((wx-V.cx)*S_-w/2),y=Math.round((wy-V.cy)*S_-h+k-bob*S_);
  if(flip){ctx.save();ctx.translate(x+w,y);ctx.scale(-1,1);ctx.drawImage(img,0,0,w,h);ctx.restore()}else ctx.drawImage(img,x,y,w,h)}
 function shadow(wx,wy,rw=6){ctx.fillStyle='rgba(26,22,32,.28)';ctx.beginPath();ctx.ellipse((wx-V.cx)*V.S,(wy-V.cy)*V.S,rw*V.S,2*V.S,0,0,Math.PI*2);ctx.fill()}
 function plate(txt,x,y,fs,hi){const w=ctx.measureText(txt).width+16,h=fs+10;ctx.fillStyle='#1a1620';ctx.fillRect(x-w/2-2,y-h/2-2,w+4,h+4);ctx.fillStyle=hi?'#f5c542':'#f4e9d1';ctx.fillRect(x-w/2,y-h/2,w,h);ctx.fillStyle='#2a2533';ctx.fillText(txt,x,y+1)}
