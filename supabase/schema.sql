@@ -623,7 +623,12 @@ begin
       'start',coalesce(p_args#>>'{set,start}',c.settings->>'start'),'end',coalesce(p_args#>>'{set,end}',c.settings->>'end'),
       'limit',least(240,greatest(5,coalesce((p_args#>>'{set,limit}')::int,30))),
       'free',coalesce((p_args#>>'{set,free}')::boolean,false),'fast',coalesce((p_args#>>'{set,fast}')::boolean,false),
-      'live',coalesce((p_args#>>'{set,live}')::boolean,true));
+      'live',coalesce((p_args#>>'{set,live}')::boolean,true),
+      'tname',left(coalesce(nullif(trim(p_args#>>'{set,tname}'),''),c.settings->>'tname','선생님'),10),
+      'tav',jsonb_build_object('skin',least(2,greatest(0,coalesce((p_args#>>'{set,tav,skin}')::int,0))),'hs',least(2,greatest(0,coalesce((p_args#>>'{set,tav,hs}')::int,0))),
+        'hc',least(4,greatest(0,coalesce((p_args#>>'{set,tav,hc}')::int,0))),
+        'top',case when p_args#>>'{set,tav,top}' in ('top_red','top_blue','top_yellow','top_green','top_purple','top_white') then p_args#>>'{set,tav,top}' else 'top_green' end,
+        'gl',coalesce((p_args#>>'{set,tav,gl}')::boolean,true)));
     update classes set name=left(coalesce(nullif(trim(p_args->>'name'),''),name),30), code=k, notice=left(coalesce(p_args->>'notice',''),500), settings=s,
       phrases=case when jsonb_typeof(p_args->'phrases')='array' and jsonb_array_length(p_args->'phrases')>0 then
         (select jsonb_agg(left(x,20)) from (select x from jsonb_array_elements_text(p_args->'phrases') x limit 16) q) else phrases end

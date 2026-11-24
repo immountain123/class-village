@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
 <style>
-/* VOICE: 따뜻하고 장난스러운 초등 교실, 말투는 다람쥐 안내자 토리
+/* VOICE: 따뜻하고 장난스러운 초등 교실, 말투는 이장 선생님
    IDEA: 우리 반이 곧 작은 도트 마을, 교사는 이장
    PICTURE: 화면 가득 걸어 다니는 탑다운 도트 마을
    COLOUR and TYPE: 보랏빛 밤색 #2a2533 바탕, 종이색 창, 풀색·코인색 강조 / Jua (배포 때 갈무리 도트 폰트로 교체)
@@ -144,7 +144,8 @@ div.cell{border-color:transparent;cursor:default}
 #dlg{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);width:min(820px,94vw);display:none;gap:12px;padding:12px;z-index:40;align-items:stretch}
 #dlg.on{display:flex}
 #dlg .por{width:84px;flex:none;background:var(--bg);border:3px solid var(--edge);display:grid;place-items:center}
-#dlg .por img{width:64px;height:80px}
+#dlg .por img{width:52px;height:85px}
+body.tv #hud{display:none}
 #dlg .tx{flex:1;display:flex;flex-direction:column;gap:6px}
 #dlg .nm{color:var(--muted);font-size:15px}
 #dlgText{font-size:19px;min-height:58px;line-height:1.5}
@@ -240,7 +241,7 @@ div.cell{border-color:transparent;cursor:default}
     <div><b class="tlogo">이장실</b><span id="tClass"></span></div>
     <div class="row wrap">
       <button class="btn sm" id="tLockBtn" data-a="tLock"></button>
-      <button class="btn sm" data-a="tView">마을 보기</button>
+      <button class="btn sm pri" data-a="tView">마을로 나가기</button>
       <button class="btn sm" data-a="logout">나가기</button>
     </div>
   </header>
@@ -248,11 +249,11 @@ div.cell{border-color:transparent;cursor:default}
   <main class="tbody" id="tBody"></main>
 </section>
 
-<div id="tvBar" class="px"><b>마을 보기</b><span id="tvInfo"></span><button class="btn sm" data-a="tvBack">대시보드로</button></div>
+<div id="tvBar" class="px"><b>선생님 산책 중</b><span id="tvInfo"></span><button class="btn sm" data-a="tvWhole" id="tvWholeBtn">전체 보기</button><button class="btn sm" data-a="tvBack">이장실로</button></div>
 
 <div id="modal"><div id="win" class="win px" role="dialog" aria-modal="true" aria-labelledby="wTitle"><div class="whead"><h2 id="wTitle"></h2><button class="btn sm" data-a="close">닫기 ✕</button></div><div class="wbody" id="wBody"></div></div></div>
 
-<div id="dlg" class="px" role="dialog" aria-live="polite"><div class="por"><img id="dlgPor" alt="토리"></div><div class="tx"><span class="nm">토리</span><p id="dlgText"></p><div class="row"><button class="btn sm" data-a="dlgSkip">건너뛰기</button><button class="btn sm pri" data-a="dlgNext">다음 ▶</button></div></div></div>
+<div id="dlg" class="px" role="dialog" aria-live="polite"><div class="por"><img id="dlgPor" alt="선생님"></div><div class="tx"><span class="nm" id="dlgName">선생님</span><p id="dlgText"></p><div class="row"><button class="btn sm" data-a="dlgSkip">건너뛰기</button><button class="btn sm pri" data-a="dlgNext">다음 ▶</button></div></div></div>
 
 <div id="lock"><div class="lockbox px"><img id="lockImg" alt=""><p id="lockMsg"></p><div class="row wrap" id="lockBtns"></div><button class="btn" data-a="logout">나가기</button></div></div>
 <div id="toast" class="px" role="status"></div>
@@ -334,8 +335,11 @@ function pat(id){if(ASSET_FILES[id]&&IMG[id])return ASSET_FILES[id];return toURL
 const STEP=[0,1,0,2];
 function charSpr(av,top,hat,dir,fr){return spr(`c${av.skin}${av.hs}${av.hc}_${top}_${hat}_${dir}${fr}`,16,24,x=>drawChar(x,av,top,hat,dir,STEP[fr]||0))}
 function charURL(st){const av=st.av,top=st.wear.top,hat=st.wear.hat;return toURL(`u${av.skin}${av.hs}${av.hc}_${top}_${hat}`,()=>charSpr(av,top,hat,'d',0))}
-const toriSpr=()=>spr('tori',16,20,drawTori);
-const toriURL=()=>toURL('tori',toriSpr);
+const DEF_TAV={skin:0,hs:0,hc:0,top:'top_green',gl:true};
+const tav=()=>Object.assign({},DEF_TAV,(typeof S!=='undefined'&&S&&S.cls.set.tav)||{});
+const guideName=()=>(typeof S!=='undefined'&&S&&S.cls.set.tname)||'선생님';
+const toriSpr=(dir='d',fr=0)=>{const t=tav();return charSpr({skin:t.skin,hs:t.hs,hc:t.hc},t.top,t.gl?'hat_glasses':null,dir,fr)};
+const toriURL=()=>{const t=tav();return toURL(`g${t.skin}${t.hs}${t.hc}_${t.top}_${t.gl}`,()=>toriSpr('d',0))};
 
 function P_(x){return (c,a,b,w=1,h=1)=>{x.fillStyle=c;x.fillRect(a,b,w,h)}}
 function drawChar(x,av,top,hat,dir,step){const r=P_(x);
@@ -359,6 +363,7 @@ function drawHat(x,id,dir){const r=P_(x);
  else if(id==='hat_ribbon'){r('#f08aa8',8,0,6,3);r('#c95a7a',10,1,2,1)}
  else if(id==='hat_beanie'){r('#58aa55',3,1,10,4);r('#3f8f46',3,4,10,1);r('#3f8f46',5,1,1,3);r('#3f8f46',9,1,1,3);r('#ffffff',7,-1,2,2)}
  else if(id==='hat_crown'){r('#f5c542',4,0,8,3);r('#f5c542',4,-1,1,1);r('#f5c542',7,-1,2,1);r('#f5c542',11,-1,1,1);r('#e05a47',7,1,2,1)}
+ else if(id==='hat_glasses'){const k='#8a5a32';if(dir==='d'){r(k,4,7,3,1);r(k,4,10,3,1);r(k,4,8,1,2);r(k,6,8,1,2);r(k,9,7,3,1);r(k,9,10,3,1);r(k,9,8,1,2);r(k,11,8,1,2);r(k,7,8,2,1)}else if(dir==='l'){r(k,3,7,3,1);r(k,3,10,3,1);r(k,5,8,1,2);r(k,6,8,4,1)}else if(dir==='r'){r(k,10,7,3,1);r(k,10,10,3,1);r(k,10,8,1,2);r(k,6,8,4,1)}}
  else if(id==='hat_flower'){r('#ffffff',10,1,3,3);r('#ffffff',9,2,5,1);r('#f5c542',11,2,1,1)}}
 function drawTori(x){const r=P_(x);const b='#b8733d',l='#d99a5e',dk='#2a2533';
  r(b,10,3,5,11);r(l,11,4,3,8);r(b,3,10,8,8);r('#f0d0a0',5,12,4,5);r(b,2,3,9,8);r(b,2,1,2,2);r(b,9,1,2,2);
@@ -505,7 +510,10 @@ const ME=()=>S&&S.students.find(s=>s.no===ME_NO);
 const P={x:0,y:0,dir:'d',fr:0,ft:0,target:null,stuck:0,bubble:null,moving:false};
 const pet={x:0,y:0,flip:false};
 let cols=[],friends=[],flags={mission:false,library:false},flagT=0,secT=0,talkT=6,warned=false,useAcc=0,useT=0,pollT=0,sendT=0,wasMoving=false;
-const tori={x:26*T+8,y:10*T+12,bubble:null};
+const tori={x:26*T+8,y:10*T+12,hx:26*T+8,hy:10*T+12,tx:null,ty:null,dir:'d',fr:0,ft:0,moving:false,live:false,bubble:null};
+let TVW=false;
+const myNo=()=>ROLE==='teacher'?0:ME_NO;
+function guideHome(){tori.live=false;tori.tx=null;tori.x=tori.hx;tori.y=tori.hy;tori.dir='d';tori.moving=false}
 const keys=new Set();
 const JOY={on:false,x:0,y:0,id:null};
 const nickOf=st=>st&&st.nickOk&&st.nick?st.nick:`${st?st.no:''}번 주민`;
@@ -525,26 +533,29 @@ function rtJoin(){try{if(!window.supabase||!S)return;rtLeave();
  const key=ROLE==='teacher'?'t'+Math.random().toString(36).slice(2,7):String(ME_NO);
  CH=RT.channel('cv-'+S.cls.id,{config:{broadcast:{self:false},presence:{key}}});
  CH.on('broadcast',{event:'mv'},m=>onMv(m.payload)).on('broadcast',{event:'emo'},m=>onEmo(m.payload)).on('broadcast',{event:'refresh'},()=>refreshSoon())
-  .on('presence',{event:'sync'},()=>onPresence()).on('presence',{event:'join'},()=>{if(ROLE==='student'&&mode==='village')setTimeout(()=>sendPos(true),300)})
+  .on('presence',{event:'sync'},()=>onPresence()).on('presence',{event:'join'},()=>{setTimeout(()=>sendPos(true),300)})
   .subscribe(s=>{if(s==='SUBSCRIBED'&&ROLE==='student'){CH.track({no:ME_NO});sendPos(true)}})}catch(e){console.warn(e)}}
 function rtLeave(){try{if(CH&&RT)RT.removeChannel(CH)}catch(e){}CH=null;online=new Set()}
 function bcast(ev,p){try{if(CH)CH.send({type:'broadcast',event:ev,payload:p})}catch(e){}}
-function sendPos(j){if(ROLE!=='student'||!liveOn()||mode!=='village')return;bcast('mv',{no:ME_NO,x:Math.round(P.x),y:Math.round(P.y),d:P.dir,j:j?1:0})}
-function onMv(p){if(!liveOn()||!p||typeof p.x!=='number'||typeof p.y!=='number')return;const f=friends.find(x=>x.no===p.no);if(!f)return;
+function sendPos(j){if(!liveOn())return;const pl={x:Math.round(P.x),y:Math.round(P.y),d:P.dir,j:j?1:0};if(ROLE==='student'&&mode==='village')bcast('mv',Object.assign({no:ME_NO},pl));else if(ROLE==='teacher'&&mode==='tview')bcast('mv',Object.assign({no:0},pl))}
+function onMv(p){if(!liveOn()||!p)return;
+ if(p.no===0){if(ROLE==='teacher')return;if(p.h){guideHome();return}if(typeof p.x!=='number'||typeof p.y!=='number')return;const gx=clamp(p.x,0,MW*T),gy=clamp(p.y,0,MH*T);tori.live=true;if(p.j||Math.hypot(gx-tori.x,gy-tori.y)>220){tori.x=gx;tori.y=gy}tori.tx=gx;tori.ty=gy;if(['u','d','l','r'].includes(p.d))tori.dir=p.d;return}
+ if(typeof p.x!=='number'||typeof p.y!=='number')return;const f=friends.find(x=>x.no===p.no);if(!f)return;
  const x=clamp(p.x,0,MW*T),y=clamp(p.y,0,MH*T);f.live=true;if(p.j||Math.hypot(x-f.x,y-f.y)>220){f.x=x;f.y=y}f.tx=x;f.ty=y;if(['u','d','l','r'].includes(p.d))f.dir=p.d}
-function onEmo(p){if(!p||!S)return;const f=friends.find(x=>x.no===p.no);if(!f)return;
+function onEmo(p){if(!p||!S)return;const f=p.no===0?(ROLE==='teacher'?null:tori):friends.find(x=>x.no===p.no);if(!f)return;
  if(p.emo&&EMO.includes(p.emo))f.bubble={emo:p.emo,until:Date.now()+3500};else if(p.txt&&S.cls.phrases.includes(p.txt))f.bubble={txt:p.txt,until:Date.now()+3500}}
 function onPresence(){if(!CH)return;const st=CH.presenceState();online=new Set(Object.keys(st).filter(k=>!k.startsWith('t')).map(Number));
  for(const f of friends)if(!online.has(f.no)&&f.live){f.live=false;f.tx=null;f.x=f.hx;f.y=f.hy;f.moving=false}
+ if(tori.live&&!Object.keys(st).some(k=>k.startsWith('t')))guideHome();
  if(mode==='tview')$('#tvInfo').textContent=`지금 접속 ${online.size}명`}
 let refT=0;function refreshSoon(){clearTimeout(refT);refT=setTimeout(()=>{if(ROLE==='student'&&mode==='village')act('view',{},{quiet:true});else if(ROLE==='teacher'&&(mode==='teacher'||mode==='tview'))tact('view',{},{quiet:true})},800+Math.random()*2500)}
 
 /* ===== loop ===== */
 let last=performance.now();
 function loop(t){const dt=Math.min(.05,(t-last)/1000);last=t;
- try{if(mode==='village')update(dt);if(mode==='village'||mode==='tview')moveFriends(dt);if(mode==='teacher'||mode==='tview')teacherTick(dt);draw(t)}catch(e){console.error(e)}
+ try{if(mode==='village')update(dt);else if(mode==='tview')updateT(dt);if(mode==='village'||mode==='tview')moveFriends(dt);if(mode==='teacher'||mode==='tview')teacherTick(dt);draw(t)}catch(e){console.error(e)}
  requestAnimationFrame(loop)}
-function moveFriends(dt){for(const f of friends){if(f.tx==null){f.moving=false;continue}const dx=f.tx-f.x,dy=f.ty-f.y,d=Math.hypot(dx,dy);
+function moveFriends(dt){for(const f of [...friends,tori]){if(f.tx==null){f.moving=false;continue}const dx=f.tx-f.x,dy=f.ty-f.y,d=Math.hypot(dx,dy);
  if(d<1.5){f.moving=false;f.fr=0;continue}const s=Math.min(d,(d>50?160:78)*dt);f.x+=dx/d*s;f.y+=dy/d*s;f.moving=true;f.ft+=dt;if(f.ft>.13){f.ft=0;f.fr=(f.fr+1)%4}
  if(Math.abs(dx)>Math.abs(dy))f.dir=dx<0?'l':'r';else f.dir=dy<0?'u':'d'}}
 let tPoll=0;function teacherTick(dt){tPoll+=dt;if(tPoll>30){tPoll=0;const a=document.activeElement;if(!(a&&/INPUT|TEXTAREA|SELECT/.test(a.tagName))&&!modalOpen())tact('view',{},{quiet:true})}}
@@ -560,8 +571,14 @@ function update(dt){
  const now=Date.now();
  if(P.bubble&&P.bubble.until<now)P.bubble=null;
  for(const f of friends)if(f.bubble&&f.bubble.until<now)f.bubble=null;
+ if(tori.bubble&&tori.bubble.until<now)tori.bubble=null;
  talkT-=dt;if(talkT<=0&&friends.length){talkT=7+Math.random()*7;const idle=friends.filter(f=>!f.live);const f=idle[(Math.random()*idle.length)|0];const ph=S.cls.phrases;if(f&&ph.length)f.bubble={txt:ph[(Math.random()*ph.length)|0],until:now+3000}}
  if(modalOpen()){updA(null);if(wasMoving){wasMoving=false;sendPos(false)}P.moving=false;return}
+ stepPlayer(dt);
+ for(const c of cols)if(!c.got&&Math.hypot(c.x-P.x,c.y-P.y)<11){c.got=true;collect(c)}
+ if(me.pet&&me.pet.walk!==false){const bx=P.x+(P.dir==='l'?14:P.dir==='r'?-14:0),by=P.y+(P.dir==='u'?12:P.dir==='d'?-4:2);const dx=bx-pet.x,dy=by-pet.y,d=Math.hypot(dx,dy);if(d>6){const s=Math.min(d,90*dt);pet.x+=dx/d*s;pet.y+=dy/d*s;if(Math.abs(dx)>1)pet.flip=dx>0}}
+ updA(nearest())}
+function stepPlayer(dt){
  let vx=0,vy=0;
  if(keys.has('ArrowLeft')||keys.has('a'))vx--;if(keys.has('ArrowRight')||keys.has('d'))vx++;if(keys.has('ArrowUp')||keys.has('w'))vy--;if(keys.has('ArrowDown')||keys.has('s'))vy++;
  if(JOY.on&&(JOY.x||JOY.y)){vx=JOY.x;vy=JOY.y}
@@ -575,22 +592,23 @@ function update(dt){
   if(P.target){if(Math.hypot(P.x-ox,P.y-oy)<sp*.25){P.stuck+=dt;if(P.stuck>.3){const tg=P.target;P.target=null;P.stuck=0;if(tg.then&&Math.hypot(tg.x-P.x,tg.y-P.y)<26)tg.then()}}else P.stuck=0}
  }else{P.fr=0;P.moving=false}
  if(P.moving){sendT-=dt;if(sendT<=0){sendT=.5;sendPos(false)}wasMoving=true}else if(wasMoving){wasMoving=false;sendT=0;sendPos(false)}
- for(const c of cols)if(!c.got&&Math.hypot(c.x-P.x,c.y-P.y)<11){c.got=true;collect(c)}
- if(me.pet&&me.pet.walk!==false){const bx=P.x+(P.dir==='l'?14:P.dir==='r'?-14:0),by=P.y+(P.dir==='u'?12:P.dir==='d'?-4:2);const dx=bx-pet.x,dy=by-pet.y,d=Math.hypot(dx,dy);if(d>6){const s=Math.min(d,90*dt);pet.x+=dx/d*s;pet.y+=dy/d*s;if(Math.abs(dx)>1)pet.flip=dx>0}}
- updA(nearest())}
+}
+function updateT(dt){const now=Date.now();if(P.bubble&&P.bubble.until<now)P.bubble=null;for(const f of friends)if(f.bubble&&f.bubble.until<now)f.bubble=null;
+ if(modalOpen()){updA(null);if(wasMoving){wasMoving=false;sendPos(false)}P.moving=false;return}
+ stepPlayer(dt);updA(nearest())}
 async function collect(c){const r=await act('collect',{cid:c.id},{quiet:true});if(r&&r.picked){toast(`${jo(ITEMS[r.picked].n,'을','를')} 주웠어요!`);beep(880);beep(1320,.06,.07)}}
 function nearest(){let best=null,bd=22;
  for(const d of doors){const k=Math.hypot(d.x-P.x,d.y-P.y);if(k<bd){bd=k;best={kind:'door',d}}}
- const kt=Math.hypot(tori.x-P.x,tori.y-P.y);if(kt<24&&kt<bd+2){bd=kt;best={kind:'tori'}}
+ if(mode!=='tview'){const kt=Math.hypot(tori.x-P.x,tori.y-P.y);if(kt<24&&kt<bd+2){bd=kt;best={kind:'tori'}}}
  for(const f of friends){const k=Math.hypot(f.x-P.x,f.y-P.y);if(k<16&&k<bd){bd=k;best={kind:'friend',f}}}
  return best}
 let curNear=null,aLabel='';
 function updA(n){curNear=n;let l='';
- if(n){if(n.kind==='tori')l='토리에게 말 걸기';else if(n.kind==='friend')l='인사하기';else if(n.d.type==='house')l=n.d.owner===ME_NO?'우리 집 들어가기':`${nickOf(S.students.find(s=>s.no===n.d.owner)||{no:n.d.owner})} 집 구경`;else l='들어가기'}
+ if(n){if(n.kind==='tori')l=`${guideName()}께 말 걸기`;else if(n.kind==='friend')l='인사하기';else if(n.d.type==='house')l=(n.d.owner===ME_NO&&mode==='village')?'우리 집 들어가기':`${nickOf(S.students.find(s=>s.no===n.d.owner)||{no:n.d.owner})} 집 구경`;else l=mode==='tview'?({mission:'미션 관리',library:'도서관 관리',shop:'상점 관리',mayor:'이장실로 돌아가기'})[n.d.type]:'들어가기'}
  if(l!==aLabel){aLabel=l;const b=$('#bA');b.hidden=!l;b.textContent=l}}
 function interact(){const n=curNear;if(!n||modalOpen()||dlgOn||lockOn)return;beep(660);
  if(n.kind==='door')openDoor(n.d);else if(n.kind==='tori')toriTalk();else if(n.kind==='friend')greet(n.f)}
-function greet(f){const st=S.students.find(s=>s.no===f.no);P.bubble={txt:'안녕!',until:Date.now()+2500};if(S.cls.phrases.includes('안녕!'))bcast('emo',{no:ME_NO,txt:'안녕!'});else{P.bubble={emo:'smile',until:Date.now()+2500};bcast('emo',{no:ME_NO,emo:'smile'})}if(st)toast(`${nickOf(st)}에게 인사했어요`)}
+function greet(f){const st=S.students.find(s=>s.no===f.no);P.bubble={txt:'안녕!',until:Date.now()+2500};if(S.cls.phrases.includes('안녕!'))bcast('emo',{no:myNo(),txt:'안녕!'});else{P.bubble={emo:'smile',until:Date.now()+2500};bcast('emo',{no:myNo(),emo:'smile'})}if(st)toast(`${nickOf(st)}에게 인사했어요`)}
 function toriTalk(){say(TIPS[(Math.random()*TIPS.length)|0])}
 function computeFlags(){const me=ME();if(!me)return;const t=today();
  flags.mission=S.missions.some(m=>!mySub(m)&&(m.repeat==='daily'||!m.due||m.due>=t));
@@ -604,7 +622,7 @@ function draw(t){
  ctx.fillStyle='#2a2533';ctx.fillRect(0,0,w,h);
  if(!mapC||mode==='teacher')return;
  const MWp=MW*T,MHp=MH*T;let S_,cx,cy;
- if(mode==='tview'){S_=Math.min(w/MWp,(h-60)/MHp);cx=-(w/S_-MWp)/2;cy=-(h/S_-MHp)/2-20/S_}
+ if(mode==='tview'&&TVW){S_=Math.min(w/MWp,(h-60)/MHp);cx=-(w/S_-MWp)/2;cy=-(h/S_-MHp)/2-20/S_}
  else if(mode==='title'){S_=Math.max(2,Math.round(Math.min(w/(T*22),h/(T*13))));const range=Math.max(1,MWp-w/S_);const p=(t*.012)%(2*range);cx=p<range?p:2*range-p;cy=clamp(T*3,0,Math.max(0,MHp-h/S_))}
  else{S_=Math.max(2,Math.round(Math.min(w/(T*18),h/(T*12))));const vw=w/S_,vh=h/S_;cx=vw>=MWp?-(vw-MWp)/2:clamp(P.x-vw/2,0,MWp-vw);cy=vh>=MHp?-(vh-MHp)/2:clamp(P.y-8-vh/2,0,MHp-vh)}
  V.S=S_;V.cx=cx;V.cy=cy;V.w=w;V.h=h;
@@ -612,7 +630,8 @@ function draw(t){
  ctx.fillStyle='rgba(255,255,255,.75)';const ph=Math.floor(t/400);
  sparks.forEach((s,i)=>{if((i+ph)%5===0)ctx.fillRect((s[0]-cx)*S_,(s[1]-cy)*S_,2*S_,S_)});
  const ents=[];
- ents.push({y:tori.y,d:()=>{shadow(tori.x,tori.y);dS(toriSpr(),tori.x,tori.y+1,t%1600<800?0:1)}});
+ if(mode!=='tview')ents.push({y:tori.y,d:()=>{shadow(tori.x,tori.y);dS(toriSpr(tori.dir||'d',tori.moving?tori.fr:0),tori.x,tori.y,tori.live?0:(t%1600<800?0:1))}});
+ if(mode==='tview')ents.push({y:P.y,d:()=>{shadow(P.x,P.y);dS(toriSpr(P.dir,P.fr),P.x,P.y)}});
  if(S)for(const f of friends){const st=S.students.find(s=>s.no===f.no);if(!st)continue;ents.push({y:f.y,d:()=>{shadow(f.x,f.y);dS(charSpr(st.av,st.wear.top,st.wear.hat,f.dir||'d',f.moving?f.fr:0),f.x,f.y)}});
   if(st.pet&&st.pet.walk!==false){const px=f.x+(f.dir==='l'?13:f.dir==='r'?-13:13),py=f.y-2;ents.push({y:py,d:()=>{shadow(px,py,4);dS(itemSpr('pet_'+st.pet.type),px,py+1,0,f.dir==='r')}})}}
  if(mode==='village'){const me=ME();
@@ -625,7 +644,9 @@ function draw(t){
  if(S)for(const p of plates){let txt=p.t;if(p.k==='house'){const st=S.students.find(s=>s.no===p.no);if(!st)continue;txt=st.no===ME_NO&&mode==='village'?'우리 집':(st.created?nickOf(st):`${st.no}번 빈 집`)}
   const mine=p.k==='house'&&p.no===ME_NO&&mode==='village';plate(txt,(p.x-cx)*S_,(p.y-cy)*S_,fs,mine);
   if(mode==='village'&&((p.k==='mission'&&flags.mission)||(p.k==='library'&&flags.library)))bubbleIcon('exclaim',(p.x-cx)*S_,(p.y-cy)*S_-fs-6-Math.abs(Math.sin(t/250))*4)}
- if(mode==='village'&&P.bubble)bubble(P.bubble,(P.x-cx)*S_,(P.y-28-cy)*S_,fs);
+ if((mode==='village'||mode==='tview')&&P.bubble)bubble(P.bubble,(P.x-cx)*S_,(P.y-28-cy)*S_,fs);
+ if(mode!=='tview'){plate(guideName(),(tori.x-cx)*S_,(tori.y+6-cy)*S_+fs/2,Math.max(11,fs-2),true);if(tori.bubble)bubble(tori.bubble,(tori.x-cx)*S_,(tori.y-28-cy)*S_,fs)}
+ else plate(guideName(),(P.x-cx)*S_,(P.y+6-cy)*S_+fs/2,Math.max(11,fs-2),true);
  for(const f of friends)if(f.bubble)bubble(f.bubble,(f.x-cx)*S_,(f.y-28-cy)*S_,fs);
  if(mode==='tview'&&S)for(const f of friends){const st=S.students.find(s=>s.no===f.no);if(st)plate(nickOf(st),(f.x-cx)*S_,(f.y+6-cy)*S_+fs/2,Math.max(11,fs-2),f.live)}
 }
@@ -647,7 +668,7 @@ const tabs=(list,cur)=>`<div class="tabs" role="tablist">${list.map(([k,l])=>`<b
 let dlgOn=false,dlgQ=[],dlgFull='',dlgI=0,dlgTimer=0;
 function say(...lines){dlgQ.push(...lines.flat());if(!dlgOn)nextLine()}
 function nextLine(){clearInterval(dlgTimer);if(!dlgQ.length){dlgOn=false;$('#dlg').classList.remove('on');return}
- dlgOn=true;$('#dlgPor').src=toriURL();$('#dlg').classList.add('on');dlgFull=dlgQ.shift();dlgI=0;const el=$('#dlgText');el.textContent='';
+ dlgOn=true;$('#dlgPor').src=toriURL();$('#dlgName').textContent=guideName();$('#dlg').classList.add('on');dlgFull=dlgQ.shift();dlgI=0;const el=$('#dlgText');el.textContent='';
  dlgTimer=setInterval(()=>{dlgI++;el.textContent=dlgFull.slice(0,dlgI);if(dlgI>=dlgFull.length)clearInterval(dlgTimer)},26)}
 function dlgNext(){if(dlgI<dlgFull.length){dlgI=dlgFull.length;$('#dlgText').textContent=dlgFull;clearInterval(dlgTimer)}else nextLine()}
 let AC=null;function beep(f=660,d=.07,delay=0){try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();const t0=AC.currentTime+delay,o=AC.createOscillator(),g=AC.createGain();o.type='square';o.frequency.value=f;g.gain.setValueAtTime(.035,t0);g.gain.exponentialRampToValueAtTime(.0001,t0+d);o.connect(g).connect(AC.destination);o.start(t0);o.stop(t0+d+.02)}catch(e){}}
@@ -755,10 +776,11 @@ function enterVillage(tutorial){mode='village';document.body.className='village'
  const h=houses.find(x=>x.no===me.no);P.x=h?h.door.x:24*T;P.y=h?h.door.y+4:13*T;P.dir='d';P.target=null;P.bubble=null;pet.x=P.x-14;pet.y=P.y;warned=false;useAcc=0;
  spawnCols();friends=[];makeFriends(false);aLabel='x';updA(null);updHud();computeFlags();lockMsgKey='?';checkLock();rtJoin();
  const lines=[];
- if(tutorial)lines.push(`안녕, ${me.nick}! 나는 클래스 빌리지 안내를 맡은 다람쥐 토리야.`,'왼쪽 아래 조이스틱을 끌거나, 방향키를 누르거나, 가고 싶은 곳을 누르면 걸어갈 수 있어. 건물 앞에 서면 오른쪽 아래 버튼으로 들어갈 수 있어.','미션 게시판에서 선생님이 낸 미션을 하고, 도서관에서 계기교육 이야기를 읽어 봐.','칭찬과 미션으로 모은 코인은 잡화점에서 가구, 옷, 씨앗을 사는 데 써.','숲에 반짝이는 보물이 떨어져 있으면 주워 봐. 무엇이 나올지는 주워 봐야 알아!','입주 선물로 코인 100개랑 침대, 의자, 토마토 씨앗을 넣어 뒀어. 먼저 우리 집에 들어가 봐!');
+ if(tutorial)lines.push(`안녕, ${me.nick}! 나는 우리 마을 이장 ${jo(guideName(),'이야','야')}. 마을 안내를 맡고 있어.`,'왼쪽 아래 조이스틱을 끌거나, 방향키를 누르거나, 가고 싶은 곳을 누르면 걸어갈 수 있어. 건물 앞에 서면 오른쪽 아래 버튼으로 들어갈 수 있어.','미션 게시판에서 선생님이 낸 미션을 하고, 도서관에서 계기교육 이야기를 읽어 봐.','칭찬과 미션으로 모은 코인은 잡화점에서 가구, 옷, 씨앗을 사는 데 써.','숲에 반짝이는 보물이 떨어져 있으면 주워 봐. 무엇이 나올지는 주워 봐야 알아!','입주 선물로 코인 100개랑 침대, 의자, 토마토 씨앗을 넣어 뒀어. 먼저 우리 집에 들어가 봐!');
  else lines.push(`${nickOf(me)==='' ? '' : (me.nick||nickOf(me))}, 어서 와!`);
  say(lines);showNotes()}
 function openDoor(d){if(typeof d==='string')d={type:d};
+ if(mode==='tview'&&d.type!=='house'){TS.tab={mission:'mis',library:'lib',shop:'shop',mayor:'stu'}[d.type]||'stu';A.tvBack();return}
  if(d.type==='mission')openWin('mission','미션 게시판',rMission);
  else if(d.type==='library')openWin('library','마을 도서관',rLib);
  else if(d.type==='shop')openWin('shop','잡화점',rShop,{tab:'furn'});
@@ -794,7 +816,7 @@ function rLib(b){const me=ME();
 
 /* ===== shop ===== */
 function itemCard(id,act,extra,dis){const it=ITEMS[id];return `<div class="item"><img class="ic" src="${ico(id)}" alt=""><b>${esc(it.n)}</b>${extra||''}${act}</div>`}
-function rShop(b){const me=ME(),t=W.tab;let h=`<div class="row between wrap" style="margin-bottom:10px"><span>잡화점 주인 토리가 반가워해요.</span><span class="pill px coin" style="min-height:36px">${cIco()}<b>${me.coins}</b></span></div>`+tabs([['furn','가구'],['wf','벽지·바닥'],['wear','옷·모자'],['farm','씨앗·펫'],['coupon','학급 쿠폰'],['sell','팔기']],t);
+function rShop(b){const me=ME(),t=W.tab;let h=`<div class="row between wrap" style="margin-bottom:10px"><span>잡화점에 온 걸 환영해요!</span><span class="pill px coin" style="min-height:36px">${cIco()}<b>${me.coins}</b></span></div>`+tabs([['furn','가구'],['wf','벽지·바닥'],['wear','옷·모자'],['farm','씨앗·펫'],['coupon','학급 쿠폰'],['sell','팔기']],t);
  const buyBtn=(id)=>{const p=ITEMS[id].p;return `<span class="price">${cIco()} ${p}</span><button class="btn sm coin" data-a="buy" data-v="${id}" ${me.coins<p?'disabled':''}>사기</button>`};
  const list=c=>Object.keys(ITEMS).filter(k=>ITEMS[k].c===c);
  if(t==='furn')h+=`<div class="grid">${list('furn').map(id=>itemCard(id,buyBtn(id),`<span class="help" style="margin:0">가진 개수 ${cnt(me,id)}</span>`)).join('')}</div>`;
@@ -907,10 +929,18 @@ function tShop(b){const waits=[];for(const s of S.students)for(const q of s.coup
   <div class="two" style="margin-top:12px"><label class="field"><span>쿠폰 이름</span><input id="cpName" maxlength="20" placeholder="예: 청소 면제권"></label><label class="field"><span>가격 (코인)</span><input id="cpPrice" type="number" value="100" min="1"></label><label class="field"><span>수량</span><input id="cpStock" type="number" value="5" min="1"></label><label class="field"><span>1인 한도</span><input id="cpLimit" type="number" value="1" min="1"></label></div><button class="btn pri" data-a="tAddCp">쿠폰 올리기</button></section>
   <section class="panel px"><h3>게임 아이템</h3><p>가구 ${Object.values(ITEMS).filter(i=>i.c==='furn').length}종, 벽지·바닥 ${Object.values(ITEMS).filter(i=>i.c==='wall'||i.c==='floor').length}종, 옷·모자 ${Object.values(ITEMS).filter(i=>i.c==='hat'||i.c==='top').length}종, 씨앗 3종이 기본으로 들어 있어요. 직접 그린 이미지를 받으면 같은 이름으로 바꿔 넣을 수 있어요.</p></section>`;
  b.innerHTML=h}
-function tSet(b){const c=S.cls,s=c.set;
+function tSet(b){const c=S.cls,s=c.set,ta=tav();
  b.innerHTML=`<section class="panel px"><h3>학급 정보</h3><div class="two"><label class="field"><span>학급 이름</span><input id="sName" value="${esc(c.name)}" maxlength="30"></label><label class="field"><span>학급 코드</span><input id="sCode" value="${esc(c.code)}" maxlength="10" style="text-transform:uppercase"></label><label class="field"><span>새 비밀번호 (바꿀 때만, 6자 이상)</span><input id="sPw" type="password" autocomplete="new-password"></label></div>
  <label class="field"><span>이장실 공지</span><textarea id="sNotice" maxlength="500">${esc(c.notice)}</textarea></label>
  <p class="help">학생 접속 주소: ${esc(location.origin+location.pathname)}</p></section>
+ <section class="panel px"><h3>선생님 캐릭터</h3><div class="row wrap" style="gap:16px;align-items:flex-start"><img src="${toriURL()}" alt="선생님 캐릭터" style="width:56px;height:91px;background:#bfe6a8;border:3px solid var(--edge)"><div class="two" style="flex:1">
+  <label class="field"><span>마을에서 부를 이름</span><input id="sTname" maxlength="10" value="${esc(guideName())}"></label>
+  <label class="field"><span>피부색</span><select id="tvSkin">${['밝은 피부','중간 피부','어두운 피부'].map((n,i)=>`<option value="${i}" ${ta.skin===i?'selected':''}>${n}</option>`).join('')}</select></label>
+  <label class="field"><span>머리 모양</span><select id="tvHs">${HAIRN.map((n,i)=>`<option value="${i}" ${ta.hs===i?'selected':''}>${n}</option>`).join('')}</select></label>
+  <label class="field"><span>머리 색</span><select id="tvHc">${['검정','갈색','금색','빨강','남색'].map((n,i)=>`<option value="${i}" ${ta.hc===i?'selected':''}>${n}</option>`).join('')}</select></label>
+  <label class="field"><span>옷</span><select id="tvTop">${Object.keys(TOPS).map(k=>`<option value="${k}" ${ta.top===k?'selected':''}>${TOPN[k]}</option>`).join('')}</select></label>
+  <label class="field"><span>안경</span><select id="tvGl"><option value="1" ${ta.gl?'selected':''}>쓰기</option><option value="0" ${ta.gl?'':'selected'}>안 쓰기</option></select></label></div></div>
+  <p class="help">학생들 마을 광장에서 안내를 맡는 캐릭터예요. 이장실 위쪽 [마을로 나가기]를 누르면 이 캐릭터로 걸어 다니고, 학생 화면에도 실시간으로 보여요.</p></section>
  <section class="panel px"><h3>접속 시간</h3><div class="two"><label class="field"><span>열리는 시간 (평일)</span><input id="sStart" type="time" value="${esc(s.start)}"></label><label class="field"><span>닫히는 시간</span><input id="sEnd" type="time" value="${esc(s.end)}"></label><label class="field"><span>하루 최대 이용 (분)</span><input id="sLimit" type="number" min="5" max="240" value="${s.limit}"></label></div>
  <label class="row" style="margin:6px 0"><input id="sFree" type="checkbox" style="width:22px;height:22px" ${s.free?'checked':''}> <span>시간 제한 끄기 (체크를 풀면 위 시간이 바로 적용돼요)</span></label>
  <p class="help">미션 게시판과 도서관을 보는 시간은 하루 이용 시간에 넣지 않아요.</p></section>
@@ -944,8 +974,8 @@ const A={
  dlgNext:()=>dlgNext(),dlgSkip:()=>{dlgQ=[];nextLine()},
  interact:()=>interact(),
  emote:()=>openEmote(),
- emo:v=>{P.bubble={emo:v,until:Date.now()+3500};bcast('emo',{no:ME_NO,emo:v});closeEmote();beep(880)},
- phr:v=>{const t=S.cls.phrases[+v];if(!t)return;P.bubble={txt:t,until:Date.now()+3500};bcast('emo',{no:ME_NO,txt:t});closeEmote();beep(880)},
+ emo:v=>{P.bubble={emo:v,until:Date.now()+3500};bcast('emo',{no:myNo(),emo:v});closeEmote();beep(880)},
+ phr:v=>{const t=S.cls.phrases[+v];if(!t)return;P.bubble={txt:t,until:Date.now()+3500};bcast('emo',{no:myNo(),txt:t});closeEmote();beep(880)},
  nb:v=>openWin('note','수첩',rNote,{tab:v}),
  goHome:()=>{const h=houses.find(x=>x.no===ME_NO);if(h){P.x=h.door.x;P.y=h.door.y+4;P.target=null;pet.x=P.x-14;pet.y=P.y;sendPos(true);toast('우리 집 앞으로 왔어요')}},
  logout:()=>{beep(392);if(TOKEN)rpc('api_logout',{p_token:TOKEN}).catch(()=>{});toTitle()},
@@ -979,8 +1009,10 @@ const A={
  /* teacher */
  tTab:v=>{TS.tab=v;TS.delArm=null;rT();$('#sTeacher').scrollTop=0},
  tLock:async()=>{const l=!S.cls.set.locked;ok(await tact('lock',{locked:l}),()=>toast(l?'모든 학생 화면을 잠갔어요':'잠금을 풀었어요'))},
- tView:()=>{mode='tview';buildMap();renderMap();friends=[];makeFriends(true);show('');$('#tvBar').classList.add('on');$('#tvInfo').textContent=`지금 접속 ${online.size}명`},
- tvBack:()=>{$('#tvBar').classList.remove('on');enterTeacher()},
+ tView:()=>{mode='tview';TVW=false;document.body.className='village tv';buildMap();renderMap();friends=[];makeFriends(true);show('sVillage');$('#tvBar').classList.add('on');$('#tvInfo').textContent=`지금 접속 ${online.size}명`;$('#tvWholeBtn').textContent='전체 보기';
+  const d=doors.find(x=>x.type==='mayor');P.x=d?d.x:tori.hx;P.y=d?d.y+4:tori.hy;P.dir='d';P.target=null;P.bubble=null;P.fr=0;keys.clear();aLabel='x';updA(null);closeEmote();setTimeout(()=>sendPos(true),200)},
+ tvBack:()=>{if(mode==='tview')bcast('mv',{no:0,h:1});closeEmote();$('#tvBar').classList.remove('on');enterTeacher()},
+ tvWhole:()=>{TVW=!TVW;$('#tvWholeBtn').textContent=TVW?'선생님 따라가기':'전체 보기'},
  tSel:v=>{const n=+v;TS.sel.has(n)?TS.sel.delete(n):TS.sel.add(n);rT()},
  tSelAll:()=>{S.students.forEach(s=>TS.sel.add(s.no));rT()},tSelNone:()=>{TS.sel.clear();rT()},
  tPraise:async v=>{const p=S.praise.find(x=>x.id===v);if(!p)return;const n=TS.sel.size;ok(await tact('praise',{pid:v,nos:[...TS.sel]}),()=>{beep(988);beep(1318,.08,.07);toast(`${n}명에게 '${p.name}' +${p.coins}코인`)})},
@@ -1016,7 +1048,7 @@ const A={
   ok(await tact('add_coupon',{name,price:Math.round(+$('#cpPrice').value||1),stock:Math.round(+$('#cpStock').value||1),limit:Math.round(+$('#cpLimit').value||1)}),()=>toast('쿠폰을 올렸어요'))},
  tSave:async()=>{const ph=$('#sPhr').value.split('\n').map(x=>x.trim()).filter(Boolean).slice(0,16);
   ok(await tact('settings',{name:$('#sName').value.trim(),code:$('#sCode').value.trim().toUpperCase(),pw:$('#sPw').value,notice:$('#sNotice').value.trim(),
-   set:{start:$('#sStart').value||'08:30',end:$('#sEnd').value||'16:00',limit:Math.round(+$('#sLimit').value||30),free:$('#sFree').checked,fast:$('#sFast').checked,live:$('#sLive').checked},phrases:ph}),()=>{store.set('cv_code',S.cls.code);toast('설정을 저장했어요')})},
+   set:{start:$('#sStart').value||'08:30',end:$('#sEnd').value||'16:00',limit:Math.round(+$('#sLimit').value||30),free:$('#sFree').checked,fast:$('#sFast').checked,live:$('#sLive').checked,tname:$('#sTname').value.trim(),tav:{skin:+$('#tvSkin').value,hs:+$('#tvHs').value,hc:+$('#tvHc').value,top:$('#tvTop').value,gl:$('#tvGl').value==='1'}},phrases:ph}),()=>{store.set('cv_code',S.cls.code);toast('설정을 저장했어요')})},
  tCSV:()=>{const t=csv();openWin('csv','CSV 내보내기',b=>{b.innerHTML=`<p class="help" style="margin-top:0">아래 내용을 복사해 메모장에 붙여 넣고 .csv로 저장하면 엑셀에서 열 수 있어요.</p><textarea id="csvT" readonly style="min-height:260px;font-size:13px">${esc(t)}</textarea><div class="row" style="margin-top:10px"><button class="btn pri" data-a="copyCSV">전체 복사</button></div>`},{wide:true})},
  copyCSV:()=>copy($('#csvT').value,$('#csvT')),
  tYear:async()=>{const c=$('#yrc').value.trim();if(c!=='새 학년도'){toast("입력칸에 '새 학년도'라고 정확히 적어 주세요");return}TS.sel.clear();ok(await tact('year_reset',{confirm:c}),()=>toast('새 학년도 마을이 준비됐어요. 학생을 다시 등록해 주세요.'))}
@@ -1034,12 +1066,12 @@ document.addEventListener('keydown',e=>{
  if(k==='Escape'){if(modalOpen()&&!['creator','setup'].includes(W.kind))closeWin();closeEmote();return}
  if(dlgOn&&(k==='Enter'||k===' ')){e.preventDefault();dlgNext();return}
  if(mode==='title'&&!modalOpen()){e.preventDefault();A.start();return}
- if(mode==='village'){if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','w','a','s','d'].includes(k)){keys.add(k);e.preventDefault()}else if((k==='Enter'||k===' ')&&!modalOpen()){e.preventDefault();interact()}}});
+ if(mode==='village'||mode==='tview'){if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','w','a','s','d'].includes(k)){keys.add(k);e.preventDefault()}else if((k==='Enter'||k===' ')&&!modalOpen()){e.preventDefault();interact()}}});
 document.addEventListener('keyup',e=>{keys.delete(e.key.length===1?e.key.toLowerCase():e.key)});
 window.addEventListener('blur',()=>keys.clear());
-cv.addEventListener('pointerdown',e=>{if(mode!=='village'||lockOn||modalOpen())return;closeEmote();const wx=e.clientX/V.S+V.cx,wy=e.clientY/V.S+V.cy;
+cv.addEventListener('pointerdown',e=>{if((mode!=='village'&&mode!=='tview')||lockOn||modalOpen())return;closeEmote();const wx=e.clientX/V.S+V.cx,wy=e.clientY/V.S+V.cy;
  for(const d of doors)if(wx>=d.r[0]&&wx<d.r[2]&&wy>=d.r[1]-12&&wy<d.r[3]){P.target={x:d.x,y:d.y,then:()=>openDoor(d)};return}
- if(Math.hypot(wx-tori.x,wy-(tori.y-8))<14){P.target={x:tori.x,y:tori.y+12,then:toriTalk};return}
+ if(mode==='village'&&Math.hypot(wx-tori.x,wy-(tori.y-8))<14){P.target={x:tori.x,y:tori.y+12,then:toriTalk};return}
  for(const f of friends)if(Math.hypot(wx-f.x,wy-(f.y-10))<12){P.target={x:f.x+12,y:f.y,then:()=>greet(f)};return}
  P.target={x:wx,y:wy+6}});
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&mode==='village')flushUsage()});
@@ -1050,7 +1082,7 @@ window.addEventListener('pagehide',()=>{if(mode==='village')flushUsage()});
  const setK=(dx,dy)=>{k.style.transform=`translate(${dx}px,${dy}px)`};
  const mv=e=>{const r=j.getBoundingClientRect();let dx=e.clientX-(r.left+r.width/2),dy=e.clientY-(r.top+r.height/2);const d=Math.hypot(dx,dy);if(d>R){dx=dx/d*R;dy=dy/d*R}setK(dx,dy);const m=Math.hypot(dx,dy)/R;JOY.x=m>.22?dx/R:0;JOY.y=m>.22?dy/R:0};
  const end=e=>{if(!JOY.on||(e&&e.pointerId!==JOY.id))return;JOY.on=false;JOY.x=JOY.y=0;JOY.id=null;j.classList.remove('on');setK(0,0)};
- j.addEventListener('pointerdown',e=>{if(mode!=='village'||lockOn||modalOpen())return;e.preventDefault();JOY.on=true;JOY.id=e.pointerId;j.classList.add('on');try{j.setPointerCapture(e.pointerId)}catch(x){}P.target=null;closeEmote();mv(e)});
+ j.addEventListener('pointerdown',e=>{if((mode!=='village'&&mode!=='tview')||lockOn||modalOpen())return;e.preventDefault();JOY.on=true;JOY.id=e.pointerId;j.classList.add('on');try{j.setPointerCapture(e.pointerId)}catch(x){}P.target=null;closeEmote();mv(e)});
  j.addEventListener('pointermove',e=>{if(JOY.on&&e.pointerId===JOY.id)mv(e)});
  j.addEventListener('pointerup',end);j.addEventListener('pointercancel',end);j.addEventListener('lostpointercapture',end);
  window.addEventListener('blur',()=>end())})();
