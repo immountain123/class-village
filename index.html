@@ -113,8 +113,8 @@ p{margin:0}
 .sw.on{outline:3px solid var(--coin);outline-offset:2px}
 .crwrap{display:grid;grid-template-columns:minmax(0,180px) minmax(0,1fr);gap:18px;align-items:start}
 .crprev{background:#bfe6a8;border:3px solid var(--edge);display:flex;justify-content:center;gap:6px;padding:14px 6px}
-.crprev img{width:54px;height:88px}
-.crprev img.big{width:72px;height:117px}
+.crprev img{width:44px;height:76px}
+.crprev img.big{width:66px;height:114px}
 .crrow{margin-bottom:12px}
 .crrow>span{display:block;font-size:15px;color:var(--muted);margin-bottom:4px}
 @media(max-width:560px){.crwrap{grid-template-columns:1fr}}
@@ -179,7 +179,7 @@ body.tv #hud{display:none}
 .sgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
 .scard{font:inherit;color:var(--ink);background:var(--paper);border:3px solid var(--edge);box-shadow:4px 4px 0 var(--edge);padding:10px;display:grid;justify-items:center;gap:2px;cursor:pointer;text-align:center}
 .scard.on{background:#fff0b8;outline:4px solid var(--coin);outline-offset:-1px}
-.scard>img{width:48px;height:78px}
+.scard>img{width:44px;height:76px}
 .scard.ghost>img{opacity:.35}
 .scard .no{font-size:14px;color:var(--muted)}
 .scard b{font-weight:400;font-size:18px}
@@ -300,7 +300,8 @@ const DEX=['col_acorn','col_pine','col_shell','col_feather','col_clover','col_st
 const EMO=['heart','star','note','exclaim','question','smile'];
 const SKIN=['#f6d2b0','#e0a77a','#a8714a'];
 const HAIR=['#3b2a20','#7a4a2a','#d9a441','#c2523c','#2f3e6b'];
-const HAIRN=['짧은 머리','긴 머리','똥머리'];
+const HAIRN=['짧은 머리','긴 머리','똥머리','단발','양갈래','포니테일','곱슬머리','바가지머리'];
+const OUTN=['티셔츠','후드티','원피스','멜빵바지','한복','체육복','교복'];
 const ROOFS=['#d9604c','#4a7fd4','#58aa55','#9b6bc9','#e0a830','#d97aa0','#3fa7a0'];
 const BANNED=['바보','멍청','꺼져','죽어','병신','시발'];
 const TIPS=['선생님께 칭찬을 받으면 코인이 들어와. 코인은 꾸미기랑 구매에 쓸 수 있어.','미션 게시판 위에 느낌표가 떠 있으면 아직 안 한 미션이 있다는 뜻이야.','숲에는 매일 반짝이는 보물이 몇 개씩 떨어져 있어. 주워서 도감을 채워 봐!','잡화점에서 씨앗을 사서 우리 집 농장에 심어 봐. 물을 주면 쑥쑥 자라.','도서관 지붕에 느낌표가 뜨면 새 이야기가 올라온 거야. 소감을 쓰면 코인도 받아.','친구 집 문 앞에 서면 친구 방을 구경할 수 있어. 가구는 못 옮기니까 걱정 마.','펫은 굶거나 아프지 않아. 그래도 간식을 주고 쓰다듬어 주면 더 친해져!'];
@@ -333,13 +334,13 @@ function itemSpr(id){if(IMG[id])return IMG[id];if(id.startsWith('pet_'))return p
 function ico(id){if(ASSET_FILES[id]&&IMG[id])return ASSET_FILES[id];return toURL('i_'+id,()=>itemSpr(id))}
 function pat(id){if(ASSET_FILES[id]&&IMG[id])return ASSET_FILES[id];return toURL('p_'+id,()=>{const c=document.createElement('canvas');c.width=c.height=16;drawItem(c.getContext('2d'),id);return c})}
 const STEP=[0,1,0,2];
-function charSpr(av,top,hat,dir,fr){const k=`c4${av.skin}${av.hs}${av.hc}_${top}_${hat}_${dir}${fr||0}`;return CACHE[k]||(CACHE[k]=drawChar4(av,top,hat,dir,fr||0))}
-function charURL(st){const av=st.av,top=st.wear.top,hat=st.wear.hat;return toURL(`u${av.skin}${av.hs}${av.hc}_${top}_${hat}`,()=>charSpr(av,top,hat,'d',0))}
-const DEF_TAV={skin:0,hs:0,hc:0,top:'top_green',gl:true};
+function charSpr(av,top,hat,dir,fr){const k=`c5${av.skin}_${av.hs}_${av.hc}_${av.os|0}_${top}_${hat}_${dir}${fr||0}`;return CACHE[k]||(CACHE[k]=drawChar4(av,top,hat,dir,fr||0))}
+function charURL(st){const av=st.av,top=st.wear.top,hat=st.wear.hat;return toURL(`u${av.skin}_${av.hs}_${av.hc}_${av.os|0}_${top}_${hat}`,()=>charSpr(av,top,hat,'d',0))}
+const DEF_TAV={skin:0,hs:0,hc:0,os:6,top:'top_green',gl:true};
 const tav=()=>Object.assign({},DEF_TAV,(typeof S!=='undefined'&&S&&S.cls.set.tav)||{});
 const guideName=()=>(typeof S!=='undefined'&&S&&S.cls.set.tname)||'선생님';
-const toriSpr=(dir='d',fr=0)=>{const t=tav();return charSpr({skin:t.skin,hs:t.hs,hc:t.hc},t.top,t.gl?'hat_glasses':null,dir,fr)};
-const toriURL=()=>{const t=tav();return toURL(`g${t.skin}${t.hs}${t.hc}_${t.top}_${t.gl}`,()=>toriSpr('d',0))};
+const toriSpr=(dir='d',fr=0)=>{const t=tav();return charSpr({skin:t.skin,hs:t.hs,hc:t.hc,os:t.os},t.top,t.gl?'hat_glasses':null,dir,fr)};
+const toriURL=()=>{const t=tav();return toURL(`g${t.skin}_${t.hs}_${t.hc}_${t.os|0}_${t.top}_${t.gl}`,()=>toriSpr('d',0))};
 
 function P_(x){return (c,a,b,w=1,h=1)=>{x.fillStyle=c;x.fillRect(a,b,w,h)}}
 function drawChar(x,av,top,hat,dir,step){const r=P_(x);
@@ -514,308 +515,721 @@ function petSpr(t){return sprHi('pet_'+t,32,28,x=>{const R=(c,a,b,w=1,h=1)=>{x.f
 /* --- 2.5D characters: 40x60 art px (2 art px per world px), 3/4 view, ~2.5 heads tall --- */
 const C25W=40,C25H=60;
 function ellCc(x,cx,cy,rx,ry,base,hi,sd,dk,maxY){for(let yy=Math.floor(cy-ry);yy<=Math.min(maxY,Math.ceil(cy+ry));yy++)for(let xx=Math.floor(cx-rx);xx<=Math.ceil(cx+rx);xx++){const nx=(xx+.5-cx)/rx,ny=(yy+.5-cy)/ry,d=nx*nx+ny*ny;if(d>1)continue;const l=nx*.55+ny*.8;x.fillStyle=(dk&&l>.68)?dk:l>.28?sd:(l<-.42&&d<.8)?hi:base;x.fillRect(xx,yy,1,1)}}
-/* ===== v4 2D chibi characters: hand-placed pixel templates (22x33 art px, 1 art px = 1 world px) ===== */
-const C4W=22,C4H=33,C4OY=4,C4RES=1;
-const C4TPL=`[body_d]
-3 7:SSSSSSSS
-4 5:SSSSSSSSSSss
-5 4:SSSSSSSSSSSSss
-6 4:SSSSSSSSSSSSss
-7 4:ssssssssssssss
-8 3:sSSooSSSSSSooSss
-9 3:sSSEiSSSSSSEiSss
-10 3:sSSeESSSSSSeESss
-11 4:SrSSSSSSSSSSrs
-12 4:SSSSSSmmSSSSss
-13 5:SSSSSSSSSSss
-14 6:SSSSSSSSss
-15 8:ssss
-16 9:ssss
-17 5:U 6:UTTossoTTt 16:t
-18 4:UT 6:TTTTooTTTt 16:tt
-19 4:UT 6:o 7:TTTTTTTt 15:o 16:Tt
-20 4:tt 6:o 7:TTTTTTTt 15:o 16:tt
-21 4:SS 6:o 7:TTTTTTTt 15:o 16:Ss
-22 4:Ss 6:o 7:tttttttt 15:o 16:ss
-23 7:QPPPPPPp
-[hair0_d_over]
-0 .......d...dd.........
-1 ......dHd.dHHd........
-2 ....ddHHHdHHHHHdd.....
-3 ...dHHLLHHHHHHHHHd....
-4 ..dHHLLHHHHHHHHHHhd...
-5 ..dHHHHHHHHHHHHHHHhd..
-6 ..dhHHhHHHHHhHHHHhhd..
-7 ..dhHhh.hHHhh.hHHhhd..
-8 ..dh.....hh.......hd..
-9 ..dh..............hd..
-10 ...d..............d...
-[longtop_d]
-1 7:dddddddd
-2 5:ddHHHHHHHHdd
-3 4:dHLLHHHHHHHHhd
-4 3:dHLLHHHHHHHHHHhd
-5 2:dHHHHHHHHHHHHHHHhd
-6 2:dHHhHHHHhHHHHhHHhd
-7 2:dHHdhhhhhhhhhhdHhd
-[hair1_d_over]
-8 2:dHd 17:dHd
-9 2:dHd 17:dHd
-10 2:dHd 17:dHd
-11 2:dHd 17:dHd
-12 2:dHd 17:dHd
-13 2:dHd 17:dHd
-14 2:dHHd 16:dHHd
-15 1:dHHd 17:dHHd
-16 1:dHhd 17:dhHd
-17 1:dhd 18:dhd
-[hair1_d_under]
-5 2:hhhhhhhhhhhhhhhhhh
-6 2:hhhhhhhhhhhhhhhhhh
-7 2:hhhhhhhhhhhhhhhhhh
-8 2:hhhhhhhhhhhhhhhhhh
-9 2:hhhhhhhhhhhhhhhhhh
-10 2:hhhhhhhhhhhhhhhhhh
-11 2:hhhhhhhhhhhhhhhhhh
-12 2:hhhhhhhhhhhhhhhhhh
-13 2:hhhhhhhhhhhhhhhhhh
-14 2:hhhhhhhhhhhhhhhhhh
-15 2:hhhhhhhhhhhhhhhhhh
-16 2:hhhhhhhhhhhhhhhhhh
-17 2:hhhhhhhhhhhhhhhhhh
-18 2:hhhhhhhhhhhhhhhhhh
-19 2:hhhhhhhhhhhhhhhhhh
-20 2:dhhhhhhhhhhhhhhhhd
-21 2:dhd 17:dhd
-[bun_top]
--4 9:HHHH
--3 8:HLHHHh
--2 8:HHHHhh
--1 9:hhhh
-0 9:RRRR
-[hair2_d_over]
-8 2:dHd 17:dHd
-9 2:dd 18:dd
-[cap_d]
-1 7:CCCCCCCC
-2 5:CVVCCwwCCCcc
-3 4:CVVCCCwwCCCCcc
-4 3:CCCCCCCCCCCCCCcc
-5 3:cccccccccccccccc
-6 2:VVVVVVVVVVVVVVVVVV
-[crown]
--2 7:V 10:VV 14:V
--1 7:CC 10:CC 13:CC
-0 7:CVCCCCCc
-1 7:CgCRRCgc
-2 7:cccccccc
-[ribbon]
-0 12:CC 16:CC
-1 11:CVCcCVCc
-2 12:cc 14:Cc 16:cc
-3 14:c 16:c
-[beanie]
--3 9:wwww
--2 9:wwww
--1 7:CCCCCCCC
-0 5:CVCcCCcCCcCc
-1 4:CVCcCCcCCcCCcc
-2 3:CCCcCCcCCcCCcCcc
-3 3:CCCcCCcCCcCCcCcc
-4 3:wwwwwwwwwwwwwwww
-5 3:WWWWWWWWWWWWWWWW
-[flower]
-4 16:ww
-5 15:wYYw
-6 16:WW
-[glasses_d]
-8 5:kkkk 13:kkkk
-9 5:k 8:kkkkkk 16:k
-10 5:k 8:k 13:k 16:k
-11 5:kkkk 13:kkkk
+/* ===== v5 2D characters: hand-placed pixel templates (22x38 art px, 1 art px = 1 world px), 8 hairstyles x 7 outfits ===== */
+const C4W=22,C4H=38,C4OY=4,C4RES=1;
+const C4TPL=`[head_d]
+4 7:SSSSSSSS
+5 6:SSSSSSSSSs
+6 6:SSSSSSSSSs
+7 5:sSEESSSSEEss
+8 5:sSiESSSSiEss
+9 5:sSEeSSSSEess
+10 6:rrSSSSSSrr
+11 6:SSSSmmSSss
+12 7:SSSSSSss
+13 9:ssss
+14 9:ssss
+[head_u]
+4 7:SSSSSSSS
+5 6:SSSSSSSSSs
+6 6:SSSSSSSSSs
+7 5:sSSSSSSSSSss
+8 5:sSSSSSSSSSss
+9 5:sSSSSSSSSSss
+10 6:SSSSSSSSSs
+11 6:SSSSSSSSss
+12 7:SSSSSSss
+13 9:Ssss
+14 9:Ssss
+[head_l]
+4 7:SSSSSSSS
+5 6:SSSSSSSSSs
+6 6:SSSSSSSSSs
+7 6:SEESSSSSSs
+8 6:SiESSSSSSs
+9 5:sSEeSSSSSSs
+10 6:SSSrrSSSSs
+11 6:SmSSSSSSss
+12 7:SSSSSSss
+13 9:ssss
+14 9:ssss
 [legs_d0]
-24 7:QPp 12:PPp
-25 7:QPp 12:PPp
-26 6:BBBn 12:BBBn
-27 6:nnnn 12:nnnn
+26 7:QPp 12:PPp
+27 7:QPp 12:PPp
+28 7:QPp 12:PPp
+29 7:QPp 12:PPp
+30 7:QPp 12:PPp
+31 5:BBBBn 12:BBBBn
+32 5:nnnnn 12:nnnnn
 [legs_d1]
-24 7:QPp 12:PPp
-25 6:BBBn 12:PPp
-26 6:nnnn 12:BBBn
-27 12:nnnn
+26 7:QPp 12:PPp
+27 7:QPp 12:PPp
+28 7:QPp 12:PPp
+29 7:QPp 12:PPp
+30 5:BBBBn 12:PPp
+31 5:nnnnn 12:BBBBn
+32 12:nnnnn
 [legs_d2]
-24 7:QPp 12:PPp
-25 7:QPp 12:BBBn
-26 6:BBBn 12:nnnn
-27 6:nnnn
-[body_u]
-3 7:SSSSSSSS
-4 5:SSSSSSSSSSss
-5 4:SSSSSSSSSSSSss
-6 4:SSSSSSSSSSSSss
-7 4:SSSSSSSSSSSSss
-8 3:sSSSSSSSSSSSSSss
-9 3:sSSSSSSSSSSSSSss
-10 3:sSSSSSSSSSSSSSss
-11 4:SSSSSSSSSSSSss
-12 4:SSSSSSSSSSSSss
-13 5:SSSSSSSSSSss
-14 6:SSSSSSSSss
-15 8:SSss
-16 9:Ssss
-17 5:U 6:UTTTTTTTTt 16:t
-18 4:UT 6:TTTTTTTTTt 16:tt
-19 4:UT 6:o 7:TTTtTTTt 15:o 16:Tt
-20 4:tt 6:o 7:TTTtTTTt 15:o 16:tt
-21 4:SS 6:o 7:TTTtTTTt 15:o 16:Ss
-22 4:Ss 6:o 7:tttttttt 15:o 16:ss
-23 7:QPPPPPPp
-[body_l]
-3 7:SSSSSSSS
-4 5:SSSSSSSSSSss
-5 4:SSSSSSSSSSSSss
-6 4:SSSSSSSSSSSSss
-7 4:ssssssssssssss
-8 4:SooSSSSSSSSSss
-9 3:sSEiSSSSSSSSSss
-10 4:SeESSSSSSSSSss
-11 4:SSSrSSSSSSSSss
-12 4:SmSSSSSSSSSSss
-13 5:SSSSSSSSSSss
-14 6:SSSSSSSSss
-15 8:ssss
-16 9:ssss
+26 7:QPp 12:PPp
+27 7:QPp 12:PPp
+28 7:QPp 12:PPp
+29 7:QPp 12:PPp
+30 7:QPp 12:BBBBn
+31 5:BBBBn 12:nnnnn
+32 5:nnnnn
+[legs_l0]
+26 9:QPPp
+27 9:QPPp
+28 9:QPPp
+29 9:QPPp
+30 9:QPPp
+31 7:BBBBBn
+32 7:nnnnnn
+[legs_l1]
+26 9:QPPp
+27 8:QPp 12:PPp
+28 8:QPp 12:PPp
+29 7:QPp 13:PPp
+30 6:QPp 13:PPp
+31 4:BBBBn 13:BBBn
+32 4:nnnnn 13:nnnn
+[legs_l2]
+26 9:QPPp
+27 9:QPPp
+28 8:QPp 11:pPp
+29 8:QPp 12:pPp
+30 7:QPp 12:pPp
+31 5:BBBBn 12:BBBn
+32 5:nnnnn 12:nnnn
+[o0_d]
+15 4:UUTTTossoTTTtt
+16 3:UTTTTTTooTTTTTtt
+17 3:UTT 6:o 7:TTTTTTTt 15:o 16:Ttt
+18 3:UTT 6:o 7:TTTTTTTt 15:o 16:Ttt
+19 3:ttt 6:o 7:TTTTTTTt 15:o 16:ttt
+20 3:SSs 6:o 7:TTTTTTTt 15:o 16:SSs
+21 3:SSs 6:o 7:TTTTTTTt 15:o 16:SSs
+22 3:SSs 6:o 7:tttttttt 15:o 16:SSs
+23 3:sss 6:o 7:kkkYYkkk 15:o 16:sss
+24 7:QPPPPPPp
+25 7:QPPPPPPp
+[o1_d]
+15 4:UUTtUssUtTTTtt
+16 3:UTTTtUttUtTTTTtt
+17 3:UTT 6:o 7:TTwTTwTt 15:o 16:Ttt
+18 3:UTT 6:o 7:TTwTTwTt 15:o 16:Ttt
+19 3:UTT 6:o 7:TTTTTTTt 15:o 16:Ttt
+20 3:UTT 6:o 7:TttttttT 15:o 16:Ttt
+21 3:UTT 6:o 7:TtTTTTtt 15:o 16:Ttt
+22 3:ttt 6:o 7:TttttttT 15:o 16:ttt
+23 3:SSs 6:o 7:tttttttt 15:o 16:SSs
+24 3:sss 7:QPPPPPPp 16:sss
+25 7:QPPPPPPp
+[o2_d]
+15 4:UUTTTwsswTTTtt
+16 3:UTTTTTwwwwTTTTtt
+17 3:UTT 6:o 7:TTTTTTTt 15:o 16:Ttt
+18 3:ttt 6:o 7:TTTTTTTt 15:o 16:ttt
+19 3:SSs 6:o 7:TTTTTTTt 15:o 16:SSs
+20 3:SSs 6:o 7:AAAAAAAA 15:o 16:SSs
+21 3:SSs 6:UTTTTTTTTt 16:SSs
+22 3:sss 6:UTTTTTTTTt 16:sss
+23 5:UTTTTTTTTTTt
+24 5:UTTtTTTTtTTt
+25 4:UTTtTTTTTTtTTt
+26 4:tttttttttttttt
+[o3_d]
+15 4:UUTTTossoTTTtt
+16 3:UTTTTTTooTTTTTtt
+17 3:UTT 6:o 7:TQTTTTPt 15:o 16:Ttt
+18 3:UTT 6:o 7:TQTTTTPt 15:o 16:Ttt
+19 3:ttt 6:o 7:QPPPPPPp 15:o 16:ttt
+20 3:SSs 6:o 7:QPYPPYPp 15:o 16:SSs
+21 3:SSs 6:o 7:QPPPPPPp 15:o 16:SSs
+22 3:SSs 6:o 7:QPPppPPp 15:o 16:SSs
+23 3:sss 6:o 7:QPPPPPPp 15:o 16:sss
+24 7:QPPPPPPp
+25 7:QPPPPPPp
+[o4_d]
+15 4:UUTTTwsswTTTtt
+16 3:UTTTTTwTTwTTTTtt
+17 3:UTT 6:o 7:TTTwwTTt 15:o 16:Ttt
+18 3:UTT 6:o 7:TTTRRTTt 15:o 16:Ttt
+19 3:UTT 6:o 7:TTRtTRTt 15:o 16:Ttt
+20 3:AAA 6:o 7:tRttttRt 15:o 16:AAA
+21 3:ttt 6:oXXXXXXXXo 16:ttt
+22 3:SSs 6:XXXXXXXXXx 16:SSs
+23 3:sss 6:XXxXXXXxXx 16:sss
+24 5:XXXxXXXXxXXx
+25 5:XXXxXXXXxXXx
+26 4:XXXXxXXXXxXXXx
+27 4:XXXXxXXXXxXXXx
+28 4:XXXXxXXXXxXXXx
+29 4:XXXXxXXXXxXXXx
+30 4:xxxxxxxxxxxxxx
+[o5_d]
+15 4:UUTTTwsswTTTtt
+16 3:UwTTTTTwwTTTTTwt
+17 3:UwT 6:o 7:TTTwTTTt 15:o 16:Twt
+18 3:UwT 6:o 7:TTTwTTTt 15:o 16:Twt
+19 3:UwT 6:o 7:TTTwTTTt 15:o 16:Twt
+20 3:UwT 6:o 7:TTTwTTTt 15:o 16:Twt
+21 3:ttt 6:o 7:TTTwTTTt 15:o 16:ttt
+22 3:SSs 6:o 7:tttttttt 15:o 16:SSs
+23 3:sss 6:o 7:QPPPPPPp 15:o 16:sss
+24 7:QPPPPPPp
+25 7:QPPPPPPp
+[o6_d]
+15 4:UUTTTwsswTTTtt
+16 3:UTTTTTwRRwTTTTtt
+17 3:UTT 6:o 7:TTwRRwTt 15:o 16:Ttt
+18 3:UTT 6:o 7:TTTRRTTt 15:o 16:Ttt
+19 3:UTT 6:o 7:TTTRRTTt 15:o 16:Ttt
+20 3:ttt 6:o 7:TYTtTTYt 15:o 16:ttt
+21 3:SSs 6:o 7:TTTtTTTt 15:o 16:SSs
+22 3:SSs 6:o 7:tttttttt 15:o 16:SSs
+23 3:sss 7:QPPPPPPp 16:sss
+24 7:QPPPPPPp
+25 7:QPPPPPPp
+[o0_l]
+15 7:UTTTTTTt
+16 7:UTTTTTTt
 17 7:UTTTTTTt
 18 7:UTTTTTTt
 19 7:UTTTTTTt
 20 7:UTTTTTTt
-21 7:ttttttTt
+21 7:UTTTTTTt
 22 7:tttttttt
-23 8:QPPPPPp
-[arm_l]
-18 9:UTt
-19 8:oUTto
-20 8:ottto
+23 7:kkkkkkkk
+24 7:QPPPPPPp
+25 7:QPPPPPPp
+[o1_l]
+14 12:UUt
+15 7:UTTTTUUt
+16 7:UTTTTTUt
+17 7:UTTTTTTt
+18 7:UTTTTTTt
+19 7:UTTTTTTt
+20 7:UTTTTTTt
+21 7:UTTTTTTt
+22 7:tttttttt
+23 7:tttttttt
+24 7:QPPPPPPp
+25 7:QPPPPPPp
+[o2_l]
+15 7:wTTTTTTt
+16 7:UTTTTTTt
+17 7:UTTTTTTt
+18 7:UTTTTTTt
+19 7:UTTTTTTt
+20 7:AAAAAAAA
+21 6:UTTTTTTTTt
+22 6:UTTTTTTTTt
+23 5:UTTTTTTTTTTt
+24 5:UTTtTTTTtTTt
+25 5:UTTTTTTTTTTt
+26 5:tttttttttttt
+[o3_l]
+15 7:UTTQTTTt
+16 7:UTTQTTTt
+17 7:UTTQTTTt
+18 7:UTTQTTTt
+19 7:QPPPPPPp
+20 7:QPPPPPPp
+21 7:QPPPPPPp
+22 7:QPPPPPPp
+23 7:QPPPPPPp
+24 7:QPPPPPPp
+25 7:QPPPPPPp
+[o4_l]
+15 7:wTTTTTTt
+16 7:UwTTTTTt
+17 7:URTTTTTt
+18 7:URTTTTTt
+19 7:UTTTTTTt
+20 7:tttttttt
+21 6:XXXXXXXXXx
+22 6:XXXXXXXXXx
+23 5:XXXXXXXXXXXx
+24 5:XXXxXXXXxXXx
+25 5:XXXxXXXXxXXx
+26 5:XXXxXXXXxXXx
+27 5:XXXxXXXXxXXx
+28 5:XXXxXXXXxXXx
+29 5:XXXxXXXXxXXx
+30 5:xxxxxxxxxxxx
+[o5_l]
+15 7:wTTTTTTt
+16 7:UTTTTTTt
+17 7:UTTTTTTt
+18 7:UTTTTTTt
+19 7:UTTTTTTt
+20 7:UTTTTTTt
+21 7:UTTTTTTt
+22 7:tttttttt
+23 7:QPPPPPPp
+24 7:QPPPPPPp
+25 7:QPPPPPPp
+[o6_l]
+15 7:wTTTTTTt
+16 7:wRTTTTTt
+17 7:URTTTTTt
+18 7:UTTTTTTt
+19 7:UTTTTTTt
+20 7:UTTTTTTt
+21 7:UTTTTTTt
+22 7:tttttttt
+23 7:QPPPPPPp
+24 7:QPPPPPPp
+25 7:QPPPPPPp
+[arm_s]
+16 9:UTt
+17 8:oUTto
+18 8:oUTto
+19 8:ottto
+20 8:oSSso
 21 8:oSSso
 22 8:osSso
 23 9:ooo
-[legs_l0]
-24 9:QPPp
-25 9:QPPp
-26 7:BBBBBn
-27 7:nnnnnn
-[legs_l1]
-24 8:QPp 12:PPp
-25 7:QPp 13:PPp
-26 5:BBBBn 13:BBBn
-27 5:nnnnn 13:nnnn
-[legs_l2]
-24 9:QPPp
-25 8:QPp 11:pPp
-26 6:BBBBn 11:BBBn
-27 6:nnnnn 11:nnnn
-[hair0_l_over]
-0 .......d...dd.........
-1 ......dHd.dHHd........
-2 ....ddHHHdHHHHHdd.....
-3 ...dHHLLHHHHHHHHHd....
-4 ..dHHLLHHHHHHHHHHhd...
-5 ..dHHHHHHHHHHHHHHHhd..
-6 ..dhHHhHHHHHhHHHHhhd..
-7 ...dhh.hHHHHHHHHHhhd..
-8 9:hH 11:Ss 13:HHHHhd
-9 9:hH 11:ss 13:HHHhhd
-10 10:h 13:HHhhd
-11 13:hHhd
-12 14:dhd
-[hair0_u_over]
-0 .......d...dd.........
-1 ......dHd.dHHd........
-2 ....ddHHHdHHHHHdd.....
-3 ...dHHLLHHHHHHHHHd....
-4 ..dHHLLHHHHHHHHHHhd...
-5 ..dHHHHHHHHHHHHHHHhd..
-6 ..dhHHhHHHHHhHHHHhhd..
-7 2:dhHHhHHHhHHHHhHhhd
-8 2:dhHHhHHHhHHHHhHhhd
-9 2:dhHhhHHhhHHHhhHhhd
-10 3:dhHhHHhHHHhHHhhd
-11 4:dhhHhhHHhhHhhd
-12 5:dh.dhhd.dhd
-[longtop_l]
-1 7:dddddddd
-2 5:ddHHHHHHHHdd
-3 4:dHLLHHHHHHHHhd
-4 3:dHLLHHHHHHHHHHhd
-5 2:dHHHHHHHHHHHHHHHhd
-6 2:dHHhHHHHhHHHHhHHhd
-7 3:dhhhhhHHHHHHHHHhd
-8 9:hHHHHHHHhd
-9 9:hHHHHHHHhd
-10 9:hHHHHHHHhd
-11 9:hHHHHHHHhd
-12 10:hHHHHHHhd
-[hair1_l_over]
-13 11:hHHHHhd
-14 11:hHHHHhd
-15 11:hHHHHhd
-16 11:hHHHHhd
-[hair1_l_under]
-17 12:hhhhhd
-18 12:hhhhhd
-19 12:hhhhhd
-20 12:hhhhhd
-21 12:hhhhhd
-22 12:d.d.d
-[hair2_l_over]
-13 11:dhhd
-[bun_side]
--3 13:HHHH
--2 12:HLHHHh
--1 12:HHHHhh
-0 13:hhhh
-1 13:RRR
-[hair1_u_over]
-7 2:dHHhHHHhHHHHhHHHhd
-8 2:dHHhHHHhHHHHhHHHhd
-9 2:dHHhHHHhHHHHhHHHhd
-10 2:dHHhHHHhHHHHhHHHhd
-11 2:dHHhHHHhHHHHhHHHhd
-12 2:dHHhHHHhHHHHhHHHhd
-13 2:dHHhHHHhHHHHhHHHhd
-14 2:dHHhHHHhHHHHhHHHhd
-15 2:dHHhHHHhHHHHhHHHhd
-16 2:dhHhHHHhHHHHhHHHhd
-17 2:dhHhHHHhHHHHhHHHhd
-18 2:dhHhHHHhHHHHhHHhhd
-19 2:dhhhHHhhhHHhhHHhhd
-20 2:dhhdhhhdhhhhdhhhhd
-21 3:d..d...d....d
-[hair2_u_over]
-7 2:dHHhHHHhHHHHhHHHhd
-8 2:dHHhHHHhHHHHhHHHhd
-9 2:dHHhHHHhHHHHhHHHhd
-10 3:dhHhHHHhHHHHhHhd
-11 4:dhhhhhhhhhhhhd
+[arm_long]
+16 9:UTt
+17 8:oUTto
+18 8:oUTto
+19 8:oUTto
+20 8:oUTto
+21 8:ottto
+22 8:oSSso
+23 8:osSso
+24 9:ooo
+[arm_track]
+16 9:UTt
+17 8:oUwto
+18 8:oUwto
+19 8:oUwto
+20 8:oUwto
+21 8:ottto
+22 8:oSSso
+23 8:osSso
+24 9:ooo
+[arm_hanbok]
+16 9:UTt
+17 8:oUTto
+18 8:oUTto
+19 8:oUTto
+20 8:oAAAo
+21 8:oSSso
+22 8:osSso
+23 9:ooo
+[neat_d]
+2 8:dddddd
+3 6:ddHHHHHHdd
+4 5:dHLLHHHHHHhd
+5 4:dHLHHHHHHHHHhd
+6 4:dHdhhhhhhhhdhd
+[neat_u]
+2 8:dddddd
+3 6:ddHHHHHHdd
+4 5:dHLLHHHHHHHd
+5 4:dHLHHHHHHHHHHd
+6 4:dHHhHHHHHHhHHd
+7 4:dHHhHHHHHHhHHd
+8 4:dHhHHhHHhHHhHd
+9 4:dHhHHhHHhHHhHd
+10 5:dhHHhHHhHHhd
+11 6:dhhhhhhhhd
+[neat_l]
+2 8:dddddd
+3 6:ddHHHHHHdd
+4 5:dHLLHHHHHHhd
+5 4:dHLHHHHHHHHHhd
+6 5:dhhhhHHHHHHhd
+7 10:hHHHHHd
+8 10:H 11:Ss 13:HHHd
+9 10:h 11:ss 13:HHhd
+10 12:hHHhd
+11 13:hhd
+[h0_d]
+1 9:d 12:d
+2 8:dHddHd
+3 6:ddHHHHHHdd
+4 5:dHHLLHHHHHhd
+5 4:dHHLHHHHHHHHhd
+6 4:dhHhHHHhHHHhhd
+7 4:dh 9:hHHh 16:hd
+8 4:dh 16:hd
+9 5:d 16:d
+[h0_u]
+0 9:d 12:d
+1 8:dHd 11:dHd
+2 7:ddHHHHdd
+3 6:dHHHHHHHHd
+4 5:dHLLHHHHHHHd
+5 4:dHLHHHHHHHHHHd
+6 4:dHHhHHHHHHhHHd
+7 4:dHHhHHHHHHhHHd
+8 4:dHhHHhHHhHHhHd
+9 4:dHhHHhHHhHHhHd
+10 5:dhHHhHHhHHhd
+11 6:dh 9:dhhd 14:hd
+[h0_l]
+0 9:d 12:d
+1 8:dHd 11:dHd
+2 7:ddHHddHHdd
+3 6:dHHLLHHHHHd
+4 5:dHLLHHHHHHHd
+5 4:dhHHhHHHHhHHhd
+6 5:dh.hhHHHHHHhd
+7 10:hHHHHHd
+8 10:H 11:Ss 13:HHHd
+9 10:h 11:ss 13:HHhd
+10 12:hHhhd
+11 13:dhd
+[h1_d]
+7 4:dHd 15:dHd
+8 4:dHd 15:dHd
+9 4:dHd 15:dHd
+10 4:dHd 15:dHd
+11 4:dHd 15:dHd
+12 4:dHd 15:dHd
+13 4:dHd 15:dHd
+14 3:dHHd 15:dHHd
+15 3:dHHd 15:dHHd
+16 3:dhhd 15:dhhd
+17 3:dhd 16:dhd
+[h1_d_under]
+5 4:hhhhhhhhhhhhhh
+6 4:hhhhhhhhhhhhhh
+7 4:hhhhhhhhhhhhhh
+8 4:hhhhhhhhhhhhhh
+9 4:hhhhhhhhhhhhhh
+10 4:hhhhhhhhhhhhhh
+11 4:hhhhhhhhhhhhhh
+12 4:hhhhhhhhhhhhhh
+13 4:hhhhhhhhhhhhhh
+14 4:hhhhhhhhhhhhhh
+[h1_u]
+11 4:dHHhHHHHHHhHHd
+12 4:dHHhHHHHHHhHHd
+13 4:dHHhHHHHHHhHHd
+14 4:dHHhHHHHHHhHHd
+15 4:dHHhHHHHHHhHHd
+16 4:dHHhHHHHHHhHHd
+17 4:dhHhHHHHHHhHhd
+18 4:dhhhHHhhHHhhhd
+19 4:dhhdhhddhhdhhd
+20 5:d 9:d 12:d 16:d
+[h1_l]
+10 12:hHHHhd
+11 12:hHHHhd
+12 12:hHHHhd
+13 12:hHHHhd
+14 12:hHHHhd
+15 12:hHHHhd
+16 13:hHHhd
+[h1_l_under]
+17 14:hhhd
+18 14:hhhd
+19 14:hhhd
+20 14:hhhd
+21 14:d.d
+[bun]
+-2 9:HHHH
+-1 8:HLHHHh
+0 8:HHHHhh
+1 9:RRRR
+[h2_d]
+7 4:dHd 15:dHd
+8 4:dd 16:dd
+[bun_l]
+-1 15:HHH
+0 14:HLHHh
+1 14:HHHhh
+2 15:hhh
+3 14:RR
+[h3_d]
+7 4:dHd 15:dHd
+8 4:dHd 15:dHd
+9 4:dHd 15:dHd
+10 4:dHd 15:dHd
+11 4:dHHd 14:dHHd
+12 5:dhd 14:dhd
+[h3_u]
+11 4:dHHhHHHHHHhHHd
+12 4:dhHhHHhhHHhHhd
+13 5:dhhhhhhhhhhd
+[h3_l]
+10 11:hHHHHhd
+11 11:hHHHHhd
+12 12:dhhhd
+[h4_d]
+7 2:RR 4:dHd 15:dHd 18:RR
+8 1:dHHd 17:dHHd
+9 1:dHHd 17:dHhd
+10 1:dHHd 17:dHhd
+11 1:dHHd 17:dHhd
+12 1:dHhd 17:dhhd
+13 1:dhhd 17:dhhd
+14 2:dd 18:dd
+[h4_u]
+7 2:RR 18:RR
+8 1:dHHd 17:dHHd
+9 1:dHHd 17:dHhd
+10 1:dHHd 17:dHhd
+11 1:dHHd 17:dHhd
+12 1:dHhd 17:dhhd
+13 1:dhhd 17:dhhd
+14 2:dd 18:dd
+[h4_l]
+7 15:RR
+8 15:dHHd
+9 15:dHHd
+10 15:dHhd
+11 15:dHhd
+12 15:dhhd
+13 16:dd
+[h5_d]
+7 4:dHd 15:dHd
+8 4:dd 16:dd
+[h5_d_under]
+5 17:R
+6 17:Hd
+7 17:Hh
+8 17:Hh
+9 17:Hh
+10 17:hh
+11 17:hd
+[h5_u]
+5 10:RR
+6 9:hHHh
+7 9:hHHh
+8 9:hHHh
+9 9:hHHh
+10 9:hHHh
+11 9:hHHh
+12 9:dHHd
+13 10:Hh
+14 10:hh
+15 10:dd
+[h5_l]
+5 16:R
+6 16:hHHh
+7 17:HHHh
+8 18:HHh
+9 18:HHh
+10 18:Hh
+11 18:hh
+12 18:dd
+[h6_d]
+0 7:dd 10:dd 13:dd
+1 6:dHHdHHdHHd
+2 4:ddHhHHhhHHhHdd
+3 3:dHhLLHhHHhHHHhHd
+4 2:dHhLLhHHhhHHhHHhHd
+5 2:dHhLHHhHhhHhHHHhHd
+6 1:dHHdhhHdhhhhdHhhdHHd
+7 1:dHHd 17:dHHd
+8 1:dHHd 17:dHHd
+9 1:dhHHd 16:dHHhd
+10 2:dhhd 16:dhhd
+11 3:dd 17:dd
+[h6_u]
+0 7:dd 10:dd 13:dd
+1 6:dHHdHHdHHd
+2 4:ddHhHHhhHHhHdd
+3 3:dHhLLHhHHhHHHhHd
+4 2:dHhLLhHHhhHHhHHhHd
+5 2:dHhLHHhHhhHhHHHhHd
+6 1:dHHhHHHhHHHHhHHHhHHd
+7 1:dHHhHHHhHHHHhHHHhHHd
+8 1:dHhHHhHHhHHhHHhHHhHd
+9 1:dhHHhHHhHHHHhHHhHHhd
+10 2:dhhHhhHhhhhHhhHhhd
+11 3:dd 6:dd 9:dddd 14:dd 17:dd
+[h6_l]
+0 9:dd 12:d
+1 8:dHHdHHd
+2 6:ddHHHHHHHdd
+3 5:dHhLLHhHHhHd
+4 4:dHhLLhHHhHHhHd
+5 4:dHhLHHhHHhHHhd
+6 4:dhdhhHHHHHHHHd
+7 10:hHHHHHHd
+8 10:H 11:Ss 13:HHHHd
+9 10:h 11:ss 13:HHhHd
+10 12:hHHhHd
+11 13:dhhd
+[h7_d]
+2 8:dddddd
+3 6:ddHHHHHHdd
+4 5:dHLLHHHHHHHd
+5 4:dHLHHHHHHHHHHd
+6 4:dhhhhhhhhhhhhd
+7 4:dHd 15:dHd
+8 4:dHd 15:dHd
+9 4:dhd 15:dhd
+[h7_u]
+2 8:dddddd
+3 6:ddHHHHHHdd
+4 5:dHLLHHHHHHHd
+5 4:dHLHHHHHHHHHHd
+6 4:dHHhHHHHHHhHHd
+7 4:dHHhHHHHHHhHHd
+8 4:dHhHHhHHhHHhHd
+9 4:dhhhhhhhhhhhhd
+[h7_l]
+2 8:dddddd
+3 6:ddHHHHHHdd
+4 5:dHLLHHHHHHhd
+5 4:dHLHHHHHHHHHhd
+6 4:dhhhhhHHHHHHhd
+7 10:hHHHHHd
+8 10:H 11:Ss 13:HHHd
+9 10:h 11:ss 13:HHhd
+10 12:hhhhd
+[cap_d]
+2 8:CCCCCC
+3 6:CVVCwwCCcc
+4 5:CVVCCwwCCCcc
+5 4:cccccccccccccc
+6 4:VVVVVVVVVVVVVV
 [cap_u]
-1 7:CCCCCCCC
-2 5:CVVCCCCCCCcc
-3 4:CVVCCCCCCCCCcc
-4 3:CCCCCCCCCCCCCCcc
-5 3:cccccccccccccccc
+2 8:CCCCCC
+3 6:CVVCCCCCcc
+4 5:CVVCCCCCCCcc
+5 4:cccccccccccccc
 [cap_l]
-1 7:CCCCCCCC
-2 5:CVVCCwwCCCcc
-3 4:CVVCCCwwCCCCcc
-4 3:CCCCCCCCCCCCCCcc
-5 3:cccccccccccccccc
-6 0:VVVVVVVc
-7 0:cccccc
+2 8:CCCCCC
+3 6:CVVCwwCCcc
+4 5:CVVCCwwCCCcc
+5 4:cccccccccccccc
+6 1:VVVVVVc
+7 1:ccccc
+[crown]
+-1 8:V 10:VV 13:V
+0 8:CC 10:CC 12:CC
+1 8:CVCCCc
+2 8:CgRRgc
+3 8:cccccc
+[ribbon]
+1 12:CC 15:CC
+2 11:CVCcVCc
+3 12:cc 14:c 15:cc
+4 13:c 15:c
+[beanie]
+-1 10:ww
+0 9:wwww
+1 8:CCCCCC
+2 6:CVCcCCcCcc
+3 5:CVCcCCcCCcCc
+4 4:CCCcCCcCCcCCcc
+5 4:wwwwwwwwwwwwww
+6 4:WWWWWWWWWWWWWW
+[flower]
+3 15:ww
+4 14:wYYw
+5 15:WW
+[glasses_d]
+6 6:kkkk 12:kkkk
+7 6:k 9:kkkk 15:k
+8 6:k 9:k 12:k 15:k
+9 6:k 9:k 12:k 15:k
+10 6:kkkk 12:kkkk
 [glasses_l]
-8 4:kkkk
-9 4:k 7:kkkkk
-10 4:k 7:k
-11 4:kkkk
+6 6:kkkk
+7 6:k 9:kkkkk
+8 6:k 9:k
+9 6:k 9:k
+10 6:kkkk
+[o0_u]
+15 4:UUTTTTTTTTTTtt
+16 3:UTTTTTTTTTTTTTtt
+17 3:UTToTTTTTTTtoTtt
+18 3:UTToTTTTTTTtoTtt
+19 3:tttoTTTTTTTtottt
+20 3:SSsoTTTTTTTtoSSs
+21 3:SSsoTTTTTTTtoSSs
+22 3:SSsottttttttoSSs
+23 3:sssokkkTTkkkosss
+24 7:QPPPPPPp
+25 7:QPPPPPPp
+[o1_u]
+15 4:UUTtUUUUUtTTtt
+16 3:UTTTtUUUUUtTTTtt
+17 3:UTT 6:o 7:TtUUUtTt 15:o 16:Ttt
+18 3:UTT 6:o 7:TTtUtTTt 15:o 16:Ttt
+19 3:UTT 6:o 7:TTTTTTTt 15:o 16:Ttt
+20 3:UTT 6:o 7:TTTTTTTt 15:o 16:Ttt
+21 3:UTT 6:o 7:TTTTTTTt 15:o 16:Ttt
+22 3:ttt 6:o 7:TTTTTTTt 15:o 16:ttt
+23 3:SSs 6:o 7:tttttttt 15:o 16:SSs
+24 3:sss 7:QPPPPPPp 16:sss
+25 7:QPPPPPPp
+[o2_u]
+15 4:UUTTTTTTTTTTtt
+16 3:UTTTTTTTTTTTTTtt
+17 3:UTToTTTTTTTtoTtt
+18 3:tttoTTTTTTTtottt
+19 3:SSsoTTTTTTTtoSSs
+20 3:SSsoAAAAAAAAoSSs
+21 3:SSsUTTTTTTTTtSSs
+22 3:sssUTTTTTTTTtsss
+23 5:UTTTTTTTTTTt
+24 5:UTTtTTTTtTTt
+25 4:UTTtTTTTTTtTTt
+26 4:tttttttttttttt
+[o3_u]
+15 4:UUTTTTTTTTTTtt
+16 3:UTTTTTTTTTTTTTtt
+17 3:UTToTQTTTTPtoTtt
+18 3:UTToTQTTTTPtoTtt
+19 3:tttoQPPPPPPpottt
+20 3:SSsoQPTPPTPpoSSs
+21 3:SSsoQPPPPPPpoSSs
+22 3:SSsoQPPppPPpoSSs
+23 3:sssoQPPPPPPposss
+24 7:QPPPPPPp
+25 7:QPPPPPPp
+[o4_u]
+15 4:UUTTTTTTTTTTtt
+16 3:UTTTTTTTTTTTTTtt
+17 3:UTToTTTTTTTtoTtt
+18 3:UTToTTTTTTTtoTtt
+19 3:UTToTTTtTTTtoTtt
+20 3:AAAottttttttoAAA
+21 3:tttoXXXXXXXXottt
+22 3:SSsXXXXXXXXXxSSs
+23 3:sssXXxXXXXxXxsss
+24 5:XXXxXXXXxXXx
+25 5:XXXxXXXXxXXx
+26 4:XXXXxXXXXxXXXx
+27 4:XXXXxXXXXxXXXx
+28 4:XXXXxXXXXxXXXx
+29 4:XXXXxXXXXxXXXx
+30 4:xxxxxxxxxxxxxx
+[o5_u]
+15 4:UUTTTTTTTTTTtt
+16 3:UwTTTTTTTTTTTTwt
+17 3:UwToTTTTTTTtoTwt
+18 3:UwToTTTTTTTtoTwt
+19 3:UwToTTTTTTTtoTwt
+20 3:UwToTTTTTTTtoTwt
+21 3:tttoTTTTTTTtottt
+22 3:SSsottttttttoSSs
+23 3:sssoQPPPPPPposss
+24 7:QPPPPPPp
+25 7:QPPPPPPp
+[o6_u]
+15 4:UUTTTTTTTTTTtt
+16 3:UTTTTTTTTTTTTTtt
+17 3:UTToTTTTTTTtoTtt
+18 3:UTToTTTTTTTtoTtt
+19 3:UTToTTTTTTTtoTtt
+20 3:tttoTTTtTTTtottt
+21 3:SSsoTTTtTTTtoSSs
+22 3:SSsottttttttoSSs
+23 3:sss 7:QPPPPPPp 16:sss
+24 7:QPPPPPPp
+25 7:QPPPPPPp
 `;
 const C4T=(()=>{const T={};let cur=null;for(const ln of C4TPL.split('\n')){const l=ln.trim();if(!l)continue;const m=l.match(/^\[(.+)\]$/);if(m){cur=T[m[1]]={};continue}
  const p=l.split(/\s+/),r=+p[0],row=cur[r]||(cur[r]={});for(const s of p.slice(1)){let c=0,st=s;const i=s.indexOf(':');if(i>0){c=+s.slice(0,i);st=s.slice(i+1)}for(let k=0;k<st.length;k++)if(st[k]!=='.')row[c+k]=st[k]}}return T})();
@@ -829,13 +1243,12 @@ const C4HATC={cap:'#4a84da',ribbon:'#f08aa8',beanie:'#5fb35a',crown:'#f5c542'};
 function c4pal(av,top,hat){const s=C4SKIN[av.skin]||C4SKIN[0],h=C4HAIR[av.hc]||C4HAIR[0],t=C4TOPS[top]||TOPS[top]||'#e0604c',ir=C4IRIS[av.hc]||C4IRIS[0],hc=C4HATC[hat]||'#888888',X=c4hx;
  return {o:X('#24161e'),S:X(s),s:c4tone(s,-.22),K:c4tone(s,.35),H:X(h),h:c4tone(h,-.3),d:c4tone(h,-.55),L:c4tone(h,.32),E:c4tone(ir,-.6),e:c4tone(ir,.1),i:[255,255,255],
   r:c4mix(X(s),X('#ff7a8a'),.45),m:X('#b0463f'),T:X(t),t:c4tone(t,-.28),U:c4tone(t,.3),P:X('#3f4f7d'),p:c4tone('#3f4f7d',-.3),Q:c4tone('#3f4f7d',.2),B:X('#6b4632'),n:c4tone('#6b4632',-.4),
-  R:X('#e8546a'),w:[250,248,244],W:X('#d6d0c6'),Y:X('#f5c542'),g:X('#5d8fd9'),k:X('#5a3626'),C:X(hc),c:c4tone(hc,-.3),V:c4tone(hc,.35)}}
-function c4layers(av,dir,fr,hat){const hs=av.hs|0,hk='hair'+hs,f=fr|0;
- const tops={0:[],1:['longtop_d'],2:['longtop_d','bun_top']}[hs]||[],topl={0:[],1:['longtop_l'],2:['longtop_l','bun_side']}[hs]||[];
- let L;
- if(dir==='d')L=[hk+'_d_under','body_d',['legs_d0','legs_d1','legs_d0','legs_d2'][f]].concat(tops,[hk+'_d_over']);
- else if(dir==='u')L=['body_u',['legs_d0','legs_d1','legs_d0','legs_d2'][f]].concat(hs?['longtop_d']:[],[hk+'_u_over'],hs===2?['bun_top']:[]);
- else L=[hk+'_l_under','body_l',['legs_l0','legs_l1','legs_l0','legs_l2'][f],'arm_l'].concat(topl,[hk+'_l_over']);
+  R:X('#e8546a'),A:c4tone(t,.62),X:X('#e0566e'),x:c4tone('#e0566e',-.3),w:[250,248,244],W:X('#d6d0c6'),Y:X('#f5c542'),g:X('#5d8fd9'),k:X('#5a3626'),C:X(hc),c:c4tone(hc,-.3),V:c4tone(hc,.35)}}
+const C4NEAT=[1,2,3,4,5],C4ARM=['arm_s','arm_long','arm_s','arm_s','arm_hanbok','arm_track','arm_long'];
+function c4layers(av,dir,fr,hat){const s=Math.min(7,Math.max(0,av.hs|0)),o=Math.min(6,Math.max(0,av.os|0)),fi=[0,1,0,2][fr|0]||0,neat=C4NEAT.includes(s);let L;
+ if(dir==='d')L=['h'+s+'_d_under','head_d','legs_d'+fi,'o'+o+'_d'].concat(neat?['neat_d']:[],['h'+s+'_d'],s===2?['bun']:[]);
+ else if(dir==='u')L=['head_u','legs_d'+fi,'o'+o+'_u'].concat(neat?['neat_u']:[],['h'+s+'_u'],s===2?['bun']:[]);
+ else L=['h'+s+'_l_under','head_l','legs_l'+fi,'o'+o+'_l',C4ARM[o]].concat(neat?['neat_l']:[],['h'+s+'_l'],s===2?['bun_l']:[]);
  const k=dir==='d'?'d':dir==='u'?'u':'l',hid=hat?String(hat).replace('hat_',''):null;
  const HM={cap:{d:'cap_d',u:'cap_u',l:'cap_l'},ribbon:{d:'ribbon',u:'ribbon~',l:'ribbon'},beanie:{d:'beanie',u:'beanie',l:'beanie'},crown:{d:'crown',u:'crown',l:'crown'},flower:{d:'flower',u:'flower~',l:'flower'},glasses:{d:'glasses_d',l:'glasses_l'}};
  if(hid&&HM[hid]&&HM[hid][k])L.push(HM[hid][k]);return L}
@@ -979,10 +1392,10 @@ function renderGround(){const TS2=T*RES,W2=MW*TS2,H2=MH*TS2;const c=document.cre
  const img=g.createImageData(W2,H2),d=img.data;
  const GR=[[70,126,46],[83,143,54],[97,158,62],[113,174,72]],DI=[[150,88,48],[165,103,57],[181,119,68],[197,137,84]];
  for(let y=0;y<H2;y++)for(let x=0;x<W2;x++){const i=y*W2+x,t=TY[i];let col;
-  if(t===0){const v=nz3(x,y,20)*.66+nz2(x,y,7)*.29+hsh(x,y)*.05;col=GR[v<.37?0:v<.53?1:v<.68?2:3];
+  if(t===0){const v=nz3(x,y,20)*.66+nz2(x,y,7)*.29+hsh(x,y)*.05;col=GR[v<.3?1:v>.74?3:2];
    if(at(x,y+1)===2)col=[86,62,40];else if(at(x,y+2)===2||at(x,y+3)===2||at(x,y+4)===2)col=[134,100,64];
    else if(at(x,y+1)===1||at(x,y+2)===1)col=[52,92,36];else if(at(x,y-2)===1||at(x-2,y)===1||at(x+2,y)===1)col=[62,110,42];}
-  else if(t===1){const v=nz3(x+400,y,14)*.58+nz2(x,y,3)*.3+hsh(x,y,1)*.12;col=DI[v<.34?0:v<.5?1:v<.67?2:3];
+  else if(t===1){const v=nz3(x+400,y,14)*.58+nz2(x,y,3)*.3+hsh(x,y,1)*.12;col=DI[v<.3?1:v>.74?3:2];
    if(at(x,y-1)===0||at(x,y-2)===0)col=[118,66,36];else if(at(x,y-3)===0)col=[136,78,42];}
   else{const v=nz3(x,y+200,22);col=v<.45?[50,120,180]:[58,132,192];
    const w=Math.sin(x*.17+Math.sin(y*.42)*1.7+nz(x,y,9)*5);if(w>.93&&hsh(x>>1,y,2)>.35)col=[128,192,234];
@@ -993,7 +1406,7 @@ function renderGround(){const TS2=T*RES,W2=MW*TS2,H2=MH*TS2;const c=document.cre
  const R=(c,a,b,w=1,h=1)=>{g.fillStyle=c;g.fillRect(a,b,w,h)};const rr=mulberry(21);
  for(let n=0;n<W2*H2/150;n++){const x=(rr()*W2)|0,y=(rr()*H2)|0;if(at(x,y)!==0||at(x,y+2)!==0||at(x+2,y)!==0)continue;const dk=rr()<.5;R(dk?'#3d7329':'#4a8433',x,y,1,3);R('#86c25e',x+1,y-1,1,2);R(dk?'#3d7329':'#4a8433',x+2,y+1,1,2)}
  const LV=['#e07a2a','#c94a2c','#f2b03a','#b8602a','#e89a3a'];
- for(let n=0;n<W2*H2/520;n++){const x=(rr()*W2)|0,y=(rr()*H2)|0;const t=at(x,y);if(t===2||at(x+2,y+2)===2)continue;const c=LV[(rr()*LV.length)|0];if(rr()<.5){R(c,x,y,2,1);R(shade(c,-40),x+1,y+1,1,1)}else{R(c,x,y,1,2);R(shade(c,-40),x+1,y+1,1,1)}}
+ for(let n=0;n<W2*H2/1600;n++){const x=(rr()*W2)|0,y=(rr()*H2)|0;const t=at(x,y);if(t===2||at(x+2,y+2)===2)continue;const c=LV[(rr()*LV.length)|0];if(rr()<.5){R(c,x,y,2,1);R(shade(c,-40),x+1,y+1,1,1)}else{R(c,x,y,1,2);R(shade(c,-40),x+1,y+1,1,1)}}
  for(let n=0;n<W2*H2/700;n++){const x=(rr()*W2)|0,y=(rr()*H2)|0;if(at(x,y)!==1||at(x+3,y+2)!==1)continue;R('#6b665e',x,y+2,3,1);R('#9a958c',x,y,3,2);R('#c8c3b8',x,y,1,1)}
  for(let n=0;n<W2*H2/7000;n++){const x=(rr()*W2)|0,y=(rr()*H2)|0;if(at(x,y)!==0||at(x,y+4)!==0)continue;const c=['#ffffff','#f6c6d0','#f5c542','#c49be0'][(rr()*4)|0];R('#3d7329',x+1,y+2,1,3);R(c,x,y,3,1);R(c,x+1,y-1,1,3);R('#f5c542',x+1,y,1,1)}
  return c}
@@ -1042,6 +1455,16 @@ function wellSpr(){return sprHi('well',36,52,x=>{const R=(c,a,b,w=1,h=1)=>{x.fil
  R('#5a3a22',4,8,3,30);R('#5a3a22',29,8,3,30);R('#6b4428',1,4,34,5);R('#8a5a36',1,4,34,2);R('#7a5232',10,14,16,2);R('#8a857c',16,16,2,10);R('#a8723f',14,25,6,6);
  ellS(x,18,40,16,10,'#8e8a84');ellC(x,18,38,11,5,'#1f3a5a','#2c4a76','#162a40');for(let i=0;i<8;i++)R('#6b665e',4+i*4,44+(i%2),3,2)})}
 
+/* ===== pixel look: halve a RES-2 canvas so 1 art px = 1 world px, keeping palette colours and dark lines ===== */
+function pixHalf(src){const w=src.width>>1,h=src.height>>1,sx=src.getContext('2d').getImageData(0,0,w*2,h*2).data,W2=w*2,c=document.createElement('canvas');c.width=w;c.height=h;
+ const x=c.getContext('2d'),im=x.createImageData(w,h),d=im.data,idx=[0,0,0,0];
+ for(let y=0;y<h;y++)for(let i=0;i<w;i++){idx[0]=((y*2)*W2+i*2)*4;idx[1]=idx[0]+4;idx[2]=idx[0]+W2*4;idx[3]=idx[2]+4;
+  let best=-1,bd=1e9,dark=-1,dl=1e9,mr=0,mg=0,mb=0,n=0;
+  for(const k of idx){if(sx[k+3]<128)continue;mr+=sx[k];mg+=sx[k+1];mb+=sx[k+2];n++;const l=sx[k]*.3+sx[k+1]*.59+sx[k+2]*.11;if(l<62&&l<dl){dl=l;dark=k}}
+  const o=(y*w+i)*4;if(n<2){continue}
+  if(dark>=0)best=dark;else{mr/=n;mg/=n;mb/=n;for(const k of idx){if(sx[k+3]<128)continue;const e=(sx[k]-mr)**2+(sx[k+1]-mg)**2+(sx[k+2]-mb)**2;if(e<bd){bd=e;best=k}}}
+  d[o]=sx[best];d[o+1]=sx[best+1];d[o+2]=sx[best+2];d[o+3]=255}
+ x.putImageData(im,0,0);return c}
 function renderMap(){if(!groundC)groundC=renderGround();
  mapC=document.createElement('canvas');mapC.width=groundC.width;mapC.height=groundC.height;const g=mapC.getContext('2d');g.drawImage(groundC,0,0);
  const R=(c,a,b,w=1,h=1)=>{g.fillStyle=c;g.fillRect(a,b,w,h)},TS2=T*RES,rr=mulberry(11);
@@ -1056,7 +1479,7 @@ function renderMap(){if(!groundC)groundC=renderGround();
  for(const b of BUILD)objs.push({by:(b.y+b.h)*TS2,d:()=>{if(b.type==='mission')g.drawImage(boardSpr(),b.x*TS2-5,b.y*TS2-11);else{const s=bldSpr(b.type,b.w,b.h,b.roof,1);g.drawImage(s,b.x*TS2-7,b.y*TS2-43)}}});
  for(const h of houses){const st=S&&S.students.find(s=>s.no===h.no);objs.push({by:(h.hy+3)*TS2,d:()=>{const s=bldSpr('house',3,3,ROOFS[h.no%ROOFS.length],st?st.house.size:1);g.drawImage(s,h.hx*TS2-7,h.hy*TS2-43)}})}
  objs.push({by:(WELL[1]+1)*TS2,d:()=>g.drawImage(wellSpr(),WELL[0]*TS2-3,WELL[1]*TS2+TS2-53)});
- objs.sort((a,b)=>a.by-b.by).forEach(o=>o.d())}
+ objs.sort((a,b)=>a.by-b.by).forEach(o=>o.d());mapC=pixHalf(mapC)}
 
 /* ===== view & game state ===== */
 const cv=$('#cv'),ctx=cv.getContext('2d');
@@ -1180,7 +1603,7 @@ function draw(t){
  const MWp=MW*T,MHp=MH*T;let S_,cx,cy;
  if(mode==='tview'&&TVW){S_=Math.min(w/MWp,(h-60)/MHp);cx=-(w/S_-MWp)/2;cy=-(h/S_-MHp)/2-20/S_}
  else if(mode==='title'){S_=Math.max(2,Math.round(Math.min(w/(T*22),h/(T*13))));const range=Math.max(1,MWp-w/S_);const p=(t*.012)%(2*range);cx=p<range?p:2*range-p;cy=clamp(T*3,0,Math.max(0,MHp-h/S_))}
- else{S_=Math.max(2,Math.round(Math.min(w/(T*22),h/(T*15))));const vw=w/S_,vh=h/S_;cx=vw>=MWp?-(vw-MWp)/2:clamp(P.x-vw/2,0,MWp-vw);cy=vh>=MHp?-(vh-MHp)/2:clamp(P.y-8-vh/2,0,MHp-vh)}
+ else{S_=Math.max(2,Math.round(Math.min(w/(T*30),h/(T*20))*2)/2);const vw=w/S_,vh=h/S_;cx=vw>=MWp?-(vw-MWp)/2:clamp(P.x-vw/2,0,MWp-vw);cy=vh>=MHp?-(vh-MHp)/2:clamp(P.y-8-vh/2,0,MHp-vh)}
  V.S=S_;V.cx=cx;V.cy=cy;V.w=w;V.h=h;
  ctx.drawImage(mapC,-cx*S_,-cy*S_,MWp*S_,MHp*S_);
  ctx.fillStyle='rgba(255,255,255,.75)';const ph=Math.floor(t/400);
@@ -1206,7 +1629,7 @@ function draw(t){
  for(const f of friends)if(f.bubble)bubble(f.bubble,(f.x-cx)*S_,(f.y-44-cy)*S_,fs);
  if(mode==='tview'&&S)for(const f of friends){const st=S.students.find(s=>s.no===f.no);if(st)plate(nickOf(st),(f.x-cx)*S_,(f.y+6-cy)*S_+fs/2,Math.max(11,fs-2),f.live)}
 }
-function dS(img,wx,wy,bob=0,flip=false){const S_=V.S,k=img.crisp?Math.max(1,Math.round(S_/img.res)):S_/(img.res||1),w=img.width*k,h=img.height*k;const x=Math.round((wx-V.cx)*S_-w/2),y=Math.round((wy-V.cy)*S_-h+k-bob*S_);
+function dS(img,wx,wy,bob=0,flip=false){const S_=V.S,k=S_/(img.res||1),w=img.width*k,h=img.height*k;const x=Math.round((wx-V.cx)*S_-w/2),y=Math.round((wy-V.cy)*S_-h+k-bob*S_);
  if(flip){ctx.save();ctx.translate(x+w,y);ctx.scale(-1,1);ctx.drawImage(img,0,0,w,h);ctx.restore()}else ctx.drawImage(img,x,y,w,h)}
 function shadow(wx,wy,rw=6){ctx.fillStyle='rgba(26,22,32,.28)';ctx.beginPath();ctx.ellipse((wx-V.cx)*V.S,(wy-V.cy)*V.S,rw*V.S,2*V.S,0,0,Math.PI*2);ctx.fill()}
 function plate(txt,x,y,fs,hi){const w=ctx.measureText(txt).width+16,h=fs+10;ctx.fillStyle='#1a1620';ctx.fillRect(x-w/2-2,y-h/2-2,w+4,h+4);ctx.fillStyle=hi?'#f5c542':'#f4e9d1';ctx.fillRect(x-w/2,y-h/2,w,h);ctx.fillStyle='#2a2533';ctx.fillText(txt,x,y+1)}
@@ -1309,21 +1732,22 @@ function afterStudentLogin(){ME_NO=S.me;lastSig='';buildMap();renderMap();const 
 
 /* ===== character creator ===== */
 let CR=null;
-function openCreator(first){const st=ME();CR={skin:st.av.skin,hs:st.av.hs,hc:st.av.hc,top:first?'top_red':st.wear.top,first};openWin('creator',first?'내 캐릭터 만들기':'외모 바꾸기',rCreator)}
-function rCreator(b){const st=ME(),av={skin:CR.skin,hs:CR.hs,hc:CR.hc},hat=CR.first?null:st.wear.hat;
- const pv=d=>toURL(`cr${av.skin}${av.hs}${av.hc}_${CR.top}_${hat}_${d}`,()=>charSpr(av,CR.top,hat,d,0));
+function openCreator(first){const st=ME();CR={skin:st.av.skin,hs:st.av.hs,hc:st.av.hc,os:st.av.os|0,top:first?'top_red':st.wear.top,first};openWin('creator',first?'내 캐릭터 만들기':'외모 바꾸기',rCreator)}
+function rCreator(b){const st=ME(),av={skin:CR.skin,hs:CR.hs,hc:CR.hc,os:CR.os},hat=CR.first?null:st.wear.hat;
+ const pv=d=>toURL(`cr${av.skin}_${av.hs}_${av.hc}_${av.os}_${CR.top}_${hat}_${d}`,()=>charSpr(av,CR.top,hat,d,0));
  const prevNick=b.querySelector('#crNick');const nick=prevNick?prevNick.value:(st.nick||'');
  b.innerHTML=`<div class="crwrap"><div class="crprev"><img src="${pv('l')}" alt=""><img class="big" src="${pv('d')}" alt="미리보기"><img src="${pv('r')}" alt=""></div><div>
   <div class="crrow"><span>피부색</span><div class="swatches">${SKIN.map((c,i)=>`<button class="sw ${CR.skin===i?'on':''}" style="background:${c}" data-a="cr" data-v="skin:${i}" aria-label="피부색 ${i+1}"></button>`).join('')}</div></div>
   <div class="crrow"><span>머리 모양</span><div class="row wrap">${HAIRN.map((n,i)=>`<button class="tab ${CR.hs===i?'on':''}" data-a="cr" data-v="hs:${i}">${n}</button>`).join('')}</div></div>
+  <div class="crrow"><span>옷 모양</span><div class="row wrap">${OUTN.map((n,i)=>`<button class="tab ${CR.os===i?'on':''}" data-a="cr" data-v="os:${i}">${n}</button>`).join('')}</div></div>
   <div class="crrow"><span>머리 색</span><div class="swatches">${HAIR.map((c,i)=>`<button class="sw ${CR.hc===i?'on':''}" style="background:${c}" data-a="cr" data-v="hc:${i}" aria-label="머리색 ${i+1}"></button>`).join('')}</div></div>
-  ${CR.first?`<div class="crrow"><span>처음 입을 옷</span><div class="swatches">${Object.keys(TOPS).map(k=>`<button class="sw ${CR.top===k?'on':''}" style="background:${TOPS[k]}" data-a="cr" data-v="top:${k}" aria-label="${TOPN[k]}"></button>`).join('')}</div></div>`:''}
+  ${CR.first?`<div class="crrow"><span>처음 옷 색</span><div class="swatches">${Object.keys(TOPS).map(k=>`<button class="sw ${CR.top===k?'on':''}" style="background:${TOPS[k]}" data-a="cr" data-v="top:${k}" aria-label="${TOPN[k]}"></button>`).join('')}</div></div>`:''}
   <label class="field"><span>별명 (2~8자, 선생님이 승인하면 친구들에게 보여요)</span><input id="crNick" maxlength="8" value="${esc(nick)}" placeholder="예: 하늘별"></label>
   <button class="btn pri" data-a="crDone" data-enter>${CR.first?'마을로 출발!':'저장하기'}</button><p class="msg" id="crMsg"></p></div></div>`}
 async function crDone(){const nick=$('#crNick').value.trim(),m=$('#crMsg');
  if(nick.length<2||nick.length>8){m.textContent='별명은 2~8자로 지어 주세요.';return}
  if(BANNED.some(w=>nick.includes(w))){m.textContent='친구가 들으면 속상할 수 있는 말이 들어 있어요.';return}
- const av={skin:CR.skin,hs:CR.hs,hc:CR.hc},first=CR.first;
+ const av={skin:CR.skin,hs:CR.hs,hc:CR.hc,os:CR.os},first=CR.first;
  const r=await act(first?'create':'look',first?{av,top:CR.top,nick}:{av,nick});if(!r)return;
  closeWin();if(first)enterVillage(true);else{updHud();toast('외모를 바꿨어요')}}
 
@@ -1421,7 +1845,7 @@ function rFriend(b){const st=S.students.find(s=>s.no===W.arg);if(!st){b.innerHTM
 /* ===== notebook ===== */
 function rNote(b){const me=ME(),t=W.tab;let h=tabs([['wear','옷장'],['bag','가방'],['coupon','쿠폰'],['dex','도감'],['log','코인 내역']],t);
  if(t==='wear'){const hats=Object.keys(ITEMS).filter(k=>ITEMS[k].c==='hat'&&cnt(me,k)>0),tops=Object.keys(ITEMS).filter(k=>ITEMS[k].c==='top'&&cnt(me,k)>0);
-  h+=`<div class="row wrap" style="gap:16px;margin-bottom:12px"><img src="${charURL(me)}" alt="내 캐릭터" style="width:64px;height:104px;background:#bfe6a8;border:3px solid var(--edge)"><button class="btn" data-a="restyle">외모·별명 바꾸기</button></div>
+  h+=`<div class="row wrap" style="gap:16px;margin-bottom:12px"><img src="${charURL(me)}" alt="내 캐릭터" style="width:66px;height:114px;background:#bfe6a8;border:3px solid var(--edge)"><button class="btn" data-a="restyle">외모·별명 바꾸기</button></div>
   <h4 style="margin-bottom:8px">모자</h4>${hats.length?`<div class="grid">${hats.map(id=>itemCard(id,me.wear.hat===id?'<button class="btn sm" data-a="wear" data-v="hat:">벗기</button>':`<button class="btn sm pri" data-a="wear" data-v="hat:${id}">쓰기</button>`)).join('')}</div>`:'<p class="help">아직 모자가 없어요.</p>'}
   <h4 style="margin:14px 0 8px">옷</h4><div class="grid">${tops.map(id=>itemCard(id,me.wear.top===id?'<span class="tag ok">입고 있어요</span>':`<button class="btn sm pri" data-a="wear" data-v="top:${id}">입기</button>`)).join('')}</div>`}
  else if(t==='bag'){const ids=Object.keys(ITEMS).filter(k=>['seed','crop','pfood','col'].includes(ITEMS[k].c)&&cnt(me,k)>0);h+=ids.length?`<div class="grid">${ids.map(id=>itemCard(id,`<span>${cnt(me,id)}개</span>`)).join('')}</div><p class="help">작물과 보물은 잡화점 [팔기]에서 코인으로 바꿀 수 있어요.</p>`:'<p class="empty">가방이 비어 있어요.</p>'}
@@ -1469,7 +1893,7 @@ function rSubs(b){const m=S.missions.find(x=>x.id===W.arg);if(!m){b.innerHTML=''
   if(s){mid=`${s.text?`<p style="white-space:pre-wrap">${esc(s.text)}</p>`:'<p class="help" style="margin:0">완료 체크</p>'}${s.nphotos?(PHC[m.id]&&PHC[m.id][s.id]?`<div class="thumbs">${PHC[m.id][s.id].map(u=>/^data:image\//.test(u)?`<img src="${u}" alt="제출 사진">`:'').join('')}</div>`:`<p class="help" style="margin:4px 0">사진 ${s.nphotos}장 불러오는 중…</p>`):''}`;
    if(s.status==='ok')right='<span class="tag ok">승인 완료</span>';else if(s.status==='retry')right=`<span class="tag warn">다시 하기 요청</span><p class="help">${esc(s.fb)}</p>`;
    else right=`<input id="fb_${s.id}" placeholder="한 줄 피드백 (선택)"><div class="row wrap" style="margin-top:6px"><button class="btn sm pri" data-a="tSubOk" data-v="${s.id}">승인 +${m.reward}</button><button class="btn sm" data-a="tSubRetry" data-v="${s.id}">다시 하기</button></div>`}
-  return `<div class="subrow"><div class="row"><img src="${charURL(st)}" alt="" style="width:30px;height:48px"><span>${st.no}번 ${esc(st.name)}</span></div><div>${mid}</div><div>${right}</div></div>`}).join('')}
+  return `<div class="subrow"><div class="row"><img src="${charURL(st)}" alt="" style="width:28px;height:48px"><span>${st.no}번 ${esc(st.name)}</span></div><div>${mid}</div><div>${right}</div></div>`}).join('')}
 function tLib(b){
  let h=`<section class="panel px"><h3>계기교육 자료 올리기</h3><div class="two"><label class="field"><span>제목</span><input id="pTitle" maxlength="40" placeholder="예: 11월 11일은 농업인의 날"></label><label class="field"><span>기념일·주제 태그</span><input id="pTag" maxlength="20" placeholder="예: 농업인의 날"></label></div>
  <label class="field"><span>내용</span><textarea id="pBody" maxlength="2000" placeholder="학생이 읽을 글을 써 주세요"></textarea></label>
@@ -1489,12 +1913,13 @@ function tSet(b){const c=S.cls,s=c.set,ta=tav();
  b.innerHTML=`<section class="panel px"><h3>학급 정보</h3><div class="two"><label class="field"><span>학급 이름</span><input id="sName" value="${esc(c.name)}" maxlength="30"></label><label class="field"><span>학급 코드</span><input id="sCode" value="${esc(c.code)}" maxlength="10" style="text-transform:uppercase"></label><label class="field"><span>새 비밀번호 (바꿀 때만, 6자 이상)</span><input id="sPw" type="password" autocomplete="new-password"></label></div>
  <label class="field"><span>이장실 공지</span><textarea id="sNotice" maxlength="500">${esc(c.notice)}</textarea></label>
  <p class="help">학생 접속 주소: ${esc(location.origin+location.pathname)}</p></section>
- <section class="panel px"><h3>선생님 캐릭터</h3><div class="row wrap" style="gap:16px;align-items:flex-start"><img src="${toriURL()}" alt="선생님 캐릭터" style="width:56px;height:91px;background:#bfe6a8;border:3px solid var(--edge)"><div class="two" style="flex:1">
+ <section class="panel px"><h3>선생님 캐릭터</h3><div class="row wrap" style="gap:16px;align-items:flex-start"><img src="${toriURL()}" alt="선생님 캐릭터" style="width:55px;height:95px;background:#bfe6a8;border:3px solid var(--edge)"><div class="two" style="flex:1">
   <label class="field"><span>마을에서 부를 이름</span><input id="sTname" maxlength="10" value="${esc(guideName())}"></label>
   <label class="field"><span>피부색</span><select id="tvSkin">${['밝은 피부','중간 피부','어두운 피부'].map((n,i)=>`<option value="${i}" ${ta.skin===i?'selected':''}>${n}</option>`).join('')}</select></label>
   <label class="field"><span>머리 모양</span><select id="tvHs">${HAIRN.map((n,i)=>`<option value="${i}" ${ta.hs===i?'selected':''}>${n}</option>`).join('')}</select></label>
+  <label class="field"><span>옷 모양</span><select id="tvOs">${OUTN.map((n,i)=>`<option value="${i}" ${(ta.os|0)===i?'selected':''}>${n}</option>`).join('')}</select></label>
   <label class="field"><span>머리 색</span><select id="tvHc">${['검정','갈색','금색','빨강','남색'].map((n,i)=>`<option value="${i}" ${ta.hc===i?'selected':''}>${n}</option>`).join('')}</select></label>
-  <label class="field"><span>옷</span><select id="tvTop">${Object.keys(TOPS).map(k=>`<option value="${k}" ${ta.top===k?'selected':''}>${TOPN[k]}</option>`).join('')}</select></label>
+  <label class="field"><span>옷 색</span><select id="tvTop">${Object.keys(TOPS).map(k=>`<option value="${k}" ${ta.top===k?'selected':''}>${TOPN[k]}</option>`).join('')}</select></label>
   <label class="field"><span>안경</span><select id="tvGl"><option value="1" ${ta.gl?'selected':''}>쓰기</option><option value="0" ${ta.gl?'':'selected'}>안 쓰기</option></select></label></div></div>
   <p class="help">학생들 마을 광장에서 안내를 맡는 캐릭터예요. 이장실 위쪽 [마을로 나가기]를 누르면 이 캐릭터로 걸어 다니고, 학생 화면에도 실시간으로 보여요.</p></section>
  <section class="panel px"><h3>접속 시간</h3><div class="two"><label class="field"><span>열리는 시간 (평일)</span><input id="sStart" type="time" value="${esc(s.start)}"></label><label class="field"><span>닫히는 시간</span><input id="sEnd" type="time" value="${esc(s.end)}"></label><label class="field"><span>하루 최대 이용 (분)</span><input id="sLimit" type="number" min="5" max="240" value="${s.limit}"></label></div>
@@ -1604,7 +2029,7 @@ const A={
   ok(await tact('add_coupon',{name,price:Math.round(+$('#cpPrice').value||1),stock:Math.round(+$('#cpStock').value||1),limit:Math.round(+$('#cpLimit').value||1)}),()=>toast('쿠폰을 올렸어요'))},
  tSave:async()=>{const ph=$('#sPhr').value.split('\n').map(x=>x.trim()).filter(Boolean).slice(0,16);
   ok(await tact('settings',{name:$('#sName').value.trim(),code:$('#sCode').value.trim().toUpperCase(),pw:$('#sPw').value,notice:$('#sNotice').value.trim(),
-   set:{start:$('#sStart').value||'08:30',end:$('#sEnd').value||'16:00',limit:Math.round(+$('#sLimit').value||30),free:$('#sFree').checked,fast:$('#sFast').checked,live:$('#sLive').checked,tname:$('#sTname').value.trim(),tav:{skin:+$('#tvSkin').value,hs:+$('#tvHs').value,hc:+$('#tvHc').value,top:$('#tvTop').value,gl:$('#tvGl').value==='1'}},phrases:ph}),()=>{store.set('cv_code',S.cls.code);toast('설정을 저장했어요')})},
+   set:{start:$('#sStart').value||'08:30',end:$('#sEnd').value||'16:00',limit:Math.round(+$('#sLimit').value||30),free:$('#sFree').checked,fast:$('#sFast').checked,live:$('#sLive').checked,tname:$('#sTname').value.trim(),tav:{skin:+$('#tvSkin').value,hs:+$('#tvHs').value,os:+$('#tvOs').value,hc:+$('#tvHc').value,top:$('#tvTop').value,gl:$('#tvGl').value==='1'}},phrases:ph}),()=>{store.set('cv_code',S.cls.code);toast('설정을 저장했어요')})},
  tCSV:()=>{const t=csv();openWin('csv','CSV 내보내기',b=>{b.innerHTML=`<p class="help" style="margin-top:0">아래 내용을 복사해 메모장에 붙여 넣고 .csv로 저장하면 엑셀에서 열 수 있어요.</p><textarea id="csvT" readonly style="min-height:260px;font-size:13px">${esc(t)}</textarea><div class="row" style="margin-top:10px"><button class="btn pri" data-a="copyCSV">전체 복사</button></div>`},{wide:true})},
  copyCSV:()=>copy($('#csvT').value,$('#csvT')),
  tYear:async()=>{const c=$('#yrc').value.trim();if(c!=='새 학년도'){toast("입력칸에 '새 학년도'라고 정확히 적어 주세요");return}TS.sel.clear();ok(await tact('year_reset',{confirm:c}),()=>toast('새 학년도 마을이 준비됐어요. 학생을 다시 등록해 주세요.'))}
