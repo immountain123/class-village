@@ -561,7 +561,7 @@ function update(dt){
  if(P.bubble&&P.bubble.until<now)P.bubble=null;
  for(const f of friends)if(f.bubble&&f.bubble.until<now)f.bubble=null;
  talkT-=dt;if(talkT<=0&&friends.length){talkT=7+Math.random()*7;const idle=friends.filter(f=>!f.live);const f=idle[(Math.random()*idle.length)|0];const ph=S.cls.phrases;if(f&&ph.length)f.bubble={txt:ph[(Math.random()*ph.length)|0],until:now+3000}}
- if(modalOpen()||dlgOn){updA(null);if(wasMoving){wasMoving=false;sendPos(false)}P.moving=false;return}
+ if(modalOpen()){updA(null);if(wasMoving){wasMoving=false;sendPos(false)}P.moving=false;return}
  let vx=0,vy=0;
  if(keys.has('ArrowLeft')||keys.has('a'))vx--;if(keys.has('ArrowRight')||keys.has('d'))vx++;if(keys.has('ArrowUp')||keys.has('w'))vy--;if(keys.has('ArrowDown')||keys.has('s'))vy++;
  if(JOY.on&&(JOY.x||JOY.y)){vx=JOY.x;vy=JOY.y}
@@ -1037,7 +1037,7 @@ document.addEventListener('keydown',e=>{
  if(mode==='village'){if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','w','a','s','d'].includes(k)){keys.add(k);e.preventDefault()}else if((k==='Enter'||k===' ')&&!modalOpen()){e.preventDefault();interact()}}});
 document.addEventListener('keyup',e=>{keys.delete(e.key.length===1?e.key.toLowerCase():e.key)});
 window.addEventListener('blur',()=>keys.clear());
-cv.addEventListener('pointerdown',e=>{if(mode!=='village'||lockOn||modalOpen()||dlgOn)return;closeEmote();const wx=e.clientX/V.S+V.cx,wy=e.clientY/V.S+V.cy;
+cv.addEventListener('pointerdown',e=>{if(mode!=='village'||lockOn||modalOpen())return;closeEmote();const wx=e.clientX/V.S+V.cx,wy=e.clientY/V.S+V.cy;
  for(const d of doors)if(wx>=d.r[0]&&wx<d.r[2]&&wy>=d.r[1]-12&&wy<d.r[3]){P.target={x:d.x,y:d.y,then:()=>openDoor(d)};return}
  if(Math.hypot(wx-tori.x,wy-(tori.y-8))<14){P.target={x:tori.x,y:tori.y+12,then:toriTalk};return}
  for(const f of friends)if(Math.hypot(wx-f.x,wy-(f.y-10))<12){P.target={x:f.x+12,y:f.y,then:()=>greet(f)};return}
@@ -1050,7 +1050,7 @@ window.addEventListener('pagehide',()=>{if(mode==='village')flushUsage()});
  const setK=(dx,dy)=>{k.style.transform=`translate(${dx}px,${dy}px)`};
  const mv=e=>{const r=j.getBoundingClientRect();let dx=e.clientX-(r.left+r.width/2),dy=e.clientY-(r.top+r.height/2);const d=Math.hypot(dx,dy);if(d>R){dx=dx/d*R;dy=dy/d*R}setK(dx,dy);const m=Math.hypot(dx,dy)/R;JOY.x=m>.22?dx/R:0;JOY.y=m>.22?dy/R:0};
  const end=e=>{if(!JOY.on||(e&&e.pointerId!==JOY.id))return;JOY.on=false;JOY.x=JOY.y=0;JOY.id=null;j.classList.remove('on');setK(0,0)};
- j.addEventListener('pointerdown',e=>{if(mode!=='village'||lockOn||modalOpen()||dlgOn)return;e.preventDefault();JOY.on=true;JOY.id=e.pointerId;j.classList.add('on');try{j.setPointerCapture(e.pointerId)}catch(x){}P.target=null;closeEmote();mv(e)});
+ j.addEventListener('pointerdown',e=>{if(mode!=='village'||lockOn||modalOpen())return;e.preventDefault();JOY.on=true;JOY.id=e.pointerId;j.classList.add('on');try{j.setPointerCapture(e.pointerId)}catch(x){}P.target=null;closeEmote();mv(e)});
  j.addEventListener('pointermove',e=>{if(JOY.on&&e.pointerId===JOY.id)mv(e)});
  j.addEventListener('pointerup',end);j.addEventListener('pointercancel',end);j.addEventListener('lostpointercapture',end);
  window.addEventListener('blur',()=>end())})();
