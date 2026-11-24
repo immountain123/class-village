@@ -68,6 +68,10 @@ p{margin:0}
 #hTime{padding:4px 12px;font-size:15px}
 #act{position:absolute;right:14px;bottom:16px;display:flex;gap:10px;align-items:flex-end}
 .abtn{font-size:20px;min-height:64px;padding:10px 22px}
+#joy{position:absolute;left:18px;bottom:18px;width:136px;height:136px;border-radius:50%;background:rgba(26,22,32,.35);border:4px solid rgba(26,22,32,.75);touch-action:none;cursor:grab}
+#joy::before{content:'';position:absolute;inset:18px;border-radius:50%;border:2px dashed rgba(244,233,209,.45)}
+#joyK{position:absolute;left:50%;top:50%;width:60px;height:60px;margin:-30px 0 0 -30px;border-radius:50%;background:var(--paper);border:4px solid var(--edge);box-shadow:0 4px 0 var(--edge);pointer-events:none}
+#joy.on #joyK{background:var(--coin)}
 #emotePop{position:absolute;right:14px;bottom:96px;width:min(340px,92vw);padding:12px}
 #emotePop .emos{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-bottom:10px}
 #emotePop .emos .btn{padding:4px;min-height:48px}
@@ -223,6 +227,7 @@ div.cell{border-color:transparent;cursor:default}
       <button class="btn sm" data-a="logout">나가기</button>
     </div>
   </div>
+  <div id="joy" role="application" aria-label="캐릭터 이동 조이스틱"><div id="joyK"></div></div>
   <div id="act">
     <button class="btn sm" data-a="emote">이모티콘</button>
     <button class="btn pri abtn" data-a="interact" id="bA" hidden>들어가기</button>
@@ -502,6 +507,7 @@ const pet={x:0,y:0,flip:false};
 let cols=[],friends=[],flags={mission:false,library:false},flagT=0,secT=0,talkT=6,warned=false,useAcc=0,useT=0,pollT=0,sendT=0,wasMoving=false;
 const tori={x:26*T+8,y:10*T+12,bubble:null};
 const keys=new Set();
+const JOY={on:false,x:0,y:0,id:null};
 const nickOf=st=>st&&st.nickOk&&st.nick?st.nick:`${st?st.no:''}번 주민`;
 
 function makeFriends(all){const old=new Map(friends.map(f=>[f.no,f]));friends=[];if(!S)return;
@@ -558,6 +564,7 @@ function update(dt){
  if(modalOpen()||dlgOn){updA(null);if(wasMoving){wasMoving=false;sendPos(false)}P.moving=false;return}
  let vx=0,vy=0;
  if(keys.has('ArrowLeft')||keys.has('a'))vx--;if(keys.has('ArrowRight')||keys.has('d'))vx++;if(keys.has('ArrowUp')||keys.has('w'))vy--;if(keys.has('ArrowDown')||keys.has('s'))vy++;
+ if(JOY.on&&(JOY.x||JOY.y)){vx=JOY.x;vy=JOY.y}
  if(vx||vy)P.target=null;
  else if(P.target){const dx=P.target.x-P.x,dy=P.target.y-P.y,d=Math.hypot(dx,dy);if(d<3){const f=P.target.then;P.target=null;if(f)f()}else{vx=dx/d;vy=dy/d}}
  if(vx||vy){const m=Math.hypot(vx,vy);vx/=m;vy/=m;const sp=74*dt,ox=P.x,oy=P.y;
@@ -748,7 +755,7 @@ function enterVillage(tutorial){mode='village';document.body.className='village'
  const h=houses.find(x=>x.no===me.no);P.x=h?h.door.x:24*T;P.y=h?h.door.y+4:13*T;P.dir='d';P.target=null;P.bubble=null;pet.x=P.x-14;pet.y=P.y;warned=false;useAcc=0;
  spawnCols();friends=[];makeFriends(false);aLabel='x';updA(null);updHud();computeFlags();lockMsgKey='?';checkLock();rtJoin();
  const lines=[];
- if(tutorial)lines.push(`안녕, ${me.nick}! 나는 클래스 빌리지 안내를 맡은 다람쥐 토리야.`,'화면을 누르거나 방향키로 걸어 다닐 수 있어. 건물 앞에 서면 오른쪽 아래 버튼으로 들어갈 수 있어.','미션 게시판에서 선생님이 낸 미션을 하고, 도서관에서 계기교육 이야기를 읽어 봐.','칭찬과 미션으로 모은 코인은 잡화점에서 가구, 옷, 씨앗을 사는 데 써.','숲에 반짝이는 보물이 떨어져 있으면 주워 봐. 무엇이 나올지는 주워 봐야 알아!','입주 선물로 코인 100개랑 침대, 의자, 토마토 씨앗을 넣어 뒀어. 먼저 우리 집에 들어가 봐!');
+ if(tutorial)lines.push(`안녕, ${me.nick}! 나는 클래스 빌리지 안내를 맡은 다람쥐 토리야.`,'왼쪽 아래 조이스틱을 끌거나, 방향키를 누르거나, 가고 싶은 곳을 누르면 걸어갈 수 있어. 건물 앞에 서면 오른쪽 아래 버튼으로 들어갈 수 있어.','미션 게시판에서 선생님이 낸 미션을 하고, 도서관에서 계기교육 이야기를 읽어 봐.','칭찬과 미션으로 모은 코인은 잡화점에서 가구, 옷, 씨앗을 사는 데 써.','숲에 반짝이는 보물이 떨어져 있으면 주워 봐. 무엇이 나올지는 주워 봐야 알아!','입주 선물로 코인 100개랑 침대, 의자, 토마토 씨앗을 넣어 뒀어. 먼저 우리 집에 들어가 봐!');
  else lines.push(`${nickOf(me)==='' ? '' : (me.nick||nickOf(me))}, 어서 와!`);
  say(lines);showNotes()}
 function openDoor(d){if(typeof d==='string')d={type:d};
@@ -1037,6 +1044,16 @@ cv.addEventListener('pointerdown',e=>{if(mode!=='village'||lockOn||modalOpen()||
  P.target={x:wx,y:wy+6}});
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&mode==='village')flushUsage()});
 window.addEventListener('pagehide',()=>{if(mode==='village')flushUsage()});
+
+/* ===== joystick ===== */
+(()=>{const j=$('#joy'),k=$('#joyK'),R=48;
+ const setK=(dx,dy)=>{k.style.transform=`translate(${dx}px,${dy}px)`};
+ const mv=e=>{const r=j.getBoundingClientRect();let dx=e.clientX-(r.left+r.width/2),dy=e.clientY-(r.top+r.height/2);const d=Math.hypot(dx,dy);if(d>R){dx=dx/d*R;dy=dy/d*R}setK(dx,dy);const m=Math.hypot(dx,dy)/R;JOY.x=m>.22?dx/R:0;JOY.y=m>.22?dy/R:0};
+ const end=e=>{if(!JOY.on||(e&&e.pointerId!==JOY.id))return;JOY.on=false;JOY.x=JOY.y=0;JOY.id=null;j.classList.remove('on');setK(0,0)};
+ j.addEventListener('pointerdown',e=>{if(mode!=='village'||lockOn||modalOpen()||dlgOn)return;e.preventDefault();JOY.on=true;JOY.id=e.pointerId;j.classList.add('on');try{j.setPointerCapture(e.pointerId)}catch(x){}P.target=null;closeEmote();mv(e)});
+ j.addEventListener('pointermove',e=>{if(JOY.on&&e.pointerId===JOY.id)mv(e)});
+ j.addEventListener('pointerup',end);j.addEventListener('pointercancel',end);j.addEventListener('lostpointercapture',end);
+ window.addEventListener('blur',()=>end())})();
 
 /* ===== boot ===== */
 for(const k in ASSET_FILES){const im=new Image();im.onload=()=>{IMG[k]=im;for(const c in CACHE)delete CACHE[c];for(const u in URLC)delete URLC[u];if(mapC)renderMap()};im.src=ASSET_FILES[k]}
