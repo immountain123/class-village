@@ -700,7 +700,7 @@ async function start(){beep(523);beep(784,.1,.08);
  let st=null;try{st=await rpc('api_status')}catch(e){toast(e.message);return}
  if(st&&!st.hasClass)openWin('setup','처음 설정 · 학급 만들기',rSetup);else openLogin()}
 function rSetup(b){b.innerHTML=`<p style="margin-bottom:12px">처음 한 번만 하는 설정이에요. 선생님이 학급을 만들면 바로 이장실로 들어가요.</p>
- <div class="two"><label class="field"><span>학급 이름</span><input id="suName" maxlength="30" placeholder="예: 대교초 3학년 2반"></label><label class="field"><span>학급 코드 (영어·숫자 4~10자)</span><input id="suCode" maxlength="10" placeholder="예: DAEGYO32" style="text-transform:uppercase"></label></div>
+ <div class="two"><label class="field"><span>학급 이름</span><input id="suName" maxlength="30" placeholder="예: 영주서부초 3학년 2반"></label><label class="field"><span>학급 코드 (영어·숫자 4~10자)</span><input id="suCode" maxlength="10" placeholder="예: SEOBU32" style="text-transform:uppercase"></label></div>
  <div class="two"><label class="field"><span>선생님 비밀번호 (6자 이상)</span><input id="suPw" type="password" autocomplete="new-password"></label><label class="field"><span>비밀번호 한 번 더</span><input id="suPw2" type="password" autocomplete="new-password"></label></div>
  <button class="btn pri" data-a="setupGo" data-enter>학급 만들기</button><p class="msg" id="suMsg"></p>
  <p class="help">학생들은 학급 코드, 번호, 선생님이 나눠 준 4자리 핀으로 들어와요. 비밀번호는 다른 곳에 적어 두세요.</p>`}
