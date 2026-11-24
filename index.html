@@ -514,435 +514,308 @@ function petSpr(t){return sprHi('pet_'+t,32,28,x=>{const R=(c,a,b,w=1,h=1)=>{x.f
 /* --- 2.5D characters: 40x60 art px (2 art px per world px), 3/4 view, ~2.5 heads tall --- */
 const C25W=40,C25H=60;
 function ellCc(x,cx,cy,rx,ry,base,hi,sd,dk,maxY){for(let yy=Math.floor(cy-ry);yy<=Math.min(maxY,Math.ceil(cy+ry));yy++)for(let xx=Math.floor(cx-rx);xx<=Math.ceil(cx+rx);xx++){const nx=(xx+.5-cx)/rx,ny=(yy+.5-cy)/ry,d=nx*nx+ny*ny;if(d>1)continue;const l=nx*.55+ny*.8;x.fillStyle=(dk&&l>.68)?dk:l>.28?sd:(l<-.42&&d<.8)?hi:base;x.fillRect(xx,yy,1,1)}}
-/* ===== v4 2D chibi characters: hand-placed pixel templates (32x49 art px, crisp integer scaling) ===== */
-const C4W=32,C4H=49,C4OY=6,C4RES=1.5;
+/* ===== v4 2D chibi characters: hand-placed pixel templates (22x33 art px, 1 art px = 1 world px) ===== */
+const C4W=22,C4H=33,C4OY=4,C4RES=1;
 const C4TPL=`[body_d]
-4 11:SSSSSSSSSS
-5 9:SSSSSSSSSSSSSS
-6 8:SSSSSSSSSSSSSSSs
-7 7:SSSSSSSSSSSSSSSSSs
-8 6:SSSSSSSSSSSSSSSSSSss
-9 6:SSSSSSSSSSSSSSSSSSss
-10 5:SSSSSSSSSSSSSSSSSSSSss
-11 5:SSSSSSSSSSSSSSSSSSSSss
-12 5:ssssssssssssssssssssss
-13 4:sSSSoooo 12:SSSSSSSS 20:ooooSss 27:s
-14 4:sSSSSEEiSSSSSSSSEEiSSsss
-15 4:sSSSSEEESSSSSSSSEEESSsss
-16 4:sSSSSeEESSSSSSSSeEESSsss
-17 5:SSSSeeeSSSSSSSSeeeSSss
-18 6:SrrSSSSSSSSSSSSSSrrs
-19 6:SSSSSSSSSmmSSSSSSSss
-20 7:SSSSSSSSSSSSSSSSss
-21 9:SSSSSSSSSSSSss
-22 11:ssssssssss
-23 13:ssssss
-24 7:U 8:UUTTTossssoTTTTt 24:t
-25 6:UT 8:UTTTTTossoTTTTTt 24:tt
-26 5:UTT 8:TTTTTTTooTTTTTTt 24:ttt
-27 5:UTT 8:o 9:TTTTTTTTTTTTTt 23:o 24:Ttt
-28 5:UTT 8:o 9:TTTTTTTTTTTTTt 23:o 24:Ttt
-29 5:ttt 8:o 9:TTTTTTTTTTTTTt 23:o 24:ttt
-30 5:SSs 8:o 9:TTTTTTTTTTTTTt 23:o 24:SSs
-31 5:SSs 8:o 9:TTTTTTTTTTTTTt 23:o 24:SSs
-32 5:SSs 8:o 9:tTTTTTTTTTTTtt 23:o 24:SSs
-33 5:SSs 8:o 9:tttttttttttttt 23:o 24:SSs
-34 5:sss 9:QPPPPPPPPPPPPp 24:sss
-35 9:QPPPPPPPPPPPPp
-[legs_d0]
-36 9:QPPPPp 17:PPPPPp
-37 9:QPPPPp 17:PPPPPp
-38 9:QPPPPp 17:PPPPPp
-39 9:PPPPPp 17:PPPPPp
-40 8:BBBBBBn 17:BBBBBBn
-41 8:nnnnnnn 17:nnnnnnn
-[legs_d1]
-36 9:QPPPPp 17:PPPPPp
-37 9:QPPPPp 17:PPPPPp
-38 9:QPPPPp 17:PPPPPp
-39 8:BBBBBBn 17:PPPPPp
-40 8:nnnnnnn 17:BBBBBBn
-41 17:nnnnnnn
-[legs_d2]
-36 9:QPPPPp 17:PPPPPp
-37 9:QPPPPp 17:PPPPPp
-38 9:QPPPPp 17:PPPPPp
-39 9:PPPPPp 17:BBBBBBn
-40 8:BBBBBBn 17:nnnnnnn
-41 8:nnnnnnn
+3 7:SSSSSSSS
+4 5:SSSSSSSSSSss
+5 4:SSSSSSSSSSSSss
+6 4:SSSSSSSSSSSSss
+7 4:ssssssssssssss
+8 3:sSSooSSSSSSooSss
+9 3:sSSEiSSSSSSEiSss
+10 3:sSSeESSSSSSeESss
+11 4:SrSSSSSSSSSSrs
+12 4:SSSSSSmmSSSSss
+13 5:SSSSSSSSSSss
+14 6:SSSSSSSSss
+15 8:ssss
+16 9:ssss
+17 5:U 6:UTTossoTTt 16:t
+18 4:UT 6:TTTTooTTTt 16:tt
+19 4:UT 6:o 7:TTTTTTTt 15:o 16:Tt
+20 4:tt 6:o 7:TTTTTTTt 15:o 16:tt
+21 4:SS 6:o 7:TTTTTTTt 15:o 16:Ss
+22 4:Ss 6:o 7:tttttttt 15:o 16:ss
+23 7:QPPPPPPp
 [hair0_d_over]
-0 ...........d....dd.............
-1 ..........dHd..dHHd..d.........
-2 ........ddHHHddHHHHddHd........
-3 .......dHHLLHHHHHHHHHHHd.......
-4 ......dHHLLLLHHHHHHHHHHHd......
-5 .....dHHLLLHHHHHHHHHHHHHhd.....
-6 ....dHHHHLHHHHHHHHHHHHHHHhd....
-7 ...dHHHHHHHHHHHHHHHHHHHHHHhd...
-8 ...dHHHHHHHHHHHHHHHHHHHHHHhh...
-9 ..dhHHHHhHHHHHHHhHHHHHHHHHhhd..
-10 ..dhHHHhhHHHHHHhhHHHHHHhHHhhhd.
-11 .dhhHHhhHhHHHHhhHhHHHHhhhHhhhd.
-12 ..dhHhh...hHHhh.hHHh....hhhhd..
-13 ..dhh.......hh...h.......hhd...
-14 ..dh......................hhd..
-15 ...d.......................hd..
-16 ............................d..
-[hair0_u_over]
-0 ...........d....dd.............
-1 ..........dHd..dHHd..d.........
-2 ........ddHHHddHHHHddHd........
-3 .......dHHLLHHHHHHHHHHHd.......
-4 ......dHHLLLLHHHHHHHHHHHd......
-5 .....dHHLLLHHHHHHHHHHHHHhd.....
-6 ....dHHHHLHHHHHHHHHHHHHHHhd....
-7 ...dHHHHHHHHHHHHHHHHHHHHHHhd...
-8 ...dHHHHHHHHHHHHHHHHHHHHHHhh...
-9 ..dhHHHHhHHHHHHHhHHHHHHHHHhhd..
-10 ..dhHHHhhHHHHHHhhHHHHHHhHHhhhd.
-11 ..dhHHHhHHHHhHHHHhHHHHhHHHhhd...
-12 ..dhHHHhHHHHhHHHHhHHHHhHHHhhd...
-13 ..dhHHhhHHHhhHHHhhHHHhhHHhhhd...
-14 ..dhHHHhHHHHhHHHHhHHHHhHHHhhd...
-15 ..dhHHhhHHHhhHHHhhHHHhhHHhhhd...
-16 ...dhHHhHHHhHHHhHHHhHHHhHhhd....
-17 ....dhHhHHhHHHhHHHhHHhHHhhd.....
-18 .....dhhHhhHHhhHHhhHhhHhhd......
-19 ......dh.dhh.dhhd.dhh.dhd.......
-20 .......d..d....d....d..d........
-[hair0_l_over]
-0 ..........d...dd................
-1 .........dHd.dHHd..d............
-2 .......ddHHHddHHHHddHd..........
-3 ......dHHLLHHHHHHHHHHHHd........
-4 .....dHLLLLHHHHHHHHHHHHHd.......
-5 ....dHHLLLHHHHHHHHHHHHHHhd......
-6 ...dHHHHLHHHHHHHHHHHHHHHHhd.....
-7 ...dHHHHHHHHHHHHHHHHHHHHHHhd....
-8 ..dHHHHHHHHHHHHHHHHHHHHHHHhhd...
-9 ..dhHHhHHHHHHHHHHHHHHHHHHHhhd...
-10 ...hHhhHHHhHHHHHHHHHHHhHHHhhd...
-11 ...dhh.hHhhHHHHHHHHHHhhHHHhhd...
-12 ....dh..hh.hHHHHHHHHhhHHHHhhd...
-13 12:hHHHHHHHHhhHHHhhd
-14 13:hH 15:sSs 18:HHHhhHHhhd
-15 13:hH 15:sSS 18:HHhHHHhhhd
-16 13:h 15:ssS 18:HhHHHHhhd
-17 16:ss 18:HhHHHhhd
-18 18:hHHHhhd
-19 18:dhdhhd
-20 19:d.d
+0 .......d...dd.........
+1 ......dHd.dHHd........
+2 ....ddHHHdHHHHHdd.....
+3 ...dHHLLHHHHHHHHHd....
+4 ..dHHLLHHHHHHHHHHhd...
+5 ..dHHHHHHHHHHHHHHHhd..
+6 ..dhHHhHHHHHhHHHHhhd..
+7 ..dhHhh.hHHhh.hHHhhd..
+8 ..dh.....hh.......hd..
+9 ..dh..............hd..
+10 ...d..............d...
 [longtop_d]
-1 11:dddddddddd
-2 9:ddHHHHHHHHHHdd
-3 8:dHHLLHHHHHHHHHhd
-4 7:dHLLLLHHHHHHHHHHhd
-5 6:dHHLLHHHHHHHHHHHHHhd
-6 5:dHHHHHHHHHHHHHHHHHHHhd
-7 4:dHHHHHHHHHHHHHHHHHHHHHhd
-8 4:dHHHHHHHHHHHHHHHHHHHHHhd
-9 3:dHHHHHHHHHHHHHHHHHHHHHHhhd
-10 3:dHHHhHHHHhHHHHHhHHHHhHHhhd
-11 3:dHHhhHHHhhHHHHhhHHHhhHHhhd
+1 7:dddddddd
+2 5:ddHHHHHHHHdd
+3 4:dHLLHHHHHHHHhd
+4 3:dHLLHHHHHHHHHHhd
+5 2:dHHHHHHHHHHHHHHHhd
+6 2:dHHhHHHHhHHHHhHHhd
+7 2:dHHdhhhhhhhhhhdHhd
 [hair1_d_over]
-12 3:dHHdhhhhhhh.hhhhhhhhhhdHhd
-13 3:dHHd 25:dHhd
-14 3:dHHd 25:dHhd
-15 3:dHHd 25:dHhd
-16 3:dHHd 25:dHhd
-17 3:dHHd 25:dHhd
-18 3:dHHd 25:dHhd
-19 3:dHHd 25:dHhd
-20 3:dHHd 25:dHhd
-21 2:dHHHd 25:dHHhd
-22 2:dHHHd 25:dHHhd
-23 2:dHHhd 25:dhHhd
-24 2:dhhd 26:dhhd
-25 2:d.d 27:d.d
+8 2:dHd 17:dHd
+9 2:dHd 17:dHd
+10 2:dHd 17:dHd
+11 2:dHd 17:dHd
+12 2:dHd 17:dHd
+13 2:dHd 17:dHd
+14 2:dHHd 16:dHHd
+15 1:dHHd 17:dHHd
+16 1:dHhd 17:dhHd
+17 1:dhd 18:dhd
 [hair1_d_under]
-8 2:hhhhhhhhhhhhhhhhhhhhhhhhhhhh
-9 2:hhhhhhhhhhhhhhhhhhhhhhhhhhhh
-10 2:hhhhhhhhhhhhhhhhhhhhhhhhhhhh
-11 2:hhhhhhhhhhhhhhhhhhhhhhhhhhhh
-12 2:hhhhhhhhhhhhhhhhhhhhhhhhhhhh
-13 2:hhhhhhhhhhhhhhhhhhhhhhhhhhhh
-14 2:hhhhhhhhhhhhhhhhhhhhhhhhhhhh
-15 2:hhhhhhhhhhhhhhhhhhhhhhhhhhhh
-16 2:hhhhhhhhhhhhhhhhhhhhhhhhhhhh
-17 2:hhhhhhhhhhhhhhhhhhhhhhhhhhhh
-18 2:hhhhhhhhhhhhhhhhhhhhhhhhhhhh
-19 2:hhhhhhhhhhhhhhhhhhhhhhhhhhhh
-20 2:hhhhhhhhhhhhhhhhhhhhhhhhhhhh
-21 2:hhhhhhhhhhhhhhhhhhhhhhhhhhhh
-22 2:hhhhhhhhhhhhhhhhhhhhhhhhhhhh
-23 2:hhhhhhhhhhhhhhhhhhhhhhhhhhhh
-24 2:hhhhhhhhhhhhhhhhhhhhhhhhhhhh
-25 2:hhhhhhhhhhhhhhhhhhhhhhhhhhhh
-26 2:hhhhhhhhhhhhhhhhhhhhhhhhhhhh
-27 2:hhhhhhhhhhhhhhhhhhhhhhhhhhhh
-28 2:hhhhhhhhhhhhhhhhhhhhhhhhhhhh
-29 2:hhhhhhhhhhhhhhhhhhhhhhhhhhhh
-30 2:dhhhhhhhhhhhhhhhhhhhhhhhhhhd
-31 2:dhd 27:dhd
-[hair1_u_over]
-12 3:dHHhHHHHhHHHHhHHHHhHHHHhhd
-13 3:dHHhHHHHhHHHHhHHHHhHHHHhhd
-14 3:dHHhHHHHhHHHHhHHHHhHHHHhhd
-15 3:dHHhHHHHhHHHHhHHHHhHHHHhhd
-16 3:dHHhHHHHhHHHHhHHHHhHHHHhhd
-17 3:dHHhHHHHhHHHHhHHHHhHHHHhhd
-18 3:dHHhHHHHhHHHHhHHHHhHHHHhhd
-19 3:dHHhHHHHhHHHHhHHHHhHHHHhhd
-20 3:dHHhHHHHhHHHHhHHHHhHHHHhhd
-21 3:dHHhHHHHhHHHHhHHHHhHHHHhhd
-22 3:dHHhHHHHhHHHHhHHHHhHHHHhhd
-23 3:dhHhHHHHhHHHHhHHHHhHHHHhhd
-24 3:dhHhHHHHhHHHHhHHHHhHHHHhhd
-25 3:dhHhHHHHhHHHHhHHHHhHHHHhhd
-26 3:dhHhHHHHhHHHHhHHHHhHHHHhhd
-27 3:dhhhHHHhhHHHhhHHHhhHHHhhhd
-28 3:dhhdhhhdhhhdhhhhdhhhdhhhhd
-29 4:d...d...d....d...d....d
+5 2:hhhhhhhhhhhhhhhhhh
+6 2:hhhhhhhhhhhhhhhhhh
+7 2:hhhhhhhhhhhhhhhhhh
+8 2:hhhhhhhhhhhhhhhhhh
+9 2:hhhhhhhhhhhhhhhhhh
+10 2:hhhhhhhhhhhhhhhhhh
+11 2:hhhhhhhhhhhhhhhhhh
+12 2:hhhhhhhhhhhhhhhhhh
+13 2:hhhhhhhhhhhhhhhhhh
+14 2:hhhhhhhhhhhhhhhhhh
+15 2:hhhhhhhhhhhhhhhhhh
+16 2:hhhhhhhhhhhhhhhhhh
+17 2:hhhhhhhhhhhhhhhhhh
+18 2:hhhhhhhhhhhhhhhhhh
+19 2:hhhhhhhhhhhhhhhhhh
+20 2:dhhhhhhhhhhhhhhhhd
+21 2:dhd 17:dhd
 [bun_top]
--5 13:HHHHHH
--4 12:HLLHHHHh
--3 12:HLHHHHhh
--2 12:HHHHHhhh
--1 13:hhhhhh
-0 13:RRRRRR
+-4 9:HHHH
+-3 8:HLHHHh
+-2 8:HHHHhh
+-1 9:hhhh
+0 9:RRRR
 [hair2_d_over]
-12 3:dHHdhhhhhhh.hhhhhhhhhhdHhd
-13 3:dHhd 25:dhhd
-14 3:dhd 26:dhd
-15 4:d 27:d
-[hair2_u_over]
-12 3:dHHhHHHHhHHHHhHHHHhHHHHhhd
-13 3:dHHhHHHHhHHHHhHHHHhHHHHhhd
-14 3:dHHhHHHHhHHHHhHHHHhHHHHhhd
-15 3:dhHhHHHHhHHHHhHHHHhHHHHhhd
-16 4:dhhHHHhHHHHhHHHHhHHHhhd
-17 5:dhhHhHHHHhHHHHhHHhhd
-18 6:dhhhhhhhhhhhhhhhhhhd
-[longtop_l]
-1 11:dddddddd
-2 9:ddHHHHHHHHdd
-3 8:dHHLLHHHHHHHHHd
-4 7:dHLLLLHHHHHHHHHHd
-5 6:dHHLLHHHHHHHHHHHHd
-6 5:dHHHHHHHHHHHHHHHHHHd
-7 4:dHHHHHHHHHHHHHHHHHHHhd
-8 4:dHHHHHHHHHHHHHHHHHHHHhhd
-9 3:dHHHHhHHHHHHHHHHHHHHHHhhd
-10 3:dHHhhHHHhHHHHHHHHHHHHHhhhd
-11 3:dHHhHHHhHHhHHHHHHHHHHHhhd
-12 4:dhhhhhhhhhHHHHHHHHHHhhd
-13 12:hHHHHHHHHHHHhhd
-14 12:hHH 15:HHH 18:HHHHHHhhd
-15 12:hHH 15:HHH 18:HHHHHHhhd
-16 12:hHH 15:hHH 18:HHHHHHhhd
-17 12:hHHH 16:HH 18:HHHHHHhhd
-[hair1_l_over]
-18 16:hHHHHHHHHhhd
-19 16:hHHHHHHHHhhd
-20 16:hHHHHHHHHhhd
-21 16:hHHHHHHHHhhd
-22 16:hHHHHHHHHhhd
-[hair1_l_under]
-23 17:hhhhhhhhhhd
-24 17:hhhhhhhhhhd
-25 17:hhhhhhhhhhd
-26 17:hhhhhhhhhhd
-27 17:hhhhhhhhhhd
-28 17:hhhhhhhhhhd
-29 17:hhhhhhhhhhd
-30 17:hhhhhhhhhhd
-31 17:hhhhhhhhhhd
-32 17:d.dd.d.dd
-[hair2_l_over]
-18 17:hhHHHhhd
-19 18:dhhhd
-[bun_side]
--3 21:HHHH
--2 20:HLLHHh
--1 20:HLHHHhh
-0 20:HHHHhhh
-1 21:hhhhh
-2 21:RRR
-[body_u]
-4 11:SSSSSSSSSS
-5 9:SSSSSSSSSSSSSS
-6 8:SSSSSSSSSSSSSSSs
-7 7:SSSSSSSSSSSSSSSSSs
-8 6:SSSSSSSSSSSSSSSSSSss
-9 6:SSSSSSSSSSSSSSSSSSss
-10 5:SSSSSSSSSSSSSSSSSSSSss
-11 5:SSSSSSSSSSSSSSSSSSSSss
-12 5:SSSSSSSSSSSSSSSSSSSSss
-13 4:sSSSSSSSSSSSSSSSSSSSSsss
-14 4:sSSSSSSSSSSSSSSSSSSSSsss
-15 4:sSSSSSSSSSSSSSSSSSSSSsss
-16 4:sSSSSSSSSSSSSSSSSSSSSsss
-17 5:SSSSSSSSSSSSSSSSSSSSss
-18 6:SSSSSSSSSSSSSSSSSSss
-19 6:SSSSSSSSSSSSSSSSSSss
-20 7:SSSSSSSSSSSSSSSSss
-21 9:SSSSSSSSSSSSss
-22 11:SSSSSSSSss
-23 13:Sssss
-24 7:U 8:UUTTTTTTTTTTTTTt 24:t
-25 6:UT 8:UTTTTTTTTTTTTTTt 24:tt
-26 5:UTT 8:TTTTTTTTTTTTTTTt 24:ttt
-27 5:UTT 8:o 9:TTTTTTTTTTTTTt 23:o 24:Ttt
-28 5:UTT 8:o 9:TTTTTTtTTTTTTt 23:o 24:Ttt
-29 5:ttt 8:o 9:TTTTTTtTTTTTTt 23:o 24:ttt
-30 5:SSs 8:o 9:TTTTTTtTTTTTTt 23:o 24:SSs
-31 5:SSs 8:o 9:TTTTTTtTTTTTTt 23:o 24:SSs
-32 5:SSs 8:o 9:tTTTTTtTTTTTtt 23:o 24:SSs
-33 5:SSs 8:o 9:tttttttttttttt 23:o 24:SSs
-34 5:sss 9:QPPPPPPPPPPPPp 24:sss
-35 9:QPPPPPPPPPPPPp
-[body_l]
-4 11:SSSSSSSSSS
-5 9:SSSSSSSSSSSSSS
-6 8:SSSSSSSSSSSSSSSs
-7 7:SSSSSSSSSSSSSSSSSs
-8 6:SSSSSSSSSSSSSSSSSSss
-9 6:SSSSSSSSSSSSSSSSSSss
-10 5:SSSSSSSSSSSSSSSSSSSss
-11 5:SSSSSSSSSSSSSSSSSSSss
-12 5:sssssssssssssssssssss
-13 5:SSooooSSSSSSSSSSSSSss
-14 5:SSSEiSSSSSSSSSSSSSSss
-15 5:SSSEESSSSSSSSSSSSSSss
-16 4:sSSSeESSSSSSSSSSSSSSss
-17 5:SSSeeSSSSSSSSSSSSSSss
-18 5:SSSSSrrSSSSSSSSSSSss
-19 5:SmSSSSSSSSSSSSSSSSss
-20 6:SSSSSSSSSSSSSSSSss
-21 8:SSSSSSSSSSSSss
-22 10:ssssssssss
-23 13:sssss
-24 10:UTTTTTTTTTTt
-25 10:UTTTTTTTTTTt
-26 10:UTTTTTTTTTTt
-27 10:UTTTTTTTTTTt
-28 10:UTTTTTTTTTTt
-29 10:UTTTTTTTTTTt
-30 10:UTTTTTTTTTTt
-31 10:UTTTTTTTTTTt
-32 10:ttttttttttTt
-33 10:tttttttttttt
-34 11:QPPPPPPPPp
-35 11:QPPPPPPPPp
-[arm_l]
-25 13:UTTTt
-26 12:oUTTTto
-27 12:oUTTTto
-28 12:oUTTTto
-29 12:ottttto
-30 12:oSSSSso
-31 12:oSSSSso
-32 12:ossssso
-33 13:ooooo
-[legs_l0]
-36 12:QPPPPPp
-37 12:QPPPPPp
-38 12:QPPPPPp
-39 12:QPPPPPp
-40 10:BBBBBBBBn
-41 10:nnnnnnnnn
-[legs_l1]
-36 11:QPPPp 17:PPPPp
-37 10:QPPPp 18:PPPPp
-38 9:QPPPp 19:PPPPp
-39 8:QPPPp 20:PPPPp
-40 6:BBBBBBn 20:BBBBBn
-41 6:nnnnnnn 20:nnnnnn
-[legs_l2]
-36 12:QPPPPPp
-37 11:QPPPp 16:pPPPp
-38 10:QPPPp 17:pPPPp
-39 9:QPPPp 18:pPPPp
-40 7:BBBBBBn 18:BBBBBn
-41 7:nnnnnnn 18:nnnnnn
+8 2:dHd 17:dHd
+9 2:dd 18:dd
 [cap_d]
-1 11:CCCCCCCCCC
-2 9:CVVCCCCCCCCCcc
-3 8:CVVVCCCwwCCCCCcc
-4 7:CVVCCCCwwCCCCCCCcc
-5 6:CCCCCCCCCCCCCCCCCCcc
-6 5:CCCCCCCCCCCCCCCCCCCCcc
-7 5:CCCCCCCCCCCCCCCCCCCCcc
-8 4:cccccccccccccccccccccccc
-9 4:VVVVVVVVVVVVVVVVVVVVVVVV
-10 5:cccccccccccccccccccccc
-[cap_u]
-1 11:CCCCCCCCCC
-2 9:CVVCCCCCCCCCcc
-3 8:CVVVCCCCCCCCCCcc
-4 7:CVVCCCCCCCCCCCCCcc
-5 6:CCCCCCCCCCCCCCCCCCcc
-6 5:CCCCCCCCCCCCCCCCCCCCcc
-7 5:CCCCCCCCCCCCCCCCCCCCcc
-8 4:cccccccccccccccccccccccc
-9 13:ccccc
-[cap_l]
-1 11:CCCCCCCCCC
-2 9:CVVCCCCCCCCCcc
-3 8:CVVVCCCwwCCCCCcc
-4 7:CVVCCCCwwCCCCCCCcc
-5 6:CCCCCCCCCCCCCCCCCCcc
-6 5:CCCCCCCCCCCCCCCCCCCCcc
-7 5:CCCCCCCCCCCCCCCCCCCCcc
-8 4:cccccccccccccccccccccccc
-9 1:VVVVVVVVVVc
-10 1:ccccccccc
-[ribbon]
-0 18:CCc 24:CCc
-1 17:CVCCc 23:CVCCc
-2 17:CVCCCcVcCCCc
-3 18:ccc 22:cc 24:ccc
-4 21:Cc 24:Cc
-5 21:c 25:c
-[beanie]
--4 14:wwww
--3 13:wwwwww
--2 14:wwww
--1 11:CCCCCCCCCC
-0 9:CVVCcCCcCCcCCc
-1 8:CVVCcCCcCCcCCcCc
-2 7:CVCCcCCcCCcCCcCCcc
-3 6:CVCCcCCcCCcCCcCCcCcc
-4 5:CCCCcCCcCCcCCcCCcCCcCc
-5 5:CCCCcCCcCCcCCcCCcCCcCc
-6 4:CCCCCcCCcCCcCCcCCcCCcCcc
-7 4:wwwwwwwwwwwwwwwwwwwwwwww
-8 4:wwwwwwwwwwwwwwwwwwwwwwww
-9 4:WWWWWWWWWWWWWWWWWWWWWWWW
+1 7:CCCCCCCC
+2 5:CVVCCwwCCCcc
+3 4:CVVCCCwwCCCCcc
+4 3:CCCCCCCCCCCCCCcc
+5 3:cccccccccccccccc
+6 2:VVVVVVVVVVVVVVVVVV
 [crown]
--3 10:V 15:VV 21:V
--2 10:CC 15:CC 20:CC
--1 10:CVC 14:CVCc 19:CCc
-0 10:CVCCCCCCCCCc
-1 10:CVCgCCRRCgCc
-2 10:cccccccccccc
+-2 7:V 10:VV 14:V
+-1 7:CC 10:CC 13:CC
+0 7:CVCCCCCc
+1 7:CgCRRCgc
+2 7:cccccccc
+[ribbon]
+0 12:CC 16:CC
+1 11:CVCcCVCc
+2 12:cc 14:Cc 16:cc
+3 14:c 16:c
+[beanie]
+-3 9:wwww
+-2 9:wwww
+-1 7:CCCCCCCC
+0 5:CVCcCCcCCcCc
+1 4:CVCcCCcCCcCCcc
+2 3:CCCcCCcCCcCCcCcc
+3 3:CCCcCCcCCcCCcCcc
+4 3:wwwwwwwwwwwwwwww
+5 3:WWWWWWWWWWWWWWWW
 [flower]
-7 24:ww
-8 22:wwYYww
-9 22:WwYYwW
-10 24:WW
+4 16:ww
+5 15:wYYw
+6 16:WW
 [glasses_d]
-13 8:kkkkk 19:kkkkk
-14 8:k 12:kkkkkkkk 23:k
-15 8:k 12:k 19:k 23:k
-16 8:k 12:k 19:k 23:k
-17 8:kkkkk 19:kkkkk
+8 5:kkkk 13:kkkk
+9 5:k 8:kkkkkk 16:k
+10 5:k 8:k 13:k 16:k
+11 5:kkkk 13:kkkk
+[legs_d0]
+24 7:QPp 12:PPp
+25 7:QPp 12:PPp
+26 6:BBBn 12:BBBn
+27 6:nnnn 12:nnnn
+[legs_d1]
+24 7:QPp 12:PPp
+25 6:BBBn 12:PPp
+26 6:nnnn 12:BBBn
+27 12:nnnn
+[legs_d2]
+24 7:QPp 12:PPp
+25 7:QPp 12:BBBn
+26 6:BBBn 12:nnnn
+27 6:nnnn
+[body_u]
+3 7:SSSSSSSS
+4 5:SSSSSSSSSSss
+5 4:SSSSSSSSSSSSss
+6 4:SSSSSSSSSSSSss
+7 4:SSSSSSSSSSSSss
+8 3:sSSSSSSSSSSSSSss
+9 3:sSSSSSSSSSSSSSss
+10 3:sSSSSSSSSSSSSSss
+11 4:SSSSSSSSSSSSss
+12 4:SSSSSSSSSSSSss
+13 5:SSSSSSSSSSss
+14 6:SSSSSSSSss
+15 8:SSss
+16 9:Ssss
+17 5:U 6:UTTTTTTTTt 16:t
+18 4:UT 6:TTTTTTTTTt 16:tt
+19 4:UT 6:o 7:TTTtTTTt 15:o 16:Tt
+20 4:tt 6:o 7:TTTtTTTt 15:o 16:tt
+21 4:SS 6:o 7:TTTtTTTt 15:o 16:Ss
+22 4:Ss 6:o 7:tttttttt 15:o 16:ss
+23 7:QPPPPPPp
+[body_l]
+3 7:SSSSSSSS
+4 5:SSSSSSSSSSss
+5 4:SSSSSSSSSSSSss
+6 4:SSSSSSSSSSSSss
+7 4:ssssssssssssss
+8 4:SooSSSSSSSSSss
+9 3:sSEiSSSSSSSSSss
+10 4:SeESSSSSSSSSss
+11 4:SSSrSSSSSSSSss
+12 4:SmSSSSSSSSSSss
+13 5:SSSSSSSSSSss
+14 6:SSSSSSSSss
+15 8:ssss
+16 9:ssss
+17 7:UTTTTTTt
+18 7:UTTTTTTt
+19 7:UTTTTTTt
+20 7:UTTTTTTt
+21 7:ttttttTt
+22 7:tttttttt
+23 8:QPPPPPp
+[arm_l]
+18 9:UTt
+19 8:oUTto
+20 8:ottto
+21 8:oSSso
+22 8:osSso
+23 9:ooo
+[legs_l0]
+24 9:QPPp
+25 9:QPPp
+26 7:BBBBBn
+27 7:nnnnnn
+[legs_l1]
+24 8:QPp 12:PPp
+25 7:QPp 13:PPp
+26 5:BBBBn 13:BBBn
+27 5:nnnnn 13:nnnn
+[legs_l2]
+24 9:QPPp
+25 8:QPp 11:pPp
+26 6:BBBBn 11:BBBn
+27 6:nnnnn 11:nnnn
+[hair0_l_over]
+0 .......d...dd.........
+1 ......dHd.dHHd........
+2 ....ddHHHdHHHHHdd.....
+3 ...dHHLLHHHHHHHHHd....
+4 ..dHHLLHHHHHHHHHHhd...
+5 ..dHHHHHHHHHHHHHHHhd..
+6 ..dhHHhHHHHHhHHHHhhd..
+7 ...dhh.hHHHHHHHHHhhd..
+8 9:hH 11:Ss 13:HHHHhd
+9 9:hH 11:ss 13:HHHhhd
+10 10:h 13:HHhhd
+11 13:hHhd
+12 14:dhd
+[hair0_u_over]
+0 .......d...dd.........
+1 ......dHd.dHHd........
+2 ....ddHHHdHHHHHdd.....
+3 ...dHHLLHHHHHHHHHd....
+4 ..dHHLLHHHHHHHHHHhd...
+5 ..dHHHHHHHHHHHHHHHhd..
+6 ..dhHHhHHHHHhHHHHhhd..
+7 2:dhHHhHHHhHHHHhHhhd
+8 2:dhHHhHHHhHHHHhHhhd
+9 2:dhHhhHHhhHHHhhHhhd
+10 3:dhHhHHhHHHhHHhhd
+11 4:dhhHhhHHhhHhhd
+12 5:dh.dhhd.dhd
+[longtop_l]
+1 7:dddddddd
+2 5:ddHHHHHHHHdd
+3 4:dHLLHHHHHHHHhd
+4 3:dHLLHHHHHHHHHHhd
+5 2:dHHHHHHHHHHHHHHHhd
+6 2:dHHhHHHHhHHHHhHHhd
+7 3:dhhhhhHHHHHHHHHhd
+8 9:hHHHHHHHhd
+9 9:hHHHHHHHhd
+10 9:hHHHHHHHhd
+11 9:hHHHHHHHhd
+12 10:hHHHHHHhd
+[hair1_l_over]
+13 11:hHHHHhd
+14 11:hHHHHhd
+15 11:hHHHHhd
+16 11:hHHHHhd
+[hair1_l_under]
+17 12:hhhhhd
+18 12:hhhhhd
+19 12:hhhhhd
+20 12:hhhhhd
+21 12:hhhhhd
+22 12:d.d.d
+[hair2_l_over]
+13 11:dhhd
+[bun_side]
+-3 13:HHHH
+-2 12:HLHHHh
+-1 12:HHHHhh
+0 13:hhhh
+1 13:RRR
+[hair1_u_over]
+7 2:dHHhHHHhHHHHhHHHhd
+8 2:dHHhHHHhHHHHhHHHhd
+9 2:dHHhHHHhHHHHhHHHhd
+10 2:dHHhHHHhHHHHhHHHhd
+11 2:dHHhHHHhHHHHhHHHhd
+12 2:dHHhHHHhHHHHhHHHhd
+13 2:dHHhHHHhHHHHhHHHhd
+14 2:dHHhHHHhHHHHhHHHhd
+15 2:dHHhHHHhHHHHhHHHhd
+16 2:dhHhHHHhHHHHhHHHhd
+17 2:dhHhHHHhHHHHhHHHhd
+18 2:dhHhHHHhHHHHhHHhhd
+19 2:dhhhHHhhhHHhhHHhhd
+20 2:dhhdhhhdhhhhdhhhhd
+21 3:d..d...d....d
+[hair2_u_over]
+7 2:dHHhHHHhHHHHhHHHhd
+8 2:dHHhHHHhHHHHhHHHhd
+9 2:dHHhHHHhHHHHhHHHhd
+10 3:dhHhHHHhHHHHhHhd
+11 4:dhhhhhhhhhhhhd
+[cap_u]
+1 7:CCCCCCCC
+2 5:CVVCCCCCCCcc
+3 4:CVVCCCCCCCCCcc
+4 3:CCCCCCCCCCCCCCcc
+5 3:cccccccccccccccc
+[cap_l]
+1 7:CCCCCCCC
+2 5:CVVCCwwCCCcc
+3 4:CVVCCCwwCCCCcc
+4 3:CCCCCCCCCCCCCCcc
+5 3:cccccccccccccccc
+6 0:VVVVVVVc
+7 0:cccccc
 [glasses_l]
-13 6:kkkkk
-14 6:k 10:kkkkkk
-15 6:k 10:k
-16 6:k 10:k
-17 6:kkkkk
+8 4:kkkk
+9 4:k 7:kkkkk
+10 4:k 7:k
+11 4:kkkk
 `;
 const C4T=(()=>{const T={};let cur=null;for(const ln of C4TPL.split('\n')){const l=ln.trim();if(!l)continue;const m=l.match(/^\[(.+)\]$/);if(m){cur=T[m[1]]={};continue}
  const p=l.split(/\s+/),r=+p[0],row=cur[r]||(cur[r]={});for(const s of p.slice(1)){let c=0,st=s;const i=s.indexOf(':');if(i>0){c=+s.slice(0,i);st=s.slice(i+1)}for(let k=0;k<st.length;k++)if(st[k]!=='.')row[c+k]=st[k]}}return T})();
@@ -1307,7 +1180,7 @@ function draw(t){
  const MWp=MW*T,MHp=MH*T;let S_,cx,cy;
  if(mode==='tview'&&TVW){S_=Math.min(w/MWp,(h-60)/MHp);cx=-(w/S_-MWp)/2;cy=-(h/S_-MHp)/2-20/S_}
  else if(mode==='title'){S_=Math.max(2,Math.round(Math.min(w/(T*22),h/(T*13))));const range=Math.max(1,MWp-w/S_);const p=(t*.012)%(2*range);cx=p<range?p:2*range-p;cy=clamp(T*3,0,Math.max(0,MHp-h/S_))}
- else{S_=Math.max(2,Math.round(Math.min(w/(T*18),h/(T*12))));const vw=w/S_,vh=h/S_;cx=vw>=MWp?-(vw-MWp)/2:clamp(P.x-vw/2,0,MWp-vw);cy=vh>=MHp?-(vh-MHp)/2:clamp(P.y-8-vh/2,0,MHp-vh)}
+ else{S_=Math.max(2,Math.round(Math.min(w/(T*22),h/(T*15))));const vw=w/S_,vh=h/S_;cx=vw>=MWp?-(vw-MWp)/2:clamp(P.x-vw/2,0,MWp-vw);cy=vh>=MHp?-(vh-MHp)/2:clamp(P.y-8-vh/2,0,MHp-vh)}
  V.S=S_;V.cx=cx;V.cy=cy;V.w=w;V.h=h;
  ctx.drawImage(mapC,-cx*S_,-cy*S_,MWp*S_,MHp*S_);
  ctx.fillStyle='rgba(255,255,255,.75)';const ph=Math.floor(t/400);
