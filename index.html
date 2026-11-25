@@ -1338,32 +1338,34 @@ function hat25(x,id,dir,o){const R=(c,a,b,w=1,h=1)=>{x.fillStyle=c;x.fillRect(a,
   else if(side){R(k,8,14+o,7,1);R(k,8,21+o,7,1);R(k,14,15+o,1,6);R(k,15,17+o,9,1)}}}
 
 /* ===== map ===== */
-const MW=72,MH=54,T=16;
+const MW=104,MH=78,T=16;
 let tiles=[],doors=[],houses=[],forestSpots=[],plates=[],sparks=[],mapC=null;
 const BLK=new Set(['t','w','B','h']);
 const isBlocked=(tx,ty)=>tx<0||ty<0||tx>=MW||ty>=MH||BLK.has(tiles[ty][tx]);
-const HX=[4,8,16,20,24,28,39,43,47,51,61,65].sort((a,b)=>Math.abs(a+1.5-36)-Math.abs(b+1.5-36)),HY=[26,32,38,44];
-const WELL=[40,13],BRIDGES=[[13,22],[35,22],[58,22]];
+const HX=[4,8,12,23,27,31,35,39,43,47,56,60,64,68,72,76,80,90,94,98].sort((a,b)=>Math.abs(a+1.5-52)-Math.abs(b+1.5-52)),HY=[37,44,51,58];
+const WELL=[56,17],BRIDGES=[[19,32],[51,32],[86,32]];
 const BUILD=[
- {type:'library',x:20,y:5,w:5,h:4,door:[22,9],label:'마을 도서관',roof:'#4a7fd4',wall:'#f4e9d1'},
- {type:'mission',x:30,y:7,w:3,h:2,door:[31,9],label:'미션 게시판'},
- {type:'shop',x:44,y:5,w:5,h:4,door:[46,9],label:'잡화점',roof:'#e05a47',wall:'#fff3dc'},
- {type:'mayor',x:52,y:11,w:4,h:3,door:[53,14],label:'이장실',roof:'#58aa55',wall:'#f4e9d1'}];
+ {type:'library',x:34,y:8,w:5,h:4,door:[36,12],label:'마을 도서관',roof:'#4a7fd4',wall:'#f4e9d1'},
+ {type:'mission',x:46,y:10,w:3,h:2,door:[47,12],label:'미션 게시판'},
+ {type:'shop',x:60,y:8,w:5,h:4,door:[62,12],label:'잡화점',roof:'#e05a47',wall:'#fff3dc'},
+ {type:'mayor',x:70,y:15,w:4,h:3,door:[71,18],label:'이장실',roof:'#58aa55',wall:'#f4e9d1'}];
 function buildMap(){
  tiles=[];const rr=mulberry(7);
  for(let y=0;y<MH;y++){tiles[y]=[];for(let x=0;x<MW;x++)tiles[y][x]='g'}
  const set=(x,y,v)=>{if(x>=0&&y>=0&&x<MW&&y<MH)tiles[y][x]=v};
  const rect=(x,y,w,h,v)=>{for(let j=y;j<y+h;j++)for(let i=x;i<x+w;i++)set(i,j,v)};
  rect(0,0,MW,2,'t');rect(0,MH-2,MW,2,'t');rect(0,0,2,MH,'t');rect(MW-2,0,2,MH,'t');
- for(let y=2;y<20;y++)for(let x=2;x<18;x++)if(rr()<.3)set(x,y,'t');
- rect(5,7,6,4,'g');
- for(let y=2;y<18;y++)for(let x=56;x<MW-2;x++)if(rr()<.12)set(x,y,'t');
- rect(59,4,8,6,'g');rect(60,5,6,4,'w');
+ for(let y=2;y<30;y++)for(let x=2;x<27;x++)if(rr()<.3)set(x,y,'t');
+ rect(7,10,8,5,'g');rect(9,20,6,4,'g');
+ for(let y=2;y<29;y++)for(let x=80;x<MW-2;x++)if(rr()<.12)set(x,y,'t');
+ rect(87,6,12,8,'g');rect(88,7,10,6,'w');
  for(let x=2;x<MW-2;x++)if(rr()<.18)set(x,2,'t');
- rect(2,22,MW-4,2,'w');for(const [bx,by] of BRIDGES)rect(bx,by,2,2,'b');
- rect(11,9,44,1,'p');rect(30,10,16,5,'p');rect(46,14,14,1,'p');
- rect(35,15,2,7,'p');rect(35,24,2,MH-27,'p');rect(13,10,2,12,'p');rect(58,15,2,7,'p');
- rect(13,24,2,5,'p');rect(58,24,2,5,'p');
+ for(let y=63;y<MH-2;y++)for(let x=2;x<MW-2;x++)if(rr()<.08)set(x,y,'t');
+ rect(7,64,12,8,'g');rect(8,65,10,6,'w');rect(70,65,16,8,'g');
+ rect(2,32,MW-4,2,'w');for(const [bx,by] of BRIDGES)rect(bx,by,2,2,'b');
+ rect(16,12,66,1,'p');rect(44,13,22,6,'p');rect(66,18,22,1,'p');
+ rect(51,19,2,13,'p');rect(51,34,2,28,'p');rect(19,13,2,19,'p');rect(86,19,2,13,'p');
+ rect(19,34,2,6,'p');rect(86,34,2,6,'p');rect(15,12,1,6,'p');
  for(const yy of HY)rect(3,yy+3,MW-6,1,'p');
  for(const b of BUILD){rect(b.x,b.y,b.w,b.h,'B')}
  set(WELL[0],WELL[1],'B');
@@ -1373,11 +1375,12 @@ function buildMap(){
  list.forEach((st,i)=>{if(i>=HX.length*HY.length)return;const hx=HX[i%HX.length],hy=HY[Math.floor(i/HX.length)];
   rect(hx,hy,3,3,'h');const d={type:'house',owner:st.no,x:(hx+1)*T+8,y:(hy+3)*T+10,r:[hx*T,hy*T,(hx+3)*T,(hy+3)*T]};doors.push(d);
   houses.push({no:st.no,hx,hy,door:d,fx:hx*T+8,fy:(hy+3)*T+12});plates.push({x:(hx+1.5)*T,y:hy*T-2,t:'',k:'house',no:st.no})});
- for(let y=24;y<MH-2;y++)for(let x=2;x<MW-2;x++)if(tiles[y][x]==='g'&&rr()<.05)set(x,y,'f');
- for(let y=15;y<21;y++)for(let x=18;x<56;x++)if(tiles[y][x]==='g'&&rr()<.08)set(x,y,'f');
- for(let y=3;y<19;y++)for(let x=56;x<MW-2;x++)if(tiles[y][x]==='g'&&rr()<.1)set(x,y,'f');
- forestSpots=[];for(let y=2;y<20;y++)for(let x=2;x<18;x++)if(tiles[y][x]==='g')forestSpots.push([x,y]);
- for(let x=2;x<MW-2;x++){if(tiles[21][x]==='g')forestSpots.push([x,21])}
+ for(let y=34;y<MH-2;y++)for(let x=2;x<MW-2;x++)if(tiles[y][x]==='g'&&rr()<.05)set(x,y,'f');
+ for(let y=19;y<31;y++)for(let x=27;x<80;x++)if(tiles[y][x]==='g'&&rr()<.07)set(x,y,'f');
+ for(let y=3;y<29;y++)for(let x=80;x<MW-2;x++)if(tiles[y][x]==='g'&&rr()<.1)set(x,y,'f');
+ for(let y=65;y<73;y++)for(let x=70;x<86;x++)if(tiles[y][x]==='g'&&rr()<.35)set(x,y,'f');
+ forestSpots=[];for(let y=2;y<30;y++)for(let x=2;x<27;x++)if(tiles[y][x]==='g')forestSpots.push([x,y]);
+ for(let x=2;x<MW-2;x++){if(tiles[31][x]==='g')forestSpots.push([x,31])}
 }
 function makeNoise(seed){const P=new Float32Array(4096);const r=mulberry(seed);for(let i=0;i<4096;i++)P[i]=r();const h=(x,y)=>P[(Math.imul(x,73856093)^Math.imul(y,19349663))&4095];
  return (x,y,sc)=>{x/=sc;y/=sc;const xi=Math.floor(x),yi=Math.floor(y),xf=x-xi,yf=y-yi,u=xf*xf*(3-2*xf),v=yf*yf*(3-2*yf),a=h(xi,yi),b=h(xi+1,yi),c=h(xi,yi+1),d=h(xi+1,yi+1);return a+(b-a)*u+(c-a)*v+(a-b-c+d)*u*v}}
@@ -1492,7 +1495,7 @@ const ME=()=>S&&S.students.find(s=>s.no===ME_NO);
 const P={x:0,y:0,dir:'d',fr:0,ft:0,target:null,stuck:0,bubble:null,moving:false};
 const pet={x:0,y:0,flip:false};
 let cols=[],friends=[],flags={mission:false,library:false},flagT=0,secT=0,talkT=6,warned=false,useAcc=0,useT=0,pollT=0,sendT=0,wasMoving=false;
-const tori={x:38*T+8,y:11*T+12,hx:38*T+8,hy:11*T+12,tx:null,ty:null,dir:'d',fr:0,ft:0,moving:false,live:false,bubble:null};
+const tori={x:54*T+8,y:15*T+12,hx:54*T+8,hy:15*T+12,tx:null,ty:null,dir:'d',fr:0,ft:0,moving:false,live:false,bubble:null};
 let TVW=false;
 const myNo=()=>ROLE==='teacher'?0:ME_NO;
 function guideHome(){tori.live=false;tori.tx=null;tori.x=tori.hx;tori.y=tori.hy;tori.dir='d';tori.moving=false}
@@ -1606,7 +1609,7 @@ function draw(t){
  const MWp=MW*T,MHp=MH*T;let S_,cx,cy;
  if(mode==='tview'&&TVW){S_=Math.min(w/MWp,(h-60)/MHp);cx=-(w/S_-MWp)/2;cy=-(h/S_-MHp)/2-20/S_}
  else if(mode==='title'){S_=Math.max(2,Math.round(Math.min(w/(T*22),h/(T*13))));const range=Math.max(1,MWp-w/S_);const p=(t*.012)%(2*range);cx=p<range?p:2*range-p;cy=clamp(T*3,0,Math.max(0,MHp-h/S_))}
- else{S_=Math.max(2,Math.round(Math.min(w/(T*30),h/(T*20))*2)/2);const vw=w/S_,vh=h/S_;cx=vw>=MWp?-(vw-MWp)/2:clamp(P.x-vw/2,0,MWp-vw);cy=vh>=MHp?-(vh-MHp)/2:clamp(P.y-8-vh/2,0,MHp-vh)}
+ else{S_=Math.max(1.5,Math.round(Math.min(w/(T*36),h/(T*24))*2)/2);const vw=w/S_,vh=h/S_;cx=vw>=MWp?-(vw-MWp)/2:clamp(P.x-vw/2,0,MWp-vw);cy=vh>=MHp?-(vh-MHp)/2:clamp(P.y-8-vh/2,0,MHp-vh)}
  V.S=S_;V.cx=cx;V.cy=cy;V.w=w;V.h=h;
  ctx.drawImage(mapC,-cx*S_,-cy*S_,MWp*S_,MHp*S_);
  ctx.fillStyle='rgba(255,255,255,.75)';const ph=Math.floor(t/400);
@@ -1756,7 +1759,7 @@ async function crDone(){const nick=$('#crNick').value.trim(),m=$('#crMsg');
 
 /* ===== village enter / doors ===== */
 function enterVillage(tutorial){mode='village';document.body.className='village';show('sVillage');buildMap();renderMap();const me=ME();
- const h=houses.find(x=>x.no===me.no);P.x=h?h.door.x:36*T;P.y=h?h.door.y+4:12*T;P.dir='d';P.target=null;P.bubble=null;pet.x=P.x-14;pet.y=P.y;warned=false;useAcc=0;
+ const h=houses.find(x=>x.no===me.no);P.x=h?h.door.x:52*T;P.y=h?h.door.y+4:16*T;P.dir='d';P.target=null;P.bubble=null;pet.x=P.x-14;pet.y=P.y;warned=false;useAcc=0;
  spawnCols();friends=[];makeFriends(false);aLabel='x';updA(null);updHud();computeFlags();lockMsgKey='?';checkLock();rtJoin();
  const lines=[];
  if(tutorial)lines.push(`안녕, ${me.nick}! 나는 우리 마을 이장 ${jo(guideName(),'이야','야')}. 마을 안내를 맡고 있어.`,'왼쪽 아래 조이스틱을 끌거나, 방향키를 누르거나, 가고 싶은 곳을 누르면 걸어갈 수 있어. 건물 앞에 서면 오른쪽 아래 버튼으로 들어갈 수 있어.','미션 게시판에서 선생님이 낸 미션을 하고, 도서관에서 계기교육 이야기를 읽어 봐.','칭찬과 미션으로 모은 코인은 잡화점에서 가구, 옷, 씨앗을 사는 데 써.','숲에 반짝이는 보물이 떨어져 있으면 주워 봐. 무엇이 나올지는 주워 봐야 알아!','입주 선물로 코인 100개랑 침대, 의자, 토마토 씨앗을 넣어 뒀어. 먼저 우리 집에 들어가 봐!');
