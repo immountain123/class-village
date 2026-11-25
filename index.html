@@ -116,8 +116,8 @@ body.village.tvw #mini{display:none}
 .sw.on{outline:3px solid var(--coin);outline-offset:2px}
 .crwrap{display:grid;grid-template-columns:minmax(0,180px) minmax(0,1fr);gap:18px;align-items:start}
 .crprev{background:#bfe6a8;border:3px solid var(--edge);display:flex;justify-content:center;gap:6px;padding:14px 6px}
-.crprev img{width:44px;height:76px}
-.crprev img.big{width:66px;height:114px}
+.crprev img{width:44px;height:70px}
+.crprev img.big{width:66px;height:105px}
 .crrow{margin-bottom:12px}
 .crrow>span{display:block;font-size:15px;color:var(--muted);margin-bottom:4px}
 @media(max-width:560px){.crwrap{grid-template-columns:1fr}}
@@ -182,7 +182,7 @@ body.tv #hud{display:none}
 .sgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
 .scard{font:inherit;color:var(--ink);background:var(--paper);border:3px solid var(--edge);box-shadow:4px 4px 0 var(--edge);padding:10px;display:grid;justify-items:center;gap:2px;cursor:pointer;text-align:center}
 .scard.on{background:#fff0b8;outline:4px solid var(--coin);outline-offset:-1px}
-.scard>img{width:44px;height:76px}
+.scard>img{width:44px;height:70px}
 .scard.ghost>img{opacity:.35}
 .scard .no{font-size:14px;color:var(--muted)}
 .scard b{font-weight:400;font-size:18px}
@@ -520,7 +520,7 @@ function petSpr(t){return sprHi('pet_'+t,32,28,x=>{const R=(c,a,b,w=1,h=1)=>{x.f
 const C25W=40,C25H=60;
 function ellCc(x,cx,cy,rx,ry,base,hi,sd,dk,maxY){for(let yy=Math.floor(cy-ry);yy<=Math.min(maxY,Math.ceil(cy+ry));yy++)for(let xx=Math.floor(cx-rx);xx<=Math.ceil(cx+rx);xx++){const nx=(xx+.5-cx)/rx,ny=(yy+.5-cy)/ry,d=nx*nx+ny*ny;if(d>1)continue;const l=nx*.55+ny*.8;x.fillStyle=(dk&&l>.68)?dk:l>.28?sd:(l<-.42&&d<.8)?hi:base;x.fillRect(xx,yy,1,1)}}
 /* ===== v5 2D characters: hand-placed pixel templates (22x38 art px, 1 art px = 1 world px), 8 hairstyles x 7 outfits ===== */
-const C4W=22,C4H=38,C4OY=4,C4RES=1;
+const C4W=22,C4H=35,C4OY=4,C4RES=1,C4HIP=29;
 const C4TPL=`[head_d]
 4 7:SSSSSSSS
 5 6:SSSSSSSSSs
@@ -558,53 +558,41 @@ const C4TPL=`[head_d]
 13 9:ssss
 14 9:ssss
 [legs_d0]
+25 7:QPp 12:PPp
 26 7:QPp 12:PPp
 27 7:QPp 12:PPp
-28 7:QPp 12:PPp
-29 7:QPp 12:PPp
-30 7:QPp 12:PPp
-31 5:BBBBn 12:BBBBn
-32 5:nnnnn 12:nnnnn
+28 5:BBBBn 12:BBBBn
+29 5:nnnnn 12:nnnnn
 [legs_d1]
+25 7:QPp 12:PPp
 26 7:QPp 12:PPp
-27 7:QPp 12:PPp
-28 7:QPp 12:PPp
-29 7:QPp 12:PPp
-30 5:BBBBn 12:PPp
-31 5:nnnnn 12:BBBBn
-32 12:nnnnn
+27 5:BBBBn 12:PPp
+28 5:nnnnn 12:BBBBn
+29 12:nnnnn
 [legs_d2]
+25 7:QPp 12:PPp
 26 7:QPp 12:PPp
-27 7:QPp 12:PPp
-28 7:QPp 12:PPp
-29 7:QPp 12:PPp
-30 7:QPp 12:BBBBn
-31 5:BBBBn 12:nnnnn
-32 5:nnnnn
+27 7:QPp 12:BBBBn
+28 5:BBBBn 12:nnnnn
+29 5:nnnnn
 [legs_l0]
+25 9:QPPp
 26 9:QPPp
 27 9:QPPp
-28 9:QPPp
-29 9:QPPp
-30 9:QPPp
-31 7:BBBBBn
-32 7:nnnnnn
+28 7:BBBBBn
+29 7:nnnnnn
 [legs_l1]
-26 9:QPPp
-27 8:QPp 12:PPp
-28 8:QPp 12:PPp
-29 7:QPp 13:PPp
-30 6:QPp 13:PPp
-31 4:BBBBn 13:BBBn
-32 4:nnnnn 13:nnnn
+25 9:QPPp
+26 8:QPp 12:PPp
+27 6:QPp 13:PPp
+28 4:BBBBn 13:BBBn
+29 4:nnnnn 13:nnnn
 [legs_l2]
+25 9:QPPp
 26 9:QPPp
-27 9:QPPp
-28 8:QPp 11:pPp
-29 8:QPp 12:pPp
-30 7:QPp 12:pPp
-31 5:BBBBn 12:BBBn
-32 5:nnnnn 12:nnnn
+27 7:QPp 12:pPp
+28 5:BBBBn 12:BBBn
+29 5:nnnnn 12:nnnn
 [o0_d]
 15 4:UUTTTossoTTTtt
 16 3:UTTTTTTooTTTTTtt
@@ -612,11 +600,10 @@ const C4TPL=`[head_d]
 18 3:UTT 6:o 7:TTTTTTTt 15:o 16:Ttt
 19 3:ttt 6:o 7:TTTTTTTt 15:o 16:ttt
 20 3:SSs 6:o 7:TTTTTTTt 15:o 16:SSs
-21 3:SSs 6:o 7:TTTTTTTt 15:o 16:SSs
-22 3:SSs 6:o 7:tttttttt 15:o 16:SSs
-23 3:sss 6:o 7:kkkYYkkk 15:o 16:sss
+21 3:SSs 6:o 7:tttttttt 15:o 16:SSs
+22 3:sss 6:o 7:kkkYYkkk 15:o 16:sss
+23 7:QPPPPPPp
 24 7:QPPPPPPp
-25 7:QPPPPPPp
 [o1_d]
 15 4:UUTtUssUtTTTtt
 16 3:UTTTtUttUtTTTTtt
@@ -624,11 +611,10 @@ const C4TPL=`[head_d]
 18 3:UTT 6:o 7:TTwTTwTt 15:o 16:Ttt
 19 3:UTT 6:o 7:TTTTTTTt 15:o 16:Ttt
 20 3:UTT 6:o 7:TttttttT 15:o 16:Ttt
-21 3:UTT 6:o 7:TtTTTTtt 15:o 16:Ttt
-22 3:ttt 6:o 7:TttttttT 15:o 16:ttt
-23 3:SSs 6:o 7:tttttttt 15:o 16:SSs
-24 3:sss 7:QPPPPPPp 16:sss
-25 7:QPPPPPPp
+21 3:ttt 6:o 7:TttttttT 15:o 16:ttt
+22 3:SSs 6:o 7:tttttttt 15:o 16:SSs
+23 3:sss 7:QPPPPPPp 16:sss
+24 7:QPPPPPPp
 [o2_d]
 15 4:UUTTTwsswTTTtt
 16 3:UTTTTTwwwwTTTTtt
@@ -636,12 +622,11 @@ const C4TPL=`[head_d]
 18 3:ttt 6:o 7:TTTTTTTt 15:o 16:ttt
 19 3:SSs 6:o 7:TTTTTTTt 15:o 16:SSs
 20 3:SSs 6:o 7:AAAAAAAA 15:o 16:SSs
-21 3:SSs 6:UTTTTTTTTt 16:SSs
-22 3:sss 6:UTTTTTTTTt 16:sss
-23 5:UTTTTTTTTTTt
-24 5:UTTtTTTTtTTt
-25 4:UTTtTTTTTTtTTt
-26 4:tttttttttttttt
+21 3:sss 6:UTTTTTTTTt 16:sss
+22 5:UTTTTTTTTTTt
+23 5:UTTtTTTTtTTt
+24 4:UTTtTTTTTTtTTt
+25 4:tttttttttttttt
 [o3_d]
 15 4:UUTTTossoTTTtt
 16 3:UTTTTTTooTTTTTtt
@@ -649,11 +634,10 @@ const C4TPL=`[head_d]
 18 3:UTT 6:o 7:TQTTTTPt 15:o 16:Ttt
 19 3:ttt 6:o 7:QPPPPPPp 15:o 16:ttt
 20 3:SSs 6:o 7:QPYPPYPp 15:o 16:SSs
-21 3:SSs 6:o 7:QPPPPPPp 15:o 16:SSs
-22 3:SSs 6:o 7:QPPppPPp 15:o 16:SSs
-23 3:sss 6:o 7:QPPPPPPp 15:o 16:sss
+21 3:SSs 6:o 7:QPPppPPp 15:o 16:SSs
+22 3:sss 6:o 7:QPPPPPPp 15:o 16:sss
+23 7:QPPPPPPp
 24 7:QPPPPPPp
-25 7:QPPPPPPp
 [o4_d]
 15 4:UUTTTwsswTTTtt
 16 3:UTTTTTwTTwTTTTtt
@@ -661,16 +645,13 @@ const C4TPL=`[head_d]
 18 3:UTT 6:o 7:TTTRRTTt 15:o 16:Ttt
 19 3:UTT 6:o 7:TTRtTRTt 15:o 16:Ttt
 20 3:AAA 6:o 7:tRttttRt 15:o 16:AAA
-21 3:ttt 6:oXXXXXXXXo 16:ttt
-22 3:SSs 6:XXXXXXXXXx 16:SSs
-23 3:sss 6:XXxXXXXxXx 16:sss
+21 3:SSs 6:XXXXXXXXXx 16:SSs
+22 3:sss 6:XXxXXXXxXx 16:sss
+23 5:XXXxXXXXxXXx
 24 5:XXXxXXXXxXXx
-25 5:XXXxXXXXxXXx
+25 4:XXXXxXXXXxXXXx
 26 4:XXXXxXXXXxXXXx
-27 4:XXXXxXXXXxXXXx
-28 4:XXXXxXXXXxXXXx
-29 4:XXXXxXXXXxXXXx
-30 4:xxxxxxxxxxxxxx
+27 4:xxxxxxxxxxxxxx
 [o5_d]
 15 4:UUTTTwsswTTTtt
 16 3:UwTTTTTwwTTTTTwt
@@ -678,11 +659,10 @@ const C4TPL=`[head_d]
 18 3:UwT 6:o 7:TTTwTTTt 15:o 16:Twt
 19 3:UwT 6:o 7:TTTwTTTt 15:o 16:Twt
 20 3:UwT 6:o 7:TTTwTTTt 15:o 16:Twt
-21 3:ttt 6:o 7:TTTwTTTt 15:o 16:ttt
-22 3:SSs 6:o 7:tttttttt 15:o 16:SSs
-23 3:sss 6:o 7:QPPPPPPp 15:o 16:sss
+21 3:SSs 6:o 7:tttttttt 15:o 16:SSs
+22 3:sss 6:o 7:QPPPPPPp 15:o 16:sss
+23 7:QPPPPPPp
 24 7:QPPPPPPp
-25 7:QPPPPPPp
 [o6_d]
 15 4:UUTTTwsswTTTtt
 16 3:UTTTTTwRRwTTTTtt
@@ -690,11 +670,10 @@ const C4TPL=`[head_d]
 18 3:UTT 6:o 7:TTTRRTTt 15:o 16:Ttt
 19 3:UTT 6:o 7:TTTRRTTt 15:o 16:Ttt
 20 3:ttt 6:o 7:TYTtTTYt 15:o 16:ttt
-21 3:SSs 6:o 7:TTTtTTTt 15:o 16:SSs
-22 3:SSs 6:o 7:tttttttt 15:o 16:SSs
-23 3:sss 7:QPPPPPPp 16:sss
+21 3:SSs 6:o 7:tttttttt 15:o 16:SSs
+22 3:sss 7:QPPPPPPp 16:sss
+23 7:QPPPPPPp
 24 7:QPPPPPPp
-25 7:QPPPPPPp
 [o0_l]
 15 7:UTTTTTTt
 16 7:UTTTTTTt
@@ -702,11 +681,10 @@ const C4TPL=`[head_d]
 18 7:UTTTTTTt
 19 7:UTTTTTTt
 20 7:UTTTTTTt
-21 7:UTTTTTTt
-22 7:tttttttt
-23 7:kkkkkkkk
+21 7:tttttttt
+22 7:kkkkkkkk
+23 7:QPPPPPPp
 24 7:QPPPPPPp
-25 7:QPPPPPPp
 [o1_l]
 14 12:UUt
 15 7:UTTTTUUt
@@ -715,11 +693,10 @@ const C4TPL=`[head_d]
 18 7:UTTTTTTt
 19 7:UTTTTTTt
 20 7:UTTTTTTt
-21 7:UTTTTTTt
+21 7:tttttttt
 22 7:tttttttt
-23 7:tttttttt
+23 7:QPPPPPPp
 24 7:QPPPPPPp
-25 7:QPPPPPPp
 [o2_l]
 15 7:wTTTTTTt
 16 7:UTTTTTTt
@@ -728,11 +705,10 @@ const C4TPL=`[head_d]
 19 7:UTTTTTTt
 20 7:AAAAAAAA
 21 6:UTTTTTTTTt
-22 6:UTTTTTTTTt
-23 5:UTTTTTTTTTTt
-24 5:UTTtTTTTtTTt
-25 5:UTTTTTTTTTTt
-26 5:tttttttttttt
+22 5:UTTTTTTTTTTt
+23 5:UTTtTTTTtTTt
+24 5:UTTTTTTTTTTt
+25 5:tttttttttttt
 [o3_l]
 15 7:UTTQTTTt
 16 7:UTTQTTTt
@@ -744,7 +720,6 @@ const C4TPL=`[head_d]
 22 7:QPPPPPPp
 23 7:QPPPPPPp
 24 7:QPPPPPPp
-25 7:QPPPPPPp
 [o4_l]
 15 7:wTTTTTTt
 16 7:UwTTTTTt
@@ -753,15 +728,12 @@ const C4TPL=`[head_d]
 19 7:UTTTTTTt
 20 7:tttttttt
 21 6:XXXXXXXXXx
-22 6:XXXXXXXXXx
-23 5:XXXXXXXXXXXx
+22 5:XXXXXXXXXXXx
+23 5:XXXxXXXXxXXx
 24 5:XXXxXXXXxXXx
 25 5:XXXxXXXXxXXx
 26 5:XXXxXXXXxXXx
-27 5:XXXxXXXXxXXx
-28 5:XXXxXXXXxXXx
-29 5:XXXxXXXXxXXx
-30 5:xxxxxxxxxxxx
+27 5:xxxxxxxxxxxx
 [o5_l]
 15 7:wTTTTTTt
 16 7:UTTTTTTt
@@ -769,11 +741,10 @@ const C4TPL=`[head_d]
 18 7:UTTTTTTt
 19 7:UTTTTTTt
 20 7:UTTTTTTt
-21 7:UTTTTTTt
-22 7:tttttttt
+21 7:tttttttt
+22 7:QPPPPPPp
 23 7:QPPPPPPp
 24 7:QPPPPPPp
-25 7:QPPPPPPp
 [o6_l]
 15 7:wTTTTTTt
 16 7:wRTTTTTt
@@ -781,49 +752,44 @@ const C4TPL=`[head_d]
 18 7:UTTTTTTt
 19 7:UTTTTTTt
 20 7:UTTTTTTt
-21 7:UTTTTTTt
-22 7:tttttttt
+21 7:tttttttt
+22 7:QPPPPPPp
 23 7:QPPPPPPp
 24 7:QPPPPPPp
-25 7:QPPPPPPp
 [arm_s]
 16 9:UTt
 17 8:oUTto
 18 8:oUTto
 19 8:ottto
 20 8:oSSso
-21 8:oSSso
-22 8:osSso
-23 9:ooo
+21 8:osSso
+22 9:ooo
 [arm_long]
 16 9:UTt
 17 8:oUTto
 18 8:oUTto
 19 8:oUTto
 20 8:oUTto
-21 8:ottto
-22 8:oSSso
-23 8:osSso
-24 9:ooo
+21 8:oSSso
+22 8:osSso
+23 9:ooo
 [arm_track]
 16 9:UTt
 17 8:oUwto
 18 8:oUwto
 19 8:oUwto
 20 8:oUwto
-21 8:ottto
-22 8:oSSso
-23 8:osSso
-24 9:ooo
+21 8:oSSso
+22 8:osSso
+23 9:ooo
 [arm_hanbok]
 16 9:UTt
 17 8:oUTto
 18 8:oUTto
 19 8:oUTto
 20 8:oAAAo
-21 8:oSSso
-22 8:osSso
-23 9:ooo
+21 8:osSso
+22 9:ooo
 [neat_d]
 2 8:dddddd
 3 6:ddHHHHHHdd
@@ -935,7 +901,6 @@ const C4TPL=`[head_d]
 18 14:hhhd
 19 14:hhhd
 20 14:hhhd
-21 14:d.d
 [bun]
 -2 9:HHHH
 -1 8:HLHHHh
@@ -1151,11 +1116,10 @@ const C4TPL=`[head_d]
 18 3:UTToTTTTTTTtoTtt
 19 3:tttoTTTTTTTtottt
 20 3:SSsoTTTTTTTtoSSs
-21 3:SSsoTTTTTTTtoSSs
-22 3:SSsottttttttoSSs
-23 3:sssokkkTTkkkosss
+21 3:SSsottttttttoSSs
+22 3:sssokkkTTkkkosss
+23 7:QPPPPPPp
 24 7:QPPPPPPp
-25 7:QPPPPPPp
 [o1_u]
 15 4:UUTtUUUUUtTTtt
 16 3:UTTTtUUUUUtTTTtt
@@ -1163,11 +1127,10 @@ const C4TPL=`[head_d]
 18 3:UTT 6:o 7:TTtUtTTt 15:o 16:Ttt
 19 3:UTT 6:o 7:TTTTTTTt 15:o 16:Ttt
 20 3:UTT 6:o 7:TTTTTTTt 15:o 16:Ttt
-21 3:UTT 6:o 7:TTTTTTTt 15:o 16:Ttt
-22 3:ttt 6:o 7:TTTTTTTt 15:o 16:ttt
-23 3:SSs 6:o 7:tttttttt 15:o 16:SSs
-24 3:sss 7:QPPPPPPp 16:sss
-25 7:QPPPPPPp
+21 3:ttt 6:o 7:TTTTTTTt 15:o 16:ttt
+22 3:SSs 6:o 7:tttttttt 15:o 16:SSs
+23 3:sss 7:QPPPPPPp 16:sss
+24 7:QPPPPPPp
 [o2_u]
 15 4:UUTTTTTTTTTTtt
 16 3:UTTTTTTTTTTTTTtt
@@ -1175,12 +1138,11 @@ const C4TPL=`[head_d]
 18 3:tttoTTTTTTTtottt
 19 3:SSsoTTTTTTTtoSSs
 20 3:SSsoAAAAAAAAoSSs
-21 3:SSsUTTTTTTTTtSSs
-22 3:sssUTTTTTTTTtsss
-23 5:UTTTTTTTTTTt
-24 5:UTTtTTTTtTTt
-25 4:UTTtTTTTTTtTTt
-26 4:tttttttttttttt
+21 3:sssUTTTTTTTTtsss
+22 5:UTTTTTTTTTTt
+23 5:UTTtTTTTtTTt
+24 4:UTTtTTTTTTtTTt
+25 4:tttttttttttttt
 [o3_u]
 15 4:UUTTTTTTTTTTtt
 16 3:UTTTTTTTTTTTTTtt
@@ -1188,11 +1150,10 @@ const C4TPL=`[head_d]
 18 3:UTToTQTTTTPtoTtt
 19 3:tttoQPPPPPPpottt
 20 3:SSsoQPTPPTPpoSSs
-21 3:SSsoQPPPPPPpoSSs
-22 3:SSsoQPPppPPpoSSs
-23 3:sssoQPPPPPPposss
+21 3:SSsoQPPppPPpoSSs
+22 3:sssoQPPPPPPposss
+23 7:QPPPPPPp
 24 7:QPPPPPPp
-25 7:QPPPPPPp
 [o4_u]
 15 4:UUTTTTTTTTTTtt
 16 3:UTTTTTTTTTTTTTtt
@@ -1200,16 +1161,13 @@ const C4TPL=`[head_d]
 18 3:UTToTTTTTTTtoTtt
 19 3:UTToTTTtTTTtoTtt
 20 3:AAAottttttttoAAA
-21 3:tttoXXXXXXXXottt
-22 3:SSsXXXXXXXXXxSSs
-23 3:sssXXxXXXXxXxsss
+21 3:SSsXXXXXXXXXxSSs
+22 3:sssXXxXXXXxXxsss
+23 5:XXXxXXXXxXXx
 24 5:XXXxXXXXxXXx
-25 5:XXXxXXXXxXXx
+25 4:XXXXxXXXXxXXXx
 26 4:XXXXxXXXXxXXXx
-27 4:XXXXxXXXXxXXXx
-28 4:XXXXxXXXXxXXXx
-29 4:XXXXxXXXXxXXXx
-30 4:xxxxxxxxxxxxxx
+27 4:xxxxxxxxxxxxxx
 [o5_u]
 15 4:UUTTTTTTTTTTtt
 16 3:UwTTTTTTTTTTTTwt
@@ -1217,11 +1175,10 @@ const C4TPL=`[head_d]
 18 3:UwToTTTTTTTtoTwt
 19 3:UwToTTTTTTTtoTwt
 20 3:UwToTTTTTTTtoTwt
-21 3:tttoTTTTTTTtottt
-22 3:SSsottttttttoSSs
-23 3:sssoQPPPPPPposss
+21 3:SSsottttttttoSSs
+22 3:sssoQPPPPPPposss
+23 7:QPPPPPPp
 24 7:QPPPPPPp
-25 7:QPPPPPPp
 [o6_u]
 15 4:UUTTTTTTTTTTtt
 16 3:UTTTTTTTTTTTTTtt
@@ -1229,11 +1186,10 @@ const C4TPL=`[head_d]
 18 3:UTToTTTTTTTtoTtt
 19 3:UTToTTTTTTTtoTtt
 20 3:tttoTTTtTTTtottt
-21 3:SSsoTTTtTTTtoSSs
-22 3:SSsottttttttoSSs
-23 3:sss 7:QPPPPPPp 16:sss
+21 3:SSsottttttttoSSs
+22 3:sss 7:QPPPPPPp 16:sss
+23 7:QPPPPPPp
 24 7:QPPPPPPp
-25 7:QPPPPPPp
 `;
 const C4T=(()=>{const T={};let cur=null;for(const ln of C4TPL.split('\n')){const l=ln.trim();if(!l)continue;const m=l.match(/^\[(.+)\]$/);if(m){cur=T[m[1]]={};continue}
  const p=l.split(/\s+/),r=+p[0],row=cur[r]||(cur[r]={});for(const s of p.slice(1)){let c=0,st=s;const i=s.indexOf(':');if(i>0){c=+s.slice(0,i);st=s.slice(i+1)}for(let k=0;k<st.length;k++)if(st[k]!=='.')row[c+k]=st[k]}}return T})();
@@ -1256,9 +1212,12 @@ function c4layers(av,dir,fr,hat){const s=Math.min(7,Math.max(0,av.hs|0)),o=Math.
  const k=dir==='d'?'d':dir==='u'?'u':'l',hid=hat?String(hat).replace('hat_',''):null;
  const HM={cap:{d:'cap_d',u:'cap_u',l:'cap_l'},ribbon:{d:'ribbon',u:'ribbon~',l:'ribbon'},beanie:{d:'beanie',u:'beanie',l:'beanie'},crown:{d:'crown',u:'crown',l:'crown'},flower:{d:'flower',u:'flower~',l:'flower'},glasses:{d:'glasses_d',l:'glasses_l'}};
  if(hid&&HM[hid]&&HM[hid][k])L.push(HM[hid][k]);return L}
-function drawChar4(av,top,hat,dir,fr){const pal=c4pal(av,top,hat&&hat.replace('hat_','')),g=Array.from({length:C4H},()=>new Array(C4W).fill(null));
+function drawChar4(av,top,hat,dir,fr){const pal=c4pal(av,top,hat&&hat.replace('hat_','')),g=Array.from({length:C4H},()=>new Array(C4W).fill(null)),sw=[0,1,0,-1][fr|0]||0,bob=(fr|0)===2;
  for(let name of c4layers(av,dir,fr,hat)){const mir=name.endsWith('~');if(mir)name=name.slice(0,-1);const t=C4T[name];if(!t)continue;
-  for(const r in t){const rr=+r+C4OY;if(rr<0||rr>=C4H)continue;const row=t[r];for(const c in row){let cc=+c;if(mir)cc=C4W-1-cc;if(cc>=0&&cc<C4W)g[rr][cc]=row[c]}}}
+  const adx=(dir==='l'||dir==='r')&&name.startsWith('arm')?-sw:0;
+  for(const r in t){const rr=+r+C4OY;if(rr<0||rr>=C4H)continue;const row=t[r];for(const c in row){let cc=+c;if(mir)cc=C4W-1-cc;cc+=adx;if(cc>=0&&cc<C4W)g[rr][cc]=row[c]}}}
+ if((dir==='d'||dir==='u')&&sw){for(const [cols,s_] of [[[2,3,4,5],sw],[[16,17,18,19],-sw]])for(const c of cols){const col=g.map(r=>r[c]);for(let r=19+C4OY;r<C4HIP;r++)g[r][c]=null;for(let r=19+C4OY;r<C4HIP;r++){const nr=r+s_;if(col[r]&&nr>=19+C4OY&&nr<=C4HIP)g[nr][c]=col[r]}}}
+ if(bob)for(let r=1;r<C4HIP;r++)g[r-1]=g[r].slice();
  const cv=document.createElement('canvas');cv.width=C4W;cv.height=C4H;const x=cv.getContext('2d'),im=x.createImageData(C4W,C4H),a=im.data,flip=dir==='r';
  for(let y=0;y<C4H;y++)for(let i=0;i<C4W;i++){let ch=g[y][i];
   if(!ch){if((y+1<C4H&&g[y+1][i])||(y>0&&g[y-1][i])||(i>0&&g[y][i-1])||(i+1<C4W&&g[y][i+1]))ch='o';else continue}
@@ -1342,34 +1301,34 @@ function hat25(x,id,dir,o){const R=(c,a,b,w=1,h=1)=>{x.fillStyle=c;x.fillRect(a,
   else if(side){R(k,8,14+o,7,1);R(k,8,21+o,7,1);R(k,14,15+o,1,6);R(k,15,17+o,9,1)}}}
 
 /* ===== map ===== */
-const MW=104,MH=78,T=16;
+const MW=148,MH=110,T=16;
 let tiles=[],doors=[],houses=[],forestSpots=[],plates=[],sparks=[],mapC=null,DECOS=[];
 const BLK=new Set(['t','w','B','h','F']);
 const isBlocked=(tx,ty)=>tx<0||ty<0||tx>=MW||ty>=MH||BLK.has(tiles[ty][tx]);
-const HX=[4,8,12,23,27,31,35,39,43,47,56,60,64,68,72,76,80,90,94,98].sort((a,b)=>Math.abs(a+1.5-52)-Math.abs(b+1.5-52)),HY=[37,44,51,58];
-const FOUNTAIN=[53,15],BRIDGES=[[19,32],[51,32],[86,32]];
+const HX=[4,8,12,16,20,31,35,39,43,47,51,55,59,63,67,77,81,85,89,93,97,101,105,109,113,117,125,129,133,137,141].sort((a,b)=>Math.abs(a+1.5-74)-Math.abs(b+1.5-74)),HY=[52,59,66,73];
+const FOUNTAIN=[73,20],BRIDGES=[[27,47],[73,47],[121,47]];
 const BUILD=[
- {type:'library',x:34,y:8,w:5,h:4,door:[36,12],label:'마을 도서관',roof:'#4a7fd4',wall:'#f4e9d1'},
- {type:'mission',x:46,y:10,w:3,h:2,door:[47,12],label:'미션 게시판'},
- {type:'shop',x:60,y:8,w:5,h:4,door:[62,12],label:'잡화점',roof:'#e05a47',wall:'#fff3dc'},
- {type:'mayor',x:70,y:15,w:4,h:3,door:[71,18],label:'이장실',roof:'#58aa55',wall:'#f4e9d1'}];
+ {type:'library',x:48,y:12,w:5,h:4,door:[50,16],label:'마을 도서관',roof:'#4a7fd4',wall:'#f4e9d1'},
+ {type:'mission',x:64,y:14,w:3,h:2,door:[65,16],label:'미션 게시판'},
+ {type:'shop',x:84,y:12,w:5,h:4,door:[86,16],label:'잡화점',roof:'#e05a47',wall:'#fff3dc'},
+ {type:'mayor',x:98,y:21,w:4,h:3,door:[99,24],label:'이장실',roof:'#58aa55',wall:'#f4e9d1'}];
 function buildMap(){
  tiles=[];const rr=mulberry(7);
  for(let y=0;y<MH;y++){tiles[y]=[];for(let x=0;x<MW;x++)tiles[y][x]='g'}
  const set=(x,y,v)=>{if(x>=0&&y>=0&&x<MW&&y<MH)tiles[y][x]=v};
  const rect=(x,y,w,h,v)=>{for(let j=y;j<y+h;j++)for(let i=x;i<x+w;i++)set(i,j,v)};
  rect(0,0,MW,2,'t');rect(0,MH-2,MW,2,'t');rect(0,0,2,MH,'t');rect(MW-2,0,2,MH,'t');
- for(let y=2;y<30;y++)for(let x=2;x<27;x++)if(rr()<.3)set(x,y,'t');
- rect(7,10,8,5,'g');rect(9,20,6,4,'g');
- for(let y=2;y<29;y++)for(let x=80;x<MW-2;x++)if(rr()<.12)set(x,y,'t');
- rect(87,6,12,8,'g');rect(88,7,10,6,'w');
+ for(let y=2;y<45;y++)for(let x=2;x<39;x++)if(rr()<.3)set(x,y,'t');
+ rect(10,14,10,6,'g');rect(14,30,8,5,'g');
+ for(let y=2;y<43;y++)for(let x=114;x<MW-2;x++)if(rr()<.12)set(x,y,'t');
+ rect(124,8,16,10,'g');rect(125,9,14,8,'w');
  for(let x=2;x<MW-2;x++)if(rr()<.18)set(x,2,'t');
- for(let y=63;y<MH-2;y++)for(let x=2;x<MW-2;x++)if(rr()<.08)set(x,y,'t');
- rect(7,64,12,8,'g');rect(8,65,10,6,'w');rect(70,65,16,8,'g');
- rect(2,32,MW-4,2,'w');for(const [bx,by] of BRIDGES)rect(bx,by,2,2,'b');
- rect(16,12,66,1,'p');rect(44,13,22,6,'p');rect(66,18,22,1,'p');
- rect(51,19,2,13,'p');rect(51,34,2,28,'p');rect(19,13,2,19,'p');rect(86,19,2,13,'p');
- rect(19,34,2,6,'p');rect(86,34,2,6,'p');rect(15,12,1,6,'p');
+ for(let y=88;y<MH-2;y++)for(let x=2;x<MW-2;x++)if(rr()<.08)set(x,y,'t');
+ rect(10,92,16,10,'g');rect(11,93,14,8,'w');rect(100,92,22,10,'g');rect(60,94,18,8,'g');
+ rect(2,47,MW-4,2,'w');for(const [bx,by] of BRIDGES)rect(bx,by,2,2,'b');
+ rect(22,16,92,1,'p');rect(62,17,26,8,'p');rect(88,24,35,1,'p');rect(21,16,1,8,'p');
+ rect(73,25,2,22,'p');rect(73,49,2,28,'p');rect(27,17,2,30,'p');rect(121,24,2,23,'p');
+ rect(27,49,2,6,'p');rect(121,49,2,6,'p');
  for(const yy of HY)rect(3,yy+3,MW-6,1,'p');
  for(const b of BUILD){rect(b.x,b.y,b.w,b.h,'B')}
  rect(FOUNTAIN[0],FOUNTAIN[1],4,2,'F');
@@ -1379,24 +1338,26 @@ function buildMap(){
  list.forEach((st,i)=>{if(i>=HX.length*HY.length)return;const hx=HX[i%HX.length],hy=HY[Math.floor(i/HX.length)];
   rect(hx,hy,3,3,'h');const d={type:'house',owner:st.no,x:(hx+1)*T+8,y:(hy+3)*T+10,r:[hx*T,hy*T,(hx+3)*T,(hy+3)*T]};doors.push(d);
   houses.push({no:st.no,hx,hy,door:d,fx:hx*T+8,fy:(hy+3)*T+12});plates.push({x:(hx+1.5)*T,y:hy*T-2,t:'',k:'house',no:st.no})});
- for(let y=34;y<MH-2;y++)for(let x=2;x<MW-2;x++)if(tiles[y][x]==='g'&&rr()<.05)set(x,y,'f');
- for(let y=19;y<31;y++)for(let x=27;x<80;x++)if(tiles[y][x]==='g'&&rr()<.07)set(x,y,'f');
- for(let y=3;y<29;y++)for(let x=80;x<MW-2;x++)if(tiles[y][x]==='g'&&rr()<.1)set(x,y,'f');
- for(let y=65;y<73;y++)for(let x=70;x<86;x++)if(tiles[y][x]==='g'&&rr()<.35)set(x,y,'f');
- forestSpots=[];for(let y=2;y<30;y++)for(let x=2;x<27;x++)if(tiles[y][x]==='g')forestSpots.push([x,y]);
- for(let x=2;x<MW-2;x++){if(tiles[31][x]==='g')forestSpots.push([x,31])}
+ for(let y=49;y<MH-2;y++)for(let x=2;x<MW-2;x++)if(tiles[y][x]==='g'&&rr()<.05)set(x,y,'f');
+ for(let y=25;y<46;y++)for(let x=39;x<114;x++)if(tiles[y][x]==='g'&&rr()<.07)set(x,y,'f');
+ for(let y=3;y<43;y++)for(let x=114;x<MW-2;x++)if(tiles[y][x]==='g'&&rr()<.1)set(x,y,'f');
+ for(let y=92;y<102;y++)for(let x=100;x<122;x++)if(tiles[y][x]==='g'&&rr()<.35)set(x,y,'f');
+ for(let y=94;y<102;y++)for(let x=60;x<78;x++)if(tiles[y][x]==='g'&&rr()<.3)set(x,y,'f');
+ forestSpots=[];for(let y=2;y<45;y++)for(let x=2;x<39;x++)if(tiles[y][x]==='g')forestSpots.push([x,y]);
+ for(let x=2;x<MW-2;x++){if(tiles[46][x]==='g')forestSpots.push([x,46])}
  DECOS=[];const okT=(x,y,w)=>{for(let i=0;i<w;i++){const v=tiles[y]&&tiles[y][x+i];if(v!=='g'&&v!=='f')return false}return true};
  const deco=(k,x,y,w)=>{if(!okT(x,y,w))return;for(let i=0;i<w;i++)set(x+i,y,'B');DECOS.push({k,x,y,w})};
- for(const [x,y] of [[44,19],[65,19],[30,13],[41,13],[74,13],[50,24],[53,28],[50,36],[53,36],[22,13],[84,19]])deco('lamp',x,y,1);
- for(const [x,y] of [[46,19],[62,19],[22,24],[83,24],[56,21]])deco('bench',x,y,2);
- for(const [x,y] of [[32,11],[33,11],[66,11],[67,11],[59,11],[78,17]])deco('barrel',x,y,1);
- deco('cart',75,17,2);deco('cart',28,13,2);
- for(const [x,y] of [[28,10],[75,20],[40,15],[67,15]])deco('garden',x,y,3);
- for(const [x,y] of [[28,8],[39,16],[66,16]])deco('fence',x,y,4);
+ for(const [x,y] of [[61,25],[88,25],[44,17],[56,17],[94,17],[106,17],[72,30],[75,34],[72,38],[75,42],[72,52],[75,52],[30,17],[118,25],[26,30],[123,30]])deco('lamp',x,y,1);
+ for(const [x,y] of [[64,25],[84,25],[31,30],[116,30],[78,28],[66,40],[80,40]])deco('bench',x,y,2);
+ for(const [x,y] of [[46,15],[47,15],[90,15],[91,15],[82,15],[104,23]])deco('barrel',x,y,1);
+ deco('cart',103,25,2);deco('cart',40,17,2);
+ for(const [x,y] of [[42,14],[103,27],[58,19],[89,19],[58,22],[89,22],[34,24],[110,30]])deco('garden',x,y,3);
+ for(const [x,y] of [[42,12],[57,18],[89,18],[103,28]])deco('fence',x,y,4);
  const rb=mulberry(23);
- for(let y=19;y<31;y++)for(let x=22;x<84;x++)if(rb()<.025)deco('bush',x,y,1);
- for(let y=63;y<MH-2;y++)for(let x=2;x<MW-2;x++)if(rb()<.02)deco('bush',x,y,1);
- for(let y=3;y<29;y++)for(let x=80;x<MW-2;x++)if(rb()<.02)deco('bush',x,y,1);
+ for(let y=26;y<46;y++)for(let x=30;x<118;x++)if(rb()<.022)deco('bush',x,y,1);
+ for(let y=88;y<MH-2;y++)for(let x=2;x<MW-2;x++)if(rb()<.02)deco('bush',x,y,1);
+ for(let y=3;y<43;y++)for(let x=114;x<MW-2;x++)if(rb()<.02)deco('bush',x,y,1);
+ for(let y=78;y<88;y++)for(let x=3;x<MW-3;x++)if(rb()<.03)deco('bush',x,y,1);
 }
 function makeNoise(seed){const P=new Float32Array(4096);const r=mulberry(seed);for(let i=0;i<4096;i++)P[i]=r();const h=(x,y)=>P[(Math.imul(x,73856093)^Math.imul(y,19349663))&4095];
  return (x,y,sc)=>{x/=sc;y/=sc;const xi=Math.floor(x),yi=Math.floor(y),xf=x-xi,yf=y-yi,u=xf*xf*(3-2*xf),v=yf*yf*(3-2*yf),a=h(xi,yi),b=h(xi+1,yi),c=h(xi,yi+1),d=h(xi+1,yi+1);return a+(b-a)*u+(c-a)*v+(a-b-c+d)*u*v}}
@@ -1407,42 +1368,39 @@ function decoSpr(name,roof){const key=name+'|'+(roof||'');if(DECOC[key])return D
  const x=c.getContext('2d'),im=x.createImageData(w,h),d=im.data,P=pal.map(p=>Array.isArray(p)?c4tone(roof||'#c0603e',p[1]):c4hx('#'+p));
  for(let i=0;i<bin.length;i++){const v=bin.charCodeAt(i);if(!v)continue;const q=P[v-1],o=i*4;d[o]=q[0];d[o+1]=q[1];d[o+2]=q[2];d[o+3]=255}
  x.putImageData(im,0,0);c.ax=ax;c.ay=ay;return DECOC[key]=c}
-function renderGround(){const TS2=T*RES,W2=MW*TS2,H2=MH*TS2;const c=document.createElement('canvas');c.width=W2;c.height=H2;const g=c.getContext('2d');
+function renderGround(){const TS=T,W2=MW*TS,H2=MH*TS;const c=document.createElement('canvas');c.width=W2;c.height=H2;const g=c.getContext('2d');
  const nz=makeNoise(5),nz2=makeNoise(9),nz3=makeNoise(13);
  const tt=(tx,ty)=>{if(tx<0||ty<0||tx>=MW||ty>=MH)return 0;const v=tiles[ty][tx];return (v==='p'||v==='F')?1:(v==='w'||v==='b')?2:0};
  const base=new Uint8Array(MW*MH),uni=new Uint8Array(MW*MH);
  for(let ty=0;ty<MH;ty++)for(let tx=0;tx<MW;tx++)base[ty*MW+tx]=tt(tx,ty);
- for(let ty=0;ty<MH;ty++)for(let tx=0;tx<MW;tx++){let s=1;const b=base[ty*MW+tx];for(let j=-1;j<=1&&s;j++)for(let i=-1;i<=1;i++)if(tt(tx+i,ty+j)!==b){s=0;break}uni[ty*MW+tx]=s}
+ for(let ty=0;ty<MH;ty++)for(let tx=0;tx<MW;tx++){let s_=1;const b=base[ty*MW+tx];for(let j=-1;j<=1&&s_;j++)for(let i=-1;i<=1;i++)if(tt(tx+i,ty+j)!==b){s_=0;break}uni[ty*MW+tx]=s_}
  const TY=new Uint8Array(W2*H2);
- for(let y=0;y<H2;y++){const ty=(y/TS2)|0;for(let x=0;x<W2;x++){const tx=(x/TS2)|0,k=ty*MW+tx,t0=base[k];let t=t0;
-  if(!uni[k]&&t0!==2){const jx=(nz(x,y,11)-.5)*13+(nz2(x,y,3)-.5)*3,jy=(nz(x+913,y+377,11)-.5)*13+(nz2(x+51,y+97,3)-.5)*3;const t1=tt(Math.floor((x+jx)/TS2),Math.floor((y+jy)/TS2));if(t1!==2)t=t1}
+ for(let y=0;y<H2;y++){const ty=(y/TS)|0;for(let x=0;x<W2;x++){const tx=(x/TS)|0,k=ty*MW+tx,t0=base[k];let t=t0;
+  if(!uni[k]&&t0!==2){const jx=(nz(x,y,5.5)-.5)*6.5+(nz2(x,y,1.5)-.5)*1.5,jy=(nz(x+913,y+377,5.5)-.5)*6.5+(nz2(x+51,y+97,1.5)-.5)*1.5;const t1=tt(Math.floor((x+jx)/TS),Math.floor((y+jy)/TS));if(t1!==2)t=t1}
   TY[y*W2+x]=t}}
  const at=(x,y)=>(x<0||y<0||x>=W2||y>=H2)?0:TY[y*W2+x];
  const img=g.createImageData(W2,H2),d=img.data;
- const STN=[[169,160,142],[184,174,153],[157,148,130],[194,185,165]],CW=W2>>1,CB=new Int32Array(CW*(H2>>1)).fill(-1);
- const cob=(X,Y)=>{if(X<0||Y<0||X>=CW||Y>=(H2>>1))return -2;const k=Y*CW+X;if(CB[k]>=0)return CB[k];const gx=Math.floor(X/8),gy=Math.floor(Y/7);let bd=1e9,best=0;
+ const STN=[[169,160,142],[184,174,153],[157,148,130],[194,185,165]],CB=new Int32Array(W2*H2).fill(-1);
+ const cob=(X,Y)=>{if(X<0||Y<0||X>=W2||Y>=H2)return -2;const k=Y*W2+X;if(CB[k]>=0)return CB[k];const gx=Math.floor(X/8),gy=Math.floor(Y/7);let bd=1e9,best=0;
   for(let j=-1;j<=1;j++)for(let i=-1;i<=1;i++){const cx=gx+i,cy=gy+j,px_=cx*8+4+Math.round((hsh(cx,cy,7)-.5)*4)+((cy&1)?4:0),py_=cy*7+3+Math.round((hsh(cx,cy,8)-.5)*4),dd=(px_-X)**2+((py_-Y)*1.15)**2;if(dd<bd){bd=dd;best=((cx+8)<<12)|((cy+8)&4095)}}
   return CB[k]=best};
- const GR=[[70,126,46],[95,162,68],[109,178,76],[130,195,90]],DI=[[150,88,48],[165,103,57],[181,119,68],[197,137,84]];
+ const GR=[[70,126,46],[95,162,68],[109,178,76],[130,195,90]];
  for(let y=0;y<H2;y++)for(let x=0;x<W2;x++){const i=y*W2+x,t=TY[i];let col;
-  if(t===0){const v=nz3(x,y,20)*.66+nz2(x,y,7)*.29+hsh(x,y)*.05;col=GR[v<.3?1:v>.74?3:2];
-   if(at(x,y+1)===2)col=[86,62,40];else if(at(x,y+2)===2||at(x,y+3)===2||at(x,y+4)===2)col=[134,100,64];
-   else if(at(x,y+1)===1||at(x,y+2)===1)col=[52,92,36];else if(at(x,y-2)===1||at(x-2,y)===1||at(x+2,y)===1)col=[62,110,42];}
-  else if(t===1){const X=x>>1,Y=y>>1,id=cob(X,Y),st=STN[(hsh(id>>12,id&4095,5)*4)|0];
-   if(cob(X+1,Y)!==id||cob(X,Y+1)!==id)col=[111,103,90];else if(cob(X-1,Y)!==id||cob(X,Y-1)!==id)col=[Math.round(st[0]+(255-st[0])*.25),Math.round(st[1]+(244-st[1])*.25),Math.round(st[2]+(214-st[2])*.25)];else col=st;
-   if(at(x,y-2)===0||at(x,y-3)===0)col=((X+Y)%3)?[92,122,69]:[122,110,90];else if(at(x,y+2)===0||at(x-2,y)===0||at(x+2,y)===0)col=((X*7+Y)%4)?[122,110,90]:[92,122,69];}
-  else{const v=nz3(x,y+200,22);col=v<.45?[50,120,180]:[58,132,192];
-   const w=Math.sin(x*.17+Math.sin(y*.42)*1.7+nz(x,y,9)*5);if(w>.93&&hsh(x>>1,y,2)>.35)col=[128,192,234];
-   if(at(x,y-1)!==2||at(x,y-2)!==2||at(x,y-3)!==2)col=[36,86,138];else if(at(x,y-4)!==2||at(x,y-5)!==2)col=[44,104,158];
+  if(t===0){const v=nz3(x,y,10)*.66+nz2(x,y,3.5)*.29+hsh(x,y)*.05;col=GR[v<.3?1:v>.74?3:2];
+   if(at(x,y+1)===2)col=[86,62,40];else if(at(x,y+2)===2)col=[134,100,64];
+   else if(at(x,y+1)===1)col=[52,92,36];else if(at(x,y-1)===1||at(x-1,y)===1||at(x+1,y)===1)col=[62,110,42];}
+  else if(t===1){const id=cob(x,y),st=STN[(hsh(id>>12,id&4095,5)*4)|0];
+   if(cob(x+1,y)!==id||cob(x,y+1)!==id)col=[111,103,90];else if(cob(x-1,y)!==id||cob(x,y-1)!==id)col=[Math.round(st[0]+(255-st[0])*.25),Math.round(st[1]+(244-st[1])*.25),Math.round(st[2]+(214-st[2])*.25)];else col=st;
+   if(at(x,y-1)===0)col=((x+y)%3)?[92,122,69]:[122,110,90];else if(at(x,y+1)===0||at(x-1,y)===0||at(x+1,y)===0)col=((x*7+y)%4)?[122,110,90]:[92,122,69];}
+  else{const v=nz3(x,y+100,11);col=v<.45?[50,120,180]:[58,132,192];
+   const w=Math.sin(x*.34+Math.sin(y*.84)*1.7+nz(x,y,4.5)*5);if(w>.93&&hsh(x,y,2)>.35)col=[128,192,234];
+   if(at(x,y-1)!==2||at(x,y-2)!==2)col=[36,86,138];else if(at(x,y-3)!==2)col=[44,104,158];
    if(at(x,y+1)!==2||at(x-1,y)!==2||at(x+1,y)!==2)col=[156,210,240];}
   d[i*4]=col[0];d[i*4+1]=col[1];d[i*4+2]=col[2];d[i*4+3]=255}
  g.putImageData(img,0,0);
  const R=(c,a,b,w=1,h=1)=>{g.fillStyle=c;g.fillRect(a,b,w,h)};const rr=mulberry(21);
- for(let n=0;n<W2*H2/150;n++){const x=(rr()*W2)|0,y=(rr()*H2)|0;if(at(x,y)!==0||at(x,y+2)!==0||at(x+2,y)!==0)continue;const dk=rr()<.5;R(dk?'#3d7329':'#4a8433',x,y,1,3);R('#86c25e',x+1,y-1,1,2);R(dk?'#3d7329':'#4a8433',x+2,y+1,1,2)}
- const LV=['#e07a2a','#c94a2c','#f2b03a','#b8602a','#e89a3a'];
- for(let n=0;n<W2*H2/1600;n++){const x=(rr()*W2)|0,y=(rr()*H2)|0;const t=at(x,y);if(t===2||at(x+2,y+2)===2)continue;const c=LV[(rr()*LV.length)|0];if(rr()<.5){R(c,x,y,2,1);R(shade(c,-40),x+1,y+1,1,1)}else{R(c,x,y,1,2);R(shade(c,-40),x+1,y+1,1,1)}}
- for(let n=0;n<W2*H2/700;n++){const x=(rr()*W2)|0,y=(rr()*H2)|0;if(at(x,y)!==1||at(x+3,y+2)!==1)continue;R('#6b665e',x,y+2,3,1);R('#9a958c',x,y,3,2);R('#c8c3b8',x,y,1,1)}
- for(let n=0;n<W2*H2/7000;n++){const x=(rr()*W2)|0,y=(rr()*H2)|0;if(at(x,y)!==0||at(x,y+4)!==0)continue;const c=['#ffffff','#f6c6d0','#f5c542','#c49be0'][(rr()*4)|0];R('#3d7329',x+1,y+2,1,3);R(c,x,y,3,1);R(c,x+1,y-1,1,3);R('#f5c542',x+1,y,1,1)}
+ for(let n=0;n<W2*H2/40;n++){const x=(rr()*W2)|0,y=(rr()*H2)|0;if(at(x,y)!==0||at(x,y+1)!==0||at(x+1,y)!==0)continue;const dk=rr()<.5;R(dk?'#3d7329':'#4a8433',x,y,1,2);R('#86c25e',x+1,y-1,1,1)}
+ for(let n=0;n<W2*H2/1750;n++){const x=(rr()*W2)|0,y=(rr()*H2)|0;if(at(x,y)!==0||at(x,y+2)!==0)continue;const c=['#ffffff','#f6c6d0','#f5c542','#c49be0'][(rr()*4)|0];R('#3d7329',x+1,y+1,1,2);R(c,x,y,3,1);R(c,x+1,y-1,1,3);R('#f5c542',x+1,y,1,1)}
  return c}
 
 function treeSpr(v){return sprHi('tree'+v,56,72,x=>{const R=(c,a,b,w=1,h=1)=>{x.fillStyle=c;x.fillRect(a,b,w,h)};
@@ -1501,20 +1459,20 @@ function pixHalf(src){const w=src.width>>1,h=src.height>>1,sx=src.getContext('2d
  x.putImageData(im,0,0);return c}
 function renderMap(){if(!groundC)groundC=renderGround();
  mapC=document.createElement('canvas');mapC.width=groundC.width;mapC.height=groundC.height;const g=mapC.getContext('2d');g.drawImage(groundC,0,0);
- const R=(c,a,b,w=1,h=1)=>{g.fillStyle=c;g.fillRect(a,b,w,h)},TS2=T*RES,rr=mulberry(11);
+ const R=(c,a,b,w=1,h=1)=>{g.fillStyle=c;g.fillRect(a,b,w,h)},TS2=T,rr=mulberry(11),half=c=>c._half||(c._half=pixHalf(c));
  sparks=[];
  for(let y=0;y<MH;y++)for(let x=0;x<MW;x++){const v=tiles[y][x];
   if(v==='w'&&rr()<.6)sparks.push([x*T+((rr()*14)|0),y*T+5+((rr()*9)|0)]);
-  if(v==='f'){for(let k=0;k<3;k++){const fx=x*TS2+4+((rr()*22)|0),fy=y*TS2+6+((rr()*20)|0),c=['#ffffff','#f6c6d0','#f5c542','#c49be0','#e05a47'][(rr()*5)|0];R('#3d7329',fx+2,fy+3,1,5);R('#4f9a3a',fx+3,fy+5,2,1);R(c,fx,fy+1,5,2);R(c,fx+1,fy,3,4);R(shade(c,-35),fx+3,fy+3,2,1);R('#f5c542',fx+2,fy+1,1,1)}}}
- for(const [BX,BY] of BRIDGES){ const bx=BX*TS2,by=BY*TS2;R('#2a1d1a',bx-4,by-6,2*TS2+8,2*TS2+12);for(let yy=by-4;yy<by+2*TS2+4;yy+=6){R('#a8723f',bx,yy,2*TS2,5);R('#c48a55',bx,yy,2*TS2,1);R('#6b4428',bx,yy+5,2*TS2,1);R('#8a5a32',bx+((hsh(yy,1)*50)|0),yy+2,6,1)}  for(const rx of [bx-4,bx+2*TS2]){R('#5a3a22',rx,by-6,4,2*TS2+12);R('#7a5232',rx,by-6,1,2*TS2+12);for(let yy=by-6;yy<by+2*TS2+6;yy+=20){R('#43291a',rx-1,yy,6,5)}}}
+  if(v==='f'){for(let k=0;k<3;k++){const fx=x*T+2+((rr()*11)|0),fy=y*T+3+((rr()*10)|0),c=['#ffffff','#f6c6d0','#f5c542','#c49be0','#e05a47'][(rr()*5)|0];R('#3d7329',fx+1,fy+2,1,2);R(c,fx,fy+1,3,1);R(c,fx+1,fy,1,3);R('#f5c542',fx+1,fy+1,1,1)}}}
+ for(const [BX,BY] of BRIDGES){const bx=BX*T,by=BY*T;R('#2a1d1a',bx-2,by-3,2*T+4,2*T+6);for(let yy=by-2;yy<by+2*T+2;yy+=3){R('#a8723f',bx,yy,2*T,2);R('#c48a55',bx,yy,2*T,1);R('#6b4428',bx,yy+2,2*T,1)}for(const rx of [bx-2,bx+2*T]){R('#5a3a22',rx,by-3,2,2*T+6);R('#7a5232',rx,by-3,1,2*T+6);for(let yy=by-3;yy<by+2*T+3;yy+=10)R('#43291a',rx,yy,3,3)}}
  const objs=[];
- g.imageSmoothingEnabled=false;const dd=(sp,lx,ty)=>g.drawImage(sp,lx*RES,ty*RES,sp.width*RES,sp.height*RES);
+ g.imageSmoothingEnabled=false;const dd=(sp,lx,ty)=>g.drawImage(sp,lx,ty);
  for(let y=0;y<MH;y++)for(let x=0;x<MW;x++)if(tiles[y][x]==='t'){const v=(hsh(x,y,4)*4)|0,sp=decoSpr('tree'+(hsh(x,y,6)<.12?3:v%3));objs.push({by:y*TS2+TS2,d:()=>dd(sp,x*T+8-(sp.width>>1),(y+1)*T+2-sp.height)})}
  for(const o of DECOS){const sp=decoSpr(o.k);objs.push({by:(o.y+1)*TS2,d:()=>dd(sp,o.x*T+((o.w*T-sp.width)>>1),(o.y+1)*T+(o.k==='fence'||o.k==='garden'?0:1)-sp.height)})}
- for(const b of BUILD)objs.push({by:(b.y+b.h)*TS2,d:()=>{if(b.type==='mission')g.drawImage(boardSpr(),b.x*TS2-5,b.y*TS2-11);else{const s=bldSpr(b.type,b.w,b.h,b.roof,1);g.drawImage(s,b.x*TS2-7,b.y*TS2-43)}}});
+ for(const b of BUILD)objs.push({by:(b.y+b.h)*TS2,d:()=>{if(b.type==='mission')g.drawImage(half(boardSpr()),b.x*T-3,b.y*T-6);else{const s=half(bldSpr(b.type,b.w,b.h,b.roof,1));g.drawImage(s,b.x*T-4,b.y*T-22)}}});
  for(const h of houses){const st=S&&S.students.find(s=>s.no===h.no);objs.push({by:(h.hy+3)*TS2,d:()=>{const sz=Math.min(3,Math.max(1,st?st.house.size:1)),sp=decoSpr('house'+sz,ROOFS[h.no%ROOFS.length]);dd(sp,h.hx*T-sp.ax,(h.hy+3)*T+1-sp.ay)}})}
  {const sp=decoSpr('fountain');objs.push({by:(FOUNTAIN[1]+2)*TS2,d:()=>dd(sp,FOUNTAIN[0]*T,(FOUNTAIN[1]+2)*T+2-sp.height)})}
- objs.sort((a,b)=>a.by-b.by).forEach(o=>o.d());mapC=pixHalf(mapC)}
+ objs.sort((a,b)=>a.by-b.by).forEach(o=>o.d())}
 
 /* ===== view & game state ===== */
 const cv=$('#cv'),ctx=cv.getContext('2d');
@@ -1524,7 +1482,7 @@ const ME=()=>S&&S.students.find(s=>s.no===ME_NO);
 const P={x:0,y:0,dir:'d',fr:0,ft:0,target:null,stuck:0,bubble:null,moving:false};
 const pet={x:0,y:0,flip:false};
 let cols=[],friends=[],flags={mission:false,library:false},flagT=0,secT=0,talkT=6,warned=false,useAcc=0,useT=0,pollT=0,sendT=0,wasMoving=false;
-const tori={x:54*T+8,y:15*T+12,hx:54*T+8,hy:15*T+12,tx:null,ty:null,dir:'d',fr:0,ft:0,moving:false,live:false,bubble:null};
+const tori={x:70*T+8,y:19*T+12,hx:70*T+8,hy:19*T+12,tx:null,ty:null,dir:'d',fr:0,ft:0,moving:false,live:false,bubble:null};
 let TVW=false;
 const myNo=()=>ROLE==='teacher'?0:ME_NO;
 function guideHome(){tori.live=false;tori.tx=null;tori.x=tori.hx;tori.y=tori.hy;tori.dir='d';tori.moving=false}
@@ -1803,7 +1761,7 @@ async function crDone(){const nick=$('#crNick').value.trim(),m=$('#crMsg');
 
 /* ===== village enter / doors ===== */
 function enterVillage(tutorial){mode='village';document.body.className='village';show('sVillage');buildMap();renderMap();const me=ME();
- const h=houses.find(x=>x.no===me.no);P.x=h?h.door.x:52*T;P.y=h?h.door.y+4:16*T;P.dir='d';P.target=null;P.bubble=null;pet.x=P.x-14;pet.y=P.y;warned=false;useAcc=0;
+ const h=houses.find(x=>x.no===me.no);P.x=h?h.door.x:74*T;P.y=h?h.door.y+4:23*T;P.dir='d';P.target=null;P.bubble=null;pet.x=P.x-14;pet.y=P.y;warned=false;useAcc=0;
  spawnCols();friends=[];makeFriends(false);aLabel='x';updA(null);updHud();computeFlags();lockMsgKey='?';checkLock();rtJoin();
  const lines=[];
  if(tutorial)lines.push(`안녕, ${me.nick}! 나는 우리 마을 이장 ${jo(guideName(),'이야','야')}. 마을 안내를 맡고 있어.`,'왼쪽 아래 조이스틱을 끌거나, 방향키를 누르거나, 가고 싶은 곳을 누르면 걸어갈 수 있어. 건물 앞에 서면 오른쪽 아래 버튼으로 들어갈 수 있어.','미션 게시판에서 선생님이 낸 미션을 하고, 도서관에서 계기교육 이야기를 읽어 봐.','칭찬과 미션으로 모은 코인은 잡화점에서 가구, 옷, 씨앗을 사는 데 써.','숲에 반짝이는 보물이 떨어져 있으면 주워 봐. 무엇이 나올지는 주워 봐야 알아!','입주 선물로 코인 100개랑 침대, 의자, 토마토 씨앗을 넣어 뒀어. 먼저 우리 집에 들어가 봐!');
@@ -1895,7 +1853,7 @@ function rFriend(b){const st=S.students.find(s=>s.no===W.arg);if(!st){b.innerHTM
 /* ===== notebook ===== */
 function rNote(b){const me=ME(),t=W.tab;let h=tabs([['wear','옷장'],['bag','가방'],['coupon','쿠폰'],['dex','도감'],['log','코인 내역']],t);
  if(t==='wear'){const hats=Object.keys(ITEMS).filter(k=>ITEMS[k].c==='hat'&&cnt(me,k)>0),tops=Object.keys(ITEMS).filter(k=>ITEMS[k].c==='top'&&cnt(me,k)>0);
-  h+=`<div class="row wrap" style="gap:16px;margin-bottom:12px"><img src="${charURL(me)}" alt="내 캐릭터" style="width:66px;height:114px;background:#bfe6a8;border:3px solid var(--edge)"><button class="btn" data-a="restyle">외모·별명 바꾸기</button></div>
+  h+=`<div class="row wrap" style="gap:16px;margin-bottom:12px"><img src="${charURL(me)}" alt="내 캐릭터" style="width:66px;height:105px;background:#bfe6a8;border:3px solid var(--edge)"><button class="btn" data-a="restyle">외모·별명 바꾸기</button></div>
   <h4 style="margin-bottom:8px">모자</h4>${hats.length?`<div class="grid">${hats.map(id=>itemCard(id,me.wear.hat===id?'<button class="btn sm" data-a="wear" data-v="hat:">벗기</button>':`<button class="btn sm pri" data-a="wear" data-v="hat:${id}">쓰기</button>`)).join('')}</div>`:'<p class="help">아직 모자가 없어요.</p>'}
   <h4 style="margin:14px 0 8px">옷</h4><div class="grid">${tops.map(id=>itemCard(id,me.wear.top===id?'<span class="tag ok">입고 있어요</span>':`<button class="btn sm pri" data-a="wear" data-v="top:${id}">입기</button>`)).join('')}</div>`}
  else if(t==='bag'){const ids=Object.keys(ITEMS).filter(k=>['seed','crop','pfood','col'].includes(ITEMS[k].c)&&cnt(me,k)>0);h+=ids.length?`<div class="grid">${ids.map(id=>itemCard(id,`<span>${cnt(me,id)}개</span>`)).join('')}</div><p class="help">작물과 보물은 잡화점 [팔기]에서 코인으로 바꿀 수 있어요.</p>`:'<p class="empty">가방이 비어 있어요.</p>'}
@@ -1943,7 +1901,7 @@ function rSubs(b){const m=S.missions.find(x=>x.id===W.arg);if(!m){b.innerHTML=''
   if(s){mid=`${s.text?`<p style="white-space:pre-wrap">${esc(s.text)}</p>`:'<p class="help" style="margin:0">완료 체크</p>'}${s.nphotos?(PHC[m.id]&&PHC[m.id][s.id]?`<div class="thumbs">${PHC[m.id][s.id].map(u=>/^data:image\//.test(u)?`<img src="${u}" alt="제출 사진">`:'').join('')}</div>`:`<p class="help" style="margin:4px 0">사진 ${s.nphotos}장 불러오는 중…</p>`):''}`;
    if(s.status==='ok')right='<span class="tag ok">승인 완료</span>';else if(s.status==='retry')right=`<span class="tag warn">다시 하기 요청</span><p class="help">${esc(s.fb)}</p>`;
    else right=`<input id="fb_${s.id}" placeholder="한 줄 피드백 (선택)"><div class="row wrap" style="margin-top:6px"><button class="btn sm pri" data-a="tSubOk" data-v="${s.id}">승인 +${m.reward}</button><button class="btn sm" data-a="tSubRetry" data-v="${s.id}">다시 하기</button></div>`}
-  return `<div class="subrow"><div class="row"><img src="${charURL(st)}" alt="" style="width:28px;height:48px"><span>${st.no}번 ${esc(st.name)}</span></div><div>${mid}</div><div>${right}</div></div>`}).join('')}
+  return `<div class="subrow"><div class="row"><img src="${charURL(st)}" alt="" style="width:28px;height:45px"><span>${st.no}번 ${esc(st.name)}</span></div><div>${mid}</div><div>${right}</div></div>`}).join('')}
 function tLib(b){
  let h=`<section class="panel px"><h3>계기교육 자료 올리기</h3><div class="two"><label class="field"><span>제목</span><input id="pTitle" maxlength="40" placeholder="예: 11월 11일은 농업인의 날"></label><label class="field"><span>기념일·주제 태그</span><input id="pTag" maxlength="20" placeholder="예: 농업인의 날"></label></div>
  <label class="field"><span>내용</span><textarea id="pBody" maxlength="2000" placeholder="학생이 읽을 글을 써 주세요"></textarea></label>
@@ -1963,7 +1921,7 @@ function tSet(b){const c=S.cls,s=c.set,ta=tav();
  b.innerHTML=`<section class="panel px"><h3>학급 정보</h3><div class="two"><label class="field"><span>학급 이름</span><input id="sName" value="${esc(c.name)}" maxlength="30"></label><label class="field"><span>학급 코드</span><input id="sCode" value="${esc(c.code)}" maxlength="10" style="text-transform:uppercase"></label><label class="field"><span>새 비밀번호 (바꿀 때만, 6자 이상)</span><input id="sPw" type="password" autocomplete="new-password"></label></div>
  <label class="field"><span>이장실 공지</span><textarea id="sNotice" maxlength="500">${esc(c.notice)}</textarea></label>
  <p class="help">학생 접속 주소: ${esc(location.origin+location.pathname)}</p></section>
- <section class="panel px"><h3>선생님 캐릭터</h3><div class="row wrap" style="gap:16px;align-items:flex-start"><img src="${toriURL()}" alt="선생님 캐릭터" style="width:55px;height:95px;background:#bfe6a8;border:3px solid var(--edge)"><div class="two" style="flex:1">
+ <section class="panel px"><h3>선생님 캐릭터</h3><div class="row wrap" style="gap:16px;align-items:flex-start"><img src="${toriURL()}" alt="선생님 캐릭터" style="width:55px;height:88px;background:#bfe6a8;border:3px solid var(--edge)"><div class="two" style="flex:1">
   <label class="field"><span>마을에서 부를 이름</span><input id="sTname" maxlength="10" value="${esc(guideName())}"></label>
   <label class="field"><span>피부색</span><select id="tvSkin">${['밝은 피부','중간 피부','어두운 피부'].map((n,i)=>`<option value="${i}" ${ta.skin===i?'selected':''}>${n}</option>`).join('')}</select></label>
   <label class="field"><span>머리 모양</span><select id="tvHs">${HAIRN.map((n,i)=>`<option value="${i}" ${ta.hs===i?'selected':''}>${n}</option>`).join('')}</select></label>
