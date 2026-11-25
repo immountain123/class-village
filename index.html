@@ -1338,42 +1338,46 @@ function hat25(x,id,dir,o){const R=(c,a,b,w=1,h=1)=>{x.fillStyle=c;x.fillRect(a,
   else if(side){R(k,8,14+o,7,1);R(k,8,21+o,7,1);R(k,14,15+o,1,6);R(k,15,17+o,9,1)}}}
 
 /* ===== map ===== */
-const MW=48,MH=36,T=16;
+const MW=72,MH=54,T=16;
 let tiles=[],doors=[],houses=[],forestSpots=[],plates=[],sparks=[],mapC=null;
 const BLK=new Set(['t','w','B','h']);
 const isBlocked=(tx,ty)=>tx<0||ty<0||tx>=MW||ty>=MH||BLK.has(tiles[ty][tx]);
-const HX=[3,7,11,15,19,27,31,35,39,43],HY=[18,22,26,30];
-const WELL=[32,9];
+const HX=[4,8,16,20,24,28,39,43,47,51,61,65].sort((a,b)=>Math.abs(a+1.5-36)-Math.abs(b+1.5-36)),HY=[26,32,38,44];
+const WELL=[40,13],BRIDGES=[[13,22],[35,22],[58,22]];
 const BUILD=[
- {type:'library',x:12,y:3,w:5,h:4,door:[14,7],label:'마을 도서관',roof:'#4a7fd4',wall:'#f4e9d1'},
- {type:'mission',x:20,y:5,w:3,h:2,door:[21,7],label:'미션 게시판'},
- {type:'shop',x:30,y:3,w:5,h:4,door:[32,7],label:'잡화점',roof:'#e05a47',wall:'#fff3dc'},
- {type:'mayor',x:36,y:8,w:4,h:3,door:[37,11],label:'이장실',roof:'#58aa55',wall:'#f4e9d1'}];
+ {type:'library',x:20,y:5,w:5,h:4,door:[22,9],label:'마을 도서관',roof:'#4a7fd4',wall:'#f4e9d1'},
+ {type:'mission',x:30,y:7,w:3,h:2,door:[31,9],label:'미션 게시판'},
+ {type:'shop',x:44,y:5,w:5,h:4,door:[46,9],label:'잡화점',roof:'#e05a47',wall:'#fff3dc'},
+ {type:'mayor',x:52,y:11,w:4,h:3,door:[53,14],label:'이장실',roof:'#58aa55',wall:'#f4e9d1'}];
 function buildMap(){
  tiles=[];const rr=mulberry(7);
  for(let y=0;y<MH;y++){tiles[y]=[];for(let x=0;x<MW;x++)tiles[y][x]='g'}
  const set=(x,y,v)=>{if(x>=0&&y>=0&&x<MW&&y<MH)tiles[y][x]=v};
  const rect=(x,y,w,h,v)=>{for(let j=y;j<y+h;j++)for(let i=x;i<x+w;i++)set(i,j,v)};
  rect(0,0,MW,2,'t');rect(0,MH-2,MW,2,'t');rect(0,0,2,MH,'t');rect(MW-2,0,2,MH,'t');
- for(let y=2;y<13;y++)for(let x=2;x<11;x++)if(rr()<.3)set(x,y,'t');
- rect(4,6,4,3,'g');
+ for(let y=2;y<20;y++)for(let x=2;x<18;x++)if(rr()<.3)set(x,y,'t');
+ rect(5,7,6,4,'g');
+ for(let y=2;y<18;y++)for(let x=56;x<MW-2;x++)if(rr()<.12)set(x,y,'t');
+ rect(59,4,8,6,'g');rect(60,5,6,4,'w');
  for(let x=2;x<MW-2;x++)if(rr()<.18)set(x,2,'t');
- rect(2,15,MW-4,2,'w');rect(23,15,2,2,'b');
- rect(13,7,23,1,'p');rect(18,8,12,4,'p');rect(30,11,8,1,'p');rect(23,7,2,8,'p');rect(23,17,2,17,'p');
- for(const yy of HY)rect(3,yy+3,43,1,'p');
+ rect(2,22,MW-4,2,'w');for(const [bx,by] of BRIDGES)rect(bx,by,2,2,'b');
+ rect(11,9,44,1,'p');rect(30,10,16,5,'p');rect(46,14,14,1,'p');
+ rect(35,15,2,7,'p');rect(35,24,2,MH-27,'p');rect(13,10,2,12,'p');rect(58,15,2,7,'p');
+ rect(13,24,2,5,'p');rect(58,24,2,5,'p');
+ for(const yy of HY)rect(3,yy+3,MW-6,1,'p');
  for(const b of BUILD){rect(b.x,b.y,b.w,b.h,'B')}
  set(WELL[0],WELL[1],'B');
- rect(11,7,2,1,'p');
  doors=[];houses=[];plates=[];
  for(const b of BUILD){doors.push({type:b.type,x:b.door[0]*T+8,y:b.door[1]*T+10,r:[b.x*T,b.y*T,(b.x+b.w)*T,(b.y+b.h)*T]});plates.push({x:(b.x+b.w/2)*T,y:b.y*T-(b.type==='mission'?2:4),t:b.label,k:b.type})}
  const list=[...(S?S.students:[])].sort((a,b)=>a.no-b.no);
  list.forEach((st,i)=>{if(i>=HX.length*HY.length)return;const hx=HX[i%HX.length],hy=HY[Math.floor(i/HX.length)];
   rect(hx,hy,3,3,'h');const d={type:'house',owner:st.no,x:(hx+1)*T+8,y:(hy+3)*T+10,r:[hx*T,hy*T,(hx+3)*T,(hy+3)*T]};doors.push(d);
   houses.push({no:st.no,hx,hy,door:d,fx:hx*T+8,fy:(hy+3)*T+12});plates.push({x:(hx+1.5)*T,y:hy*T-2,t:'',k:'house',no:st.no})});
- for(let y=17;y<MH-2;y++)for(let x=2;x<MW-2;x++)if(tiles[y][x]==='g'&&rr()<.05)set(x,y,'f');
- for(let y=12;y<15;y++)for(let x=14;x<34;x++)if(tiles[y][x]==='g'&&rr()<.08)set(x,y,'f');
- forestSpots=[];for(let y=2;y<14;y++)for(let x=2;x<12;x++)if(tiles[y][x]==='g')forestSpots.push([x,y]);
- for(let x=2;x<MW-2;x++){if(tiles[14][x]==='g')forestSpots.push([x,14])}
+ for(let y=24;y<MH-2;y++)for(let x=2;x<MW-2;x++)if(tiles[y][x]==='g'&&rr()<.05)set(x,y,'f');
+ for(let y=15;y<21;y++)for(let x=18;x<56;x++)if(tiles[y][x]==='g'&&rr()<.08)set(x,y,'f');
+ for(let y=3;y<19;y++)for(let x=56;x<MW-2;x++)if(tiles[y][x]==='g'&&rr()<.1)set(x,y,'f');
+ forestSpots=[];for(let y=2;y<20;y++)for(let x=2;x<18;x++)if(tiles[y][x]==='g')forestSpots.push([x,y]);
+ for(let x=2;x<MW-2;x++){if(tiles[21][x]==='g')forestSpots.push([x,21])}
 }
 function makeNoise(seed){const P=new Float32Array(4096);const r=mulberry(seed);for(let i=0;i<4096;i++)P[i]=r();const h=(x,y)=>P[(Math.imul(x,73856093)^Math.imul(y,19349663))&4095];
  return (x,y,sc)=>{x/=sc;y/=sc;const xi=Math.floor(x),yi=Math.floor(y),xf=x-xi,yf=y-yi,u=xf*xf*(3-2*xf),v=yf*yf*(3-2*yf),a=h(xi,yi),b=h(xi+1,yi),c=h(xi,yi+1),d=h(xi+1,yi+1);return a+(b-a)*u+(c-a)*v+(a-b-c+d)*u*v}}
@@ -1472,8 +1476,7 @@ function renderMap(){if(!groundC)groundC=renderGround();
  for(let y=0;y<MH;y++)for(let x=0;x<MW;x++){const v=tiles[y][x];
   if(v==='w'&&rr()<.6)sparks.push([x*T+((rr()*14)|0),y*T+5+((rr()*9)|0)]);
   if(v==='f'){for(let k=0;k<3;k++){const fx=x*TS2+4+((rr()*22)|0),fy=y*TS2+6+((rr()*20)|0),c=['#ffffff','#f6c6d0','#f5c542','#c49be0','#e05a47'][(rr()*5)|0];R('#3d7329',fx+2,fy+3,1,5);R('#4f9a3a',fx+3,fy+5,2,1);R(c,fx,fy+1,5,2);R(c,fx+1,fy,3,4);R(shade(c,-35),fx+3,fy+3,2,1);R('#f5c542',fx+2,fy+1,1,1)}}}
- const bx=23*TS2,by=15*TS2;R('#2a1d1a',bx-4,by-6,2*TS2+8,2*TS2+12);for(let yy=by-4;yy<by+2*TS2+4;yy+=6){R('#a8723f',bx,yy,2*TS2,5);R('#c48a55',bx,yy,2*TS2,1);R('#6b4428',bx,yy+5,2*TS2,1);R('#8a5a32',bx+((hsh(yy,1)*50)|0),yy+2,6,1)}
- for(const rx of [bx-4,bx+2*TS2]){R('#5a3a22',rx,by-6,4,2*TS2+12);R('#7a5232',rx,by-6,1,2*TS2+12);for(let yy=by-6;yy<by+2*TS2+6;yy+=20){R('#43291a',rx-1,yy,6,5)}}
+ for(const [BX,BY] of BRIDGES){ const bx=BX*TS2,by=BY*TS2;R('#2a1d1a',bx-4,by-6,2*TS2+8,2*TS2+12);for(let yy=by-4;yy<by+2*TS2+4;yy+=6){R('#a8723f',bx,yy,2*TS2,5);R('#c48a55',bx,yy,2*TS2,1);R('#6b4428',bx,yy+5,2*TS2,1);R('#8a5a32',bx+((hsh(yy,1)*50)|0),yy+2,6,1)}  for(const rx of [bx-4,bx+2*TS2]){R('#5a3a22',rx,by-6,4,2*TS2+12);R('#7a5232',rx,by-6,1,2*TS2+12);for(let yy=by-6;yy<by+2*TS2+6;yy+=20){R('#43291a',rx-1,yy,6,5)}}}
  const objs=[];
  for(let y=0;y<MH;y++)for(let x=0;x<MW;x++)if(tiles[y][x]==='t'){const v=(hsh(x,y,4)*6)|0;objs.push({by:y*TS2+TS2,d:()=>g.drawImage(treeSpr(v),x*TS2+16-29,y*TS2+TS2-73)})}
  for(const b of BUILD)objs.push({by:(b.y+b.h)*TS2,d:()=>{if(b.type==='mission')g.drawImage(boardSpr(),b.x*TS2-5,b.y*TS2-11);else{const s=bldSpr(b.type,b.w,b.h,b.roof,1);g.drawImage(s,b.x*TS2-7,b.y*TS2-43)}}});
@@ -1489,7 +1492,7 @@ const ME=()=>S&&S.students.find(s=>s.no===ME_NO);
 const P={x:0,y:0,dir:'d',fr:0,ft:0,target:null,stuck:0,bubble:null,moving:false};
 const pet={x:0,y:0,flip:false};
 let cols=[],friends=[],flags={mission:false,library:false},flagT=0,secT=0,talkT=6,warned=false,useAcc=0,useT=0,pollT=0,sendT=0,wasMoving=false;
-const tori={x:26*T+8,y:10*T+12,hx:26*T+8,hy:10*T+12,tx:null,ty:null,dir:'d',fr:0,ft:0,moving:false,live:false,bubble:null};
+const tori={x:38*T+8,y:11*T+12,hx:38*T+8,hy:11*T+12,tx:null,ty:null,dir:'d',fr:0,ft:0,moving:false,live:false,bubble:null};
 let TVW=false;
 const myNo=()=>ROLE==='teacher'?0:ME_NO;
 function guideHome(){tori.live=false;tori.tx=null;tori.x=tori.hx;tori.y=tori.hy;tori.dir='d';tori.moving=false}
@@ -1753,7 +1756,7 @@ async function crDone(){const nick=$('#crNick').value.trim(),m=$('#crMsg');
 
 /* ===== village enter / doors ===== */
 function enterVillage(tutorial){mode='village';document.body.className='village';show('sVillage');buildMap();renderMap();const me=ME();
- const h=houses.find(x=>x.no===me.no);P.x=h?h.door.x:24*T;P.y=h?h.door.y+4:13*T;P.dir='d';P.target=null;P.bubble=null;pet.x=P.x-14;pet.y=P.y;warned=false;useAcc=0;
+ const h=houses.find(x=>x.no===me.no);P.x=h?h.door.x:36*T;P.y=h?h.door.y+4:12*T;P.dir='d';P.target=null;P.bubble=null;pet.x=P.x-14;pet.y=P.y;warned=false;useAcc=0;
  spawnCols();friends=[];makeFriends(false);aLabel='x';updA(null);updHud();computeFlags();lockMsgKey='?';checkLock();rtJoin();
  const lines=[];
  if(tutorial)lines.push(`안녕, ${me.nick}! 나는 우리 마을 이장 ${jo(guideName(),'이야','야')}. 마을 안내를 맡고 있어.`,'왼쪽 아래 조이스틱을 끌거나, 방향키를 누르거나, 가고 싶은 곳을 누르면 걸어갈 수 있어. 건물 앞에 서면 오른쪽 아래 버튼으로 들어갈 수 있어.','미션 게시판에서 선생님이 낸 미션을 하고, 도서관에서 계기교육 이야기를 읽어 봐.','칭찬과 미션으로 모은 코인은 잡화점에서 가구, 옷, 씨앗을 사는 데 써.','숲에 반짝이는 보물이 떨어져 있으면 주워 봐. 무엇이 나올지는 주워 봐야 알아!','입주 선물로 코인 100개랑 침대, 의자, 토마토 씨앗을 넣어 뒀어. 먼저 우리 집에 들어가 봐!');
