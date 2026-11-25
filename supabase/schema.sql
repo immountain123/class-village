@@ -44,6 +44,8 @@ create table if not exists public.students(
   lock_until timestamptz,
   unique(class_id, no));
 
+alter table public.students add column if not exists fish jsonb not null default '{"d":"","n":0,"t":0}';
+
 create table if not exists public.sessions(
   token uuid primary key default gen_random_uuid(),
   class_id uuid not null references public.classes(id) on delete cascade,
@@ -142,7 +144,9 @@ insert into public.items(id,name,cat,price,sell,crop,w) values
  ('crop_tomato','토마토','crop',0,25,null,0),('crop_carrot','당근','crop',0,22,null,0),('crop_straw','딸기','crop',0,35,null,0),
  ('petfood','펫 간식','pfood',5,0,null,0),
  ('col_acorn','도토리','col',0,3,null,35),('col_pine','솔방울','col',0,4,null,28),('col_shell','분홍 조개','col',0,8,null,16),
- ('col_feather','파랑 깃털','col',0,10,null,12),('col_clover','네잎클로버','col',0,30,null,6),('col_star','별조각','col',0,50,null,3)
+ ('col_feather','파랑 깃털','col',0,10,null,12),('col_clover','네잎클로버','col',0,30,null,6),('col_star','별조각','col',0,50,null,3),
+ ('fish_minnow','송사리','fish',0,4,null,34),('fish_carp','붕어','fish',0,7,null,28),('fish_catfish','메기','fish',0,15,null,16),
+ ('fish_trout','무지개송어','fish',0,22,null,12),('fish_koi','비단잉어','fish',0,40,null,7),('fish_gold','황금 물고기','fish',0,100,null,3)
 on conflict (id) do update set name=excluded.name,cat=excluded.cat,price=excluded.price,sell=excluded.sell,crop=excluded.crop,w=excluded.w;
 
 -- ---------- helpers ----------
@@ -207,7 +211,7 @@ begin
   j := jsonb_build_object('no',s.no,'created',s.created,'nick',case when p_full or s.nick_ok then s.nick else '' end,
     'nickOk',s.nick_ok,'av',s.av,'wear',s.wear,'house',s.house,'farm',cv_grow(s.farm,p_fast),'pet',s.pet);
   if p_full then
-    j := j || jsonb_build_object('coins',s.coins,'inv',s.inv,'dex',s.dex,'col',s.col,'usage',s.usage,'notes',s.notes,
+    j := j || jsonb_build_object('coins',s.coins,'inv',s.inv,'dex',s.dex,'col',s.col,'fish',s.fish,'usage',s.usage,'notes',s.notes,
       'lastSeen',cv_d(s.last_seen),
       'coupons',(select coalesce(jsonb_agg(jsonb_build_object('id',q.id,'cid',q.coupon_id,'name',q.name,'status',q.status,'at',cv_ms(q.at)) order by q.at),'[]') from scoupons q where q.student_id=s.id));
   end if;
@@ -395,12 +399,24 @@ begin
     update students set inv=cv_inv(inv,it.id,1) where id=st.id;
 
   elsif p_act = 'sell' then
-    select * into it from items where id=p_args->>'id' and cat in ('crop','col');
+    select * into it from items where id=p_args->>'id' and cat in ('crop','col','fish');
     if not found then perform cv_err('팔 수 없는 물건이에요.'); end if;
     n := case when p_args->>'n'='all' then cv_cnt(st.inv,it.id) else 1 end;
     if n<1 or n>cv_cnt(st.inv,it.id) then perform cv_err('가진 개수가 부족해요.'); end if;
     update students set inv=cv_inv(inv,it.id,-n) where id=st.id;
     perform cv_coins(st.id,it.sell*n,'팔기: '||it.name||' '||n||'개',false);
+
+  elsif p_act = 'fish' then
+    v := case when st.fish->>'d' = tx then st.fish else jsonb_build_object('d',tx,'n',0,'t',0) end;
+    if (v->>'n')::int >= 15 then perform cv_err('오늘은 물고기를 충분히 잡았어요. 내일 또 낚시해요!'); end if;
+    if nowm - (v->>'t')::bigint < 4000 then perform cv_err('조금만 쉬었다가 다시 던져 봐요.'); end if;
+    select sum(items.w) into tw from items where cat='fish';
+    r := random()*tw;
+    for it in select * from items where cat='fish' order by w desc loop
+      r := r - it.w; picked := it.id;
+      exit when r <= 0;
+    end loop;
+    update students set fish=jsonb_build_object('d',tx,'n',(v->>'n')::int+1,'t',nowm), inv=cv_inv(inv,picked,1), dex=dex||jsonb_build_object(picked,1) where id=st.id;
 
   elsif p_act = 'collect' then
     k := p_args->>'cid';

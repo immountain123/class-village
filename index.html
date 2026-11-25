@@ -294,13 +294,14 @@ const ITEMS={
  seed_tomato:{n:'토마토 씨앗',c:'seed',p:10,crop:'tomato'},seed_carrot:{n:'당근 씨앗',c:'seed',p:10,crop:'carrot'},seed_straw:{n:'딸기 씨앗',c:'seed',p:15,crop:'straw'},
  crop_tomato:{n:'토마토',c:'crop',s:25},crop_carrot:{n:'당근',c:'crop',s:22},crop_straw:{n:'딸기',c:'crop',s:35},
  petfood:{n:'펫 간식',c:'pfood',p:5},
- col_acorn:{n:'도토리',c:'col',s:3,w:35},col_pine:{n:'솔방울',c:'col',s:4,w:28},col_shell:{n:'분홍 조개',c:'col',s:8,w:16},col_feather:{n:'파랑 깃털',c:'col',s:10,w:12},col_clover:{n:'네잎클로버',c:'col',s:30,w:6},col_star:{n:'별조각',c:'col',s:50,w:3}
+ col_acorn:{n:'도토리',c:'col',s:3,w:35},col_pine:{n:'솔방울',c:'col',s:4,w:28},col_shell:{n:'분홍 조개',c:'col',s:8,w:16},col_feather:{n:'파랑 깃털',c:'col',s:10,w:12},col_clover:{n:'네잎클로버',c:'col',s:30,w:6},col_star:{n:'별조각',c:'col',s:50,w:3},
+ fish_minnow:{n:'송사리',c:'fish',s:4,w:34},fish_carp:{n:'붕어',c:'fish',s:7,w:28},fish_catfish:{n:'메기',c:'fish',s:15,w:16},fish_trout:{n:'무지개송어',c:'fish',s:22,w:12},fish_koi:{n:'비단잉어',c:'fish',s:40,w:7},fish_gold:{n:'황금 물고기',c:'fish',s:100,w:3}
 };
 for(const k in TOPS)ITEMS[k]={n:TOPN[k],c:'top',p:40};
 const CROPS={tomato:{n:'토마토',col:'#e05a47'},carrot:{n:'당근',col:'#f08a30'},straw:{n:'딸기',col:'#e0405a'}};
 const PETS={cat:'고양이',dog:'강아지',rabbit:'토끼'};const PET_COST=150;
 const ROOM=[[6,4],[8,5],[10,6]];const ROOMN=['작은 방','중간 방','큰 방'];const EXP_COST=[0,300,600];
-const DEX=['col_acorn','col_pine','col_shell','col_feather','col_clover','col_star','crop_tomato','crop_carrot','crop_straw'];
+const DEX=['col_acorn','col_pine','col_shell','col_feather','col_clover','col_star','crop_tomato','crop_carrot','crop_straw','fish_minnow','fish_carp','fish_catfish','fish_trout','fish_koi','fish_gold'];
 const EMO=['heart','star','note','exclaim','question','smile'];
 const SKIN=['#f6d2b0','#e0a77a','#a8714a'];
 const HAIR=['#3b2a20','#7a4a2a','#d9a441','#c2523c','#2f3e6b'];
@@ -376,6 +377,9 @@ function drawTori(x){const r=P_(x);const b='#b8733d',l='#d99a5e',dk='#2a2533';
  r('#7a5030',3,1,7,3);r('#9a6a3f',4,1,5,1);r('#5a3a20',6,0,1,1);r('#7a5030',4,18,2,1);r('#7a5030',8,18,2,1)}
 function drawItem(x,id){const r=P_(x);const dk='#2a2533';
  if(IMG[id]){x.drawImage(IMG[id],0,0,16,16);return}
+ if(id.startsWith('fish_')){const F={minnow:['#9ab0b8','#e0eef0','#6a8a94'],carp:['#b89a5a','#ecd8a0','#8a6a3a'],catfish:['#6e6c5a','#aeac96','#4a483c'],trout:['#88a8c8','#eef4f8','#5a7a9a'],koi:['#f8f4ee','#ffffff','#f08030'],gold:['#f5c542','#fff3b0','#d88a1a']}[id.slice(5)]||['#88a8c8','#eef4f8','#5a7a9a'],[b,l,f]=F;
+  r(f,6,3,5,2);r(f,12,5,2,6);r(f,14,3,2,10);r(b,3,5,10,6);r(b,2,6,12,4);r(b,1,7,1,2);r(l,4,9,8,2);r(shade(b,25),4,6,5,1);r('#ffffff',3,6,2,2);r('#1a1a24',3,7,1,1);r(f,7,10,3,2);
+  if(id==='fish_trout'){r('#e88a9a',4,8,9,1);r(f,6,6,1,1);r(f,9,7,1,1)}if(id==='fish_koi'){r('#f08030',6,5,3,3);r('#f08030',10,8,2,2);r('#e04020',8,6,1,1)}if(id==='fish_catfish'){r(f,0,9,2,1);r(f,0,10,1,2)}if(id==='fish_gold'){r('#ffffff',6,6,1,1);r('#fff3b0',9,5,2,1)}return}
  if(id==='sparkle'){r('#fff3b0',7,2,2,12);r('#fff3b0',2,7,12,2);r('#f5c542',5,5,6,6);r('#ffffff',7,7,2,2);return}
  if(id==='coin'){r('#e0a830',4,2,8,12);r('#e0a830',2,4,12,8);r('#f5c542',4,3,8,10);r('#f5c542',3,4,10,8);r('#fff3b0',5,5,2,3);r('#c98a1e',7,6,2,5);return}
  if(id.startsWith('top_')){const c=TOPS[id];r(c,3,4,10,10);r(c,0,4,4,5);r(c,12,4,4,5);r(shade(c,-38),3,12,10,2);x.clearRect(6,4,4,2);r(shade(c,-38),6,6,4,1);return}
@@ -1532,18 +1536,20 @@ function hat25(x,id,dir,o){const R=(c,a,b,w=1,h=1)=>{x.fillStyle=c;x.fillRect(a,
 
 /* ===== map ===== */
 const MW0=148,MH0=110,PAD=14,MW=MW0+2*PAD,MH=MH0+2*PAD,T=16;
-const RIVC=y=>116+4*Math.sin(y*.07+.5)+2*Math.sin(y*.19+1.7)+.8*Math.sin(y*.43+.3),RIVW=y=>3.1+.6*Math.sin(y*.11)+.3*Math.sin(y*.31+1);
+const RIVP=[[-30,100],[-14,100],[0,101],[10,100],[22,99],[32,95],[40,89],[48,85],[56,84],[66,83],[76,84],[86,86],[96,89],[106,90],[124,90],[140,90]];
+const RIVC=y=>{let i=1;while(i<RIVP.length-2&&RIVP[i+1][0]<y)i++;const p0=RIVP[i-1],p1=RIVP[i],p2=RIVP[i+1],p3=RIVP[Math.min(i+2,RIVP.length-1)],t=Math.max(0,Math.min(1,(y-p1[0])/(p2[0]-p1[0]))),t2=t*t,t3=t2*t;
+ return .5*((2*p1[1])+(-p0[1]+p2[1])*t+(2*p0[1]-5*p1[1]+4*p2[1]-p3[1])*t2+(-p0[1]+3*p1[1]-3*p2[1]+p3[1])*t3)+.8*Math.sin(y*.43+.3)},RIVW=y=>4.0+.6*Math.sin(y*.11)+.3*Math.sin(y*.31+1);
 const inRiver=(x,y)=>Math.abs(x+.5-RIVC(y))<RIVW(y);
 let DOCK=[],tiles=[],doors=[],houses=[],forestSpots=[],plates=[],sparks=[],mapC=null,DECOS=[],FENCE=new Map(),OBJ=[],MAPFULL=null;
 const BLK=new Set(['t','w','B','h','F','o','P']);
 const isBlocked=(tx,ty)=>tx<0||ty<0||tx>=MW||ty>=MH||BLK.has(tiles[ty][tx]);
-const HX=(()=>{let a=1e9,b=-1e9;for(let y=50;y<=82;y++){a=Math.min(a,Math.floor(RIVC(y)-RIVW(y))-1);b=Math.max(b,Math.ceil(RIVC(y)+RIVW(y))+1)}const o=[],Z=[[25,30],[71,76],[a,b]];for(let x=3;x+3<=144;){const z=Z.find(([a,b])=>x+3>=a&&x<=b);if(z){x=z[1]+1;continue}o.push(x);x+=5}return o.sort((a,b)=>Math.abs(a+2-74)-Math.abs(b+2-74))})(),HY=[52,60,68,76];
+const HX=(()=>{let a=1e9,b=-1e9;for(let y=50;y<=82;y++){a=Math.min(a,Math.floor(RIVC(y)-RIVW(y))-1);b=Math.max(b,Math.ceil(RIVC(y)+RIVW(y))+1)}const o=[],Z=[[25,30],[71,76],[a,b],[116,121]];for(let x=3;x+3<=144;){const z=Z.find(([a,b])=>x+3>=a&&x<=b);if(z){x=z[1]+1;continue}o.push(x);x+=5}return o.sort((a,b)=>Math.abs(a+2-74)-Math.abs(b+2-74))})(),HY=[52,60,68,76];
 const FOUNTAIN=[73,20];let BRIDGES=[],FALLS=[];
 const BUILD=[
  {type:'library',x:40,y:12,w:7,h:4,door:[43,16],label:'마을 도서관',roof:'#4a7fd4',wall:'#f4e9d1'},
  {type:'mission',x:64,y:14,w:3,h:2,door:[65,16],label:'미션 게시판'},
  {type:'shop',x:80,y:12,w:7,h:4,door:[83,16],label:'잡화점',roof:'#e05a47',wall:'#fff3dc'},
- {type:'mayor',x:98,y:20,w:6,h:4,door:[101,24],label:'이장실',roof:'#58aa55',wall:'#f4e9d1'}];
+ {type:'mayor',x:108,y:20,w:6,h:4,door:[111,24],label:'이장실',roof:'#58aa55',wall:'#f4e9d1'}];
 function buildMap(){
  tiles=[];const rr=mulberry(7);
  for(let y=0;y<MH0;y++){tiles[y]=[];for(let x=0;x<MW0;x++)tiles[y][x]='g'}
@@ -1560,11 +1566,11 @@ function buildMap(){
  rect(22,16,92,1,'q');rect(62,17,26,8,'q');rect(88,24,35,1,'q');rect(21,16,1,8,'p');
  rect(73,25,2,56,'p');rect(27,17,2,38,'p');
  for(const yy of HY)rect(3,yy+3,MW0-6,1,'p');
- rect(93,80,2,MH0-80,'p');
- for(let y=0;y<MH0;y++)for(let x=96;x<136;x++)if(inRiver(x,y))set(x,y,'w');
- BRIDGES=[];for(const by of [24,...HY.map(v=>v+3)]){let x0=1e9,x1=-1;for(const yy of [by,by+1])for(let x=96;x<136;x++)if(tiles[yy][x]==='w'){x0=Math.min(x0,x);x1=Math.max(x1,x)}
-  if(x1<0)continue;for(let j=by-2;j<=by+3;j++)for(let i=x0-3;i<=x1+3;i++)if(tiles[j]&&tiles[j][i]==='t')set(i,j,'g');rect(x0,by,x1-x0+1,2,'b');BRIDGES.push({y:by,x0,x1});if(by===24){rect(x1+1,24,8,1,'p');rect(x1+7,24,2,32,'p')}}
- FALLS=[];for(const fy of [38,92]){let x0=1e9,x1=-1;for(let x=96;x<136;x++)if(tiles[fy][x]==='w'){x0=Math.min(x0,x);x1=Math.max(x1,x)}if(x1<0)continue;
+ rect(105,80,2,MH0-80,'p');rect(118,25,2,30,'p');
+ for(let y=0;y<MH0;y++)for(let x=70;x<120;x++)if(inRiver(x,y))set(x,y,'w');
+ BRIDGES=[];for(const by of [16,24,...HY.map(v=>v+3)]){let x0=1e9,x1=-1;for(const yy of [by,by+1])for(let x=70;x<120;x++)if(tiles[yy][x]==='w'){x0=Math.min(x0,x);x1=Math.max(x1,x)}
+  if(x1<0)continue;for(let j=by-2;j<=by+3;j++)for(let i=x0-3;i<=x1+3;i++)if(tiles[j]&&tiles[j][i]==='t')set(i,j,'g');rect(x0,by,x1-x0+1,2,'b');BRIDGES.push({y:by,x0,x1})}
+ FALLS=[];for(const fy of [34,88]){let x0=1e9,x1=-1;for(let x=70;x<120;x++)if(tiles[fy][x]==='w'){x0=Math.min(x0,x);x1=Math.max(x1,x)}if(x1<0)continue;
   for(let j=fy-2;j<=fy+2;j++)for(let i=x0-4;i<=x1+4;i++)if(tiles[j][i]==='t')set(i,j,'g');for(const xx of [x0-2,x0-1,x1+1,x1+2])set(xx,fy,'B');FALLS.push({y:fy,x0,x1})}
  for(const b of BUILD){rect(b.x,b.y,b.w,b.h,'B')}
  rect(FOUNTAIN[0],FOUNTAIN[1],4,2,'F');
@@ -1587,20 +1593,20 @@ function buildMap(){
   for(let j=y-1;j<=y;j++)for(let i=x;i<x+w;i++){const v=tiles[j]&&tiles[j][i];if(v!=='g'&&v!=='f'&&v!=='t')return}
   for(let j=y-h;j<=y+1;j++)for(let i=x-1;i<=x+w;i++)if(tiles[j]&&(tiles[j][i]==='t'||tiles[j][i]==='f'))set(i,j,'g');
   for(let j=y-1;j<=y;j++)for(let i=x;i<x+w;i++)set(i,j,'B');DECOS.push({k:'ah_'+k,x,y,w})};
- for(const [k,x,y] of [['c1',65,32],['c2',77,32],['c3',65,41],['c5',77,41],['c4',55,15],['barn',61,100],['coop',76,100],['windmill',96,100],['treehut',15,34],['c2',27,100]])home(k,x,y);
+ for(const [k,x,y] of [['c1',65,32],['c2',77,32],['c3',65,41],['c5',77,41],['c4',55,15],['barn',61,100],['coop',76,100],['windmill',100,100],['treehut',15,34],['c2',27,100]])home(k,x,y);
  rect(67,33,6,1,'p');rect(67,42,6,1,'p');rect(75,33,6,1,'p');rect(75,42,6,1,'p');
- for(const [x,y] of [[61,25],[88,25],[44,17],[56,17],[94,17],[106,17],[72,31],[75,36],[72,40],[75,44],[72,52],[75,52],[30,17],[118,25],[26,30],[123,30]])deco('lamp',x,y,1);
+ for(const [x,y] of [[61,25],[88,25],[44,17],[56,17],[92,17],[106,17],[72,31],[75,36],[72,40],[75,44],[72,52],[75,52],[30,17],[118,25],[26,30],[123,30]])deco('lamp',x,y,1);
  for(const [x,y] of [[64,25],[84,25],[31,30],[116,30],[78,28],[66,40],[80,40]])deco('bench',x,y,2);
- for(const [x,y] of [[47,15],[48,15],[90,15],[91,15],[87,15],[104,23]])deco('barrel',x,y,1);
- deco('cart',103,25,2);deco('cart',40,17,2);
- for(const [x,y] of [[39,15],[92,15],[49,15],[60,25],[87,25],[97,25]])deco('pot',x,y,1);
- for(const [x,y] of [[93,15],[50,15],[105,23],[70,98],[71,98]])deco('crate',x,y,1);
- for(const [x,y] of [[42,14],[103,27],[58,19],[89,19],[58,22],[89,22],[34,24],[110,30]])deco('garden',x,y,3);
+ for(const [x,y] of [[47,15],[48,15],[90,15],[91,15],[87,15],[114,23]])deco('barrel',x,y,1);
+ deco('cart',108,26,2);deco('cart',40,17,2);
+ for(const [x,y] of [[39,15],[92,15],[49,15],[60,25],[87,25],[107,25]])deco('pot',x,y,1);
+ for(const [x,y] of [[93,15],[50,15],[115,23],[70,98],[71,98]])deco('crate',x,y,1);
+ for(const [x,y] of [[42,14],[110,27],[58,19],[89,19],[58,22],[89,22],[34,24],[112,30]])deco('garden',x,y,3);
  FENCE=new Map();const fok=(x,y)=>{const v=tiles[y]&&tiles[y][x];return v==='g'||v==='f'};
  const fput=(x,y,o)=>{if(!fok(x,y))return;set(x,y,'B');const k=x+','+y,f=FENCE.get(k)||{x,y,h:false,v:false};f[o]=true;FENCE.set(k,f)};
  const fH=(x0,x1,y,gap)=>{for(let x=x0;x<=x1;x++)if(!(gap&&gap(x)))fput(x,y,'h')},fV=(x,y0,y1,gap)=>{for(let y=y0;y<=y1;y++)if(!(gap&&gap(y)))fput(x,y,'v')};
  for(const yy of HY)fH(3,MW0-4,yy+4,x=>(x-3)%15===7||(x-3)%15===8);
- for(const [x,y] of [[42,12],[57,18],[89,18],[103,28]])fH(x,x+3,y);
+ for(const [x,y] of [[42,12],[57,18],[89,18],[110,28]])fH(x,x+3,y);
  fH(57,61,23);fH(86,90,23);fV(57,19,22);fV(90,19,22);
  {for(let j=92;j<=104;j++)for(let i=57;i<=82;i++)if(tiles[j][i]==='t')set(i,j,'g');
   rect(73,81,2,20,'p');rect(63,101,16,1,'p');fH(57,82,92,x=>x===73||x===74);fH(57,82,104);fV(57,92,104);fV(82,92,104)}
@@ -1622,12 +1628,12 @@ function padMap(){const P=PAD,L=tiles,nt=[],nzb=makeNoise(41),sh=P*T;
   else v=d<=3+nzb(X*16,Y*16,80)*4.5?'s':'o';
   nt[Y][X]=v}}
  const S_=(X,Y)=>nt[Y]&&nt[Y][X]==='s';
- for(let X=P+92;X<=P+95;X++){let y0=MH-4;while(y0>P+MH0-2&&nt[y0-1][X]!=='s'&&nt[y0-1][X]!=='P'&&nt[y0-1][X]!=='t')y0--;}
- {let fy=MH;for(let X=P+92;X<=P+95;X++)for(let Y=P+MH0;Y<MH-3;Y++)if(nt[Y][X]==='o'){fy=Math.min(fy,Y);break}for(let X=P+92;X<=P+95;X++)for(let Y=fy-2;Y<MH-3;Y++)nt[Y][X]='k'}
+ for(let X=P+104;X<=P+107;X++){let y0=MH-4;while(y0>P+MH0-2&&nt[y0-1][X]!=='s'&&nt[y0-1][X]!=='P'&&nt[y0-1][X]!=='t')y0--;}
+ {let fy=MH;for(let X=P+104;X<=P+107;X++)for(let Y=P+MH0;Y<MH-3;Y++)if(nt[Y][X]==='o'){fy=Math.min(fy,Y);break}for(let X=P+104;X<=P+107;X++)for(let Y=fy-2;Y<MH-3;Y++)nt[Y][X]='k'}
  for(let Y=0;Y<MH;Y++){const y=Y-P;if(y>=0&&y<MH0)continue;for(let X=0;X<MW;X++)if(inRiver(X-P,y)&&(nt[Y][X]==='s'||nt[Y][X]==='P'||nt[Y][X]==='t'))nt[Y][X]='o'}
- for(let Y=MH-6;Y<=MH-4;Y++)for(let X=P+88;X<=P+99;X++)if(nt[Y][X]==='o')nt[Y][X]='k';
+ for(let Y=MH-6;Y<=MH-4;Y++)for(let X=P+100;X<=P+111;X++)if(nt[Y][X]==='o')nt[Y][X]='k';
  for(let Y=1;Y<MH-1;Y++)for(let X=1;X<MW-1;X++){if(nt[Y][X]!=='s')continue;let ok=true;for(let j=-1;j<=1&&ok;j++)for(let i=-1;i<=1;i++){const v=nt[Y+j][X+i];if(v!=='s'&&v!=='t'&&v!=='P'){ok=false;break}}
-  if(ok&&Math.abs(X-(P+93.5))>4&&hsh(X,Y,57)<.085)nt[Y][X]='P'}
+  if(ok&&Math.abs(X-(P+105.5))>4&&hsh(X,Y,57)<.085)nt[Y][X]='P'}
  for(const d of doors){d.x+=sh;d.y+=sh;d.r=d.r.map(v=>v+sh)}
  for(const h of houses){h.hx+=P;h.hy+=P;h.fx+=sh;h.fy+=sh}
  for(const p of plates){p.x+=sh;p.y+=sh}
@@ -1662,7 +1668,7 @@ function renderGround(){const TS=T,W2=MW*TS,H2=MH*TS;const c=document.createElem
  let TY=new Uint8Array(W2*H2);
  for(let y=0;y<H2;y++){const ty=(y/TS)|0;for(let x=0;x<W2;x++){const tx=(x/TS)|0,k=ty*MW+tx,t0=base[k];let t=t0;
   if(!uni[k]&&oc(tx,ty)&&(t0===2||t0===4)){const jx=(nz(x,y,9)-.5)*12+(nz2(x,y,3)-.5)*3,jy=(nz(x+913,y+377,9)-.5)*12+(nz2(x+51,y+97,3)-.5)*3,X_=Math.floor((x+jx)/TS),Y_=Math.floor((y+jy)/TS);if(oc(X_,Y_))t=tt(X_,Y_)}
-  else if(!uni[k]&&(rv(tx,ty)||(soft(t0)&&(rv(tx-1,ty)||rv(tx+1,ty)||rv(tx,ty-1)||rv(tx,ty+1)||rv(tx-1,ty-1)||rv(tx+1,ty+1)||rv(tx+1,ty-1)||rv(tx-1,ty+1))))){const jx=(nz(x,y,8)-.5)*13+(nz2(x,y,2.5)-.5)*3,jy=(nz(x+913,y+377,8)-.5)*13+(nz2(x+51,y+97,2.5)-.5)*3,X_=Math.floor((x+jx)/TS),Y_=Math.floor((y+jy)/TS),t1=tt(X_,Y_);if(soft(t1)||rv(X_,Y_))t=t1}
+  else if(!uni[k]&&(rv(tx,ty)||(soft(t0)&&(rv(tx-1,ty)||rv(tx+1,ty)||rv(tx,ty-1)||rv(tx,ty+1)||rv(tx-1,ty-1)||rv(tx+1,ty+1)||rv(tx+1,ty-1)||rv(tx-1,ty+1))))){const jx=(nz(x,y,11)-.5)*15,jy=(nz(x+913,y+377,11)-.5)*15,X_=Math.floor((x+jx)/TS),Y_=Math.floor((y+jy)/TS),t1=tt(X_,Y_);if(soft(t1)||rv(X_,Y_))t=t1}
   else if(!uni[k]&&soft(t0)){const jx=(nz(x,y,6)-.5)*7+(nz2(x,y,2)-.5)*2,jy=(nz(x+913,y+377,6)-.5)*7+(nz2(x+51,y+97,2)-.5)*2;const t1=tt(Math.floor((x+jx)/TS),Math.floor((y+jy)/TS));if(soft(t1))t=t1}
   TY[y*W2+x]=t}}
  const A=(a,x,y)=>(x<0||y<0||x>=W2||y>=H2)?2:a[y*W2+x];
@@ -1672,6 +1678,16 @@ function renderGround(){const TS=T,W2=MW*TS,H2=MH*TS;const c=document.createElem
    if((G0(0,-1)&&sx>=1)||(G0(0,-2)&&sx>=2)||(G0(0,1)&&sx>=2)||(G0(-1,0)&&sy>=1)||(G0(-2,0)&&sy>=2)||(G0(1,0)&&sy>=1)||(G0(2,0)&&sy>=2))T2[y*W2+x]=0}
   TY=T2}
  const at=(x,y)=>A(TY,x,y);
+ // river (sunken) masks: water pixels belonging to river, run lengths to land, land distance to river
+ const RT=new Uint8Array(MW*MH);for(let ty=0;ty<MH;ty++)for(let tx=0;tx<MW;tx++){let f=0;for(let j=-1;j<=1&&!f;j++)for(let i=-1;i<=1;i++){const v=tiles[ty+j]&&tiles[ty+j][tx+i];if(v==='w'||v==='b'){f=1;break}}RT[ty*MW+tx]=f}
+ const N=W2*H2,RV=new Uint8Array(N);for(let y=0;y<H2;y++)for(let x=0;x<W2;x++){const i=y*W2+x;if(TY[i]===2&&RT[((y/TS)|0)*MW+((x/TS)|0)])RV[i]=1}
+ const UP=new Uint8Array(N),DN=new Uint8Array(N),LF=new Uint8Array(N),RTn=new Uint8Array(N),ND=new Uint8Array(N);
+ for(let y=0;y<H2;y++)for(let x=0;x<W2;x++){const i=y*W2+x;if(RV[i]){UP[i]=y>0&&TY[i-W2]===2?Math.min(30,UP[i-W2]+1):1;LF[i]=x>0&&TY[i-1]===2?Math.min(30,LF[i-1]+1):1}}
+ for(let y=H2-1;y>=0;y--)for(let x=W2-1;x>=0;x--){const i=y*W2+x;if(RV[i]){DN[i]=y<H2-1&&TY[i+W2]===2?Math.min(30,DN[i+W2]+1):1;RTn[i]=x<W2-1&&TY[i+1]===2?Math.min(30,RTn[i+1]+1):1}}
+ for(let i=0;i<N;i++)ND[i]=RV[i]?0:20;
+ for(let y=0;y<H2;y++)for(let x=0;x<W2;x++){const i=y*W2+x;let d=ND[i];if(x>0&&ND[i-1]+1<d)d=ND[i-1]+1;if(y>0&&ND[i-W2]+1<d)d=ND[i-W2]+1;ND[i]=d}
+ for(let y=H2-1;y>=0;y--)for(let x=W2-1;x>=0;x--){const i=y*W2+x;let d=ND[i];if(x<W2-1&&ND[i+1]+1<d)d=ND[i+1]+1;if(y<H2-1&&ND[i+W2]+1<d)d=ND[i+W2]+1;ND[i]=d}
+ const ROCK=['#d88a44','#c47634','#b0662c'].map(h=>[parseInt(h.slice(1,3),16),parseInt(h.slice(3,5),16),parseInt(h.slice(5,7),16)]);
  const H_=s=>[parseInt(s.slice(1,3),16),parseInt(s.slice(3,5),16),parseInt(s.slice(5,7),16)];
  const GC=['#2c6c12','#3f8c1a','#52a422','#68ba2c','#84d03c','#a6e254'].map(H_),DC=['#9a5a14','#b8741e','#d18c2a','#e2a036','#f0b44c','#f8cc72'].map(H_),
   SC=['#9c6a2c','#c49c5e','#dcb878','#ecce96','#f8e4b8'].map(H_),WC=['#1f5c9c','#2c78b8','#3c92cc','#5cb0e0','#9ad4f4','#e6f6ff'].map(H_),BK1=H_('#a8661e'),BK2=H_('#6a3c16'),SA=['#c8945a','#e4bc7c','#f4d698','#fbe6b2','#fff4d4','#d8ae74'].map(H_);
@@ -1683,7 +1699,8 @@ function renderGround(){const TS=T,W2=MW*TS,H2=MH*TS;const c=document.createElem
   for(const [dx,dy,dv] of ST){const X=x+dx*fl-(fl<0?1:0),Y=y+dy;if(X>=0&&Y>=0&&X<W2&&Y<H2){const o=Y*W2+X;GT[o]=Math.max(0,Math.min(5,TN[o]+dv-(k<.18?1:0)))}}}}
  const img=g.createImageData(W2,H2),d=img.data;
  for(let y=0;y<H2;y++)for(let x=0;x<W2;x++){const i=y*W2+x,t=TY[i];let col;
-  if(t===0){col=GC[GT[i]];
+  if(t!==2&&t!==3&&ND[i]<=9){const nd=ND[i],sp=hsh(x,y,77);if(nd<=6){col=sp<.06?DC[1]:sp>.95?DC[5]:(nd===1?DC[4]:DC[3]);if(nd===1&&hsh(x>>1,y,78)<.3)col=DC[2]}else if(t===0)col=nd===7?GC[0]:nd===8?GC[1]:GC[GT[i]];else col=DC[3]}
+  else if(t===0){col=GC[GT[i]];
    if(at(x,y-1)!==0||at(x,y+1)!==0||at(x-1,y)!==0||at(x+1,y)!==0)col=GC[0];else if(at(x,y+2)!==0||at(x+2,y)!==0||at(x-2,y)!==0)col=GC[1];}
   else if(t===1){const sp=hsh(x,y,13);let dt=3;if(sp<.03)dt=2;else if(sp>.985)dt=5;else if(hsh(x-1,y,13)<.03)dt=4;col=DC[dt];
    if(at(x,y-1)===0)col=DC[0];else if(at(x,y-2)===0)col=DC[1];else if(at(x,y-3)===0)col=DC[2];else if(at(x-1,y)===0||at(x+1,y)===0||at(x,y+1)===0)col=DC[1];}
@@ -1695,6 +1712,14 @@ function renderGround(){const TS=T,W2=MW*TS,H2=MH*TS;const c=document.createElem
    col=SC[st];if(ly===1)col=SC[Math.min(st+1,4)];if(ly===5||lx===9)col=SC[1];
    if(lx===0||ly===0||((lx===1||lx===9)&&(ly===1||ly===5)))col=DC[1];
    if(at(x,y-1)===0)col=DC[0];else if(at(x,y-2)===0&&(lx===0||ly===0))col=DC[0];}
+  else if(RV[i]){const u=UP[i],dn=DN[i],lf=LF[i],rt=RTn[i],sd=Math.min(lf,rt);
+   const wall=(r,len,sx)=>{if(r===1)return [244,196,112];if(r===len)return [74,40,16];if(r===len-1)return [110,58,22];const band=r<=Math.ceil(len/2)?0:1,bx=Math.floor((sx+band*3)/6),k=hsh(bx,band+y-r+x*0,61),lx=(sx+band*3)%6;let c=lx===0?[122,64,26]:ROCK[(k*3)|0];if(r===2||r===Math.ceil(len/2)+1)c=[Math.min(255,c[0]+30),Math.min(255,c[1]+26),Math.min(255,c[2]+18)];return c};
+   if(u<=11)col=wall(u,11,x);
+   else if(sd<=4)col=sd===1?[244,196,112]:sd===4?[74,40,16]:ROCK[(hsh(x,(y/5)|0,63)*3)|0];
+   else if(dn<=2)col=dn===1?[122,64,26]:[176,104,46];
+   else if(u<=14||sd<=6)col=[40,70,104];
+   else if(u<=24||sd<=13||dn<=9){const k=hsh(x>>1,y>>1,62);col=k<.3?[78,104,134]:k<.75?[90,118,148]:[104,132,160];if(u<=17||sd<=8)col=[col[0]-18,col[1]-16,col[2]-12]}
+   else{const wv=Math.sin(x*.3+Math.sin(y*.55+x*.05)*2.2+nz3(x,y,7)*5),sp=hsh(x,y,13);col=[52,120,196];if(wv>.86&&y%4===0)col=[92,164,224];if(wv<-.9&&y%4===2)col=[40,100,172];if(wv>.95&&y%4===0&&sp>.7)col=[154,212,244];if(u<=20||sd<=10||dn<=9)col=[col[0]-6,col[1]-8,col[2]-6]}}
   else{const wv=Math.sin(x*.3+Math.sin(y*.55+x*.05)*2.2+nz3(x,y,7)*5),sp=hsh(x,y,13);let wt=2;
    if(wv>.86&&y%4===0)wt=3;if(wv<-.9&&y%4===2)wt=1;if(wv>.95&&y%4===0&&sp>.7)wt=4;col=WC[wt];
    const nw=(i_,j_)=>at(x+i_,y+j_)!==2,sd=(i_,j_)=>at(x+i_,y+j_)===4;
@@ -1906,15 +1931,16 @@ function update(dt){
  for(const f of friends)if(f.bubble&&f.bubble.until<now)f.bubble=null;
  if(tori.bubble&&tori.bubble.until<now)tori.bubble=null;
  talkT-=dt;if(talkT<=0&&friends.length){talkT=7+Math.random()*7;const idle=friends.filter(f=>!f.live);const f=idle[(Math.random()*idle.length)|0];const ph=S.cls.phrases;if(f&&ph.length)f.bubble={txt:ph[(Math.random()*ph.length)|0],until:now+3000}}
- if(modalOpen()){updA(null);if(wasMoving){wasMoving=false;sendPos(false)}P.moving=false;return}
- stepPlayer(dt);
+ if(modalOpen()){if(FISH.on)fishEnd();updA(null);if(wasMoving){wasMoving=false;sendPos(false)}P.moving=false;return}
+ stepPlayer(dt);fishUpdate(dt);
  for(const c of cols)if(!c.got&&Math.hypot(c.x-P.x,c.y-P.y)<11){c.got=true;collect(c)}
  if(me.pet&&me.pet.walk!==false){const bx=P.x+(P.dir==='l'?14:P.dir==='r'?-14:0),by=P.y+(P.dir==='u'?12:P.dir==='d'?-4:2);const dx=bx-pet.x,dy=by-pet.y,d=Math.hypot(dx,dy);if(d>6){const s=Math.min(d,90*dt);pet.x+=dx/d*s;pet.y+=dy/d*s;if(Math.abs(dx)>1)pet.flip=dx>0}}
- updA(nearest())}
+ updA(FISH.on?{kind:'fishing'}:nearest())}
 function stepPlayer(dt){
  let vx=0,vy=0;
  if(keys.has('ArrowLeft')||keys.has('a'))vx--;if(keys.has('ArrowRight')||keys.has('d'))vx++;if(keys.has('ArrowUp')||keys.has('w'))vy--;if(keys.has('ArrowDown')||keys.has('s'))vy++;
  if(JOY.on&&(JOY.x||JOY.y)){vx=JOY.x;vy=JOY.y}
+ if(FISH.on){if(vx||vy||P.target){fishEnd('낚싯대를 거뒀어요');P.target=null}else{P.moving=false;P.fr=0;return}}
  if(vx||vy)P.target=null;
  else if(P.target){const dx=P.target.x-P.x,dy=P.target.y-P.y,d=Math.hypot(dx,dy);if(d<3){const f=P.target.then;P.target=null;if(f)f()}else{vx=dx/d;vy=dy/d}}
  if(vx||vy){const m=Math.hypot(vx,vy);vx/=m;vy/=m;const sp=74*dt,ox=P.x,oy=P.y;
@@ -1930,17 +1956,60 @@ function updateT(dt){const now=Date.now();if(P.bubble&&P.bubble.until<now)P.bubb
  if(modalOpen()){updA(null);if(wasMoving){wasMoving=false;sendPos(false)}P.moving=false;return}
  stepPlayer(dt);updA(nearest())}
 async function collect(c){const r=await act('collect',{cid:c.id},{quiet:true});if(r&&r.picked){toast(`${jo(ITEMS[r.picked].n,'을','를')} 주웠어요!`);beep(880);beep(1320,.06,.07)}}
+/* ===== fishing ===== */
+const FISH={on:false,phase:null,t:0};
+const FDIR=()=>({l:[-1,0],r:[1,0],u:[0,-1],d:[0,1]})[P.dir]||[0,1];
+const isWet=(x,y)=>{const c=tiles[Math.floor(y/T)]&&tiles[Math.floor(y/T)][Math.floor(x/T)];return c==='w'||c==='o'};
+function fishSpot(){if(mode!=='village'||ROLE!=='student')return null;const v=FDIR();
+ for(const k of [14,22,30]){const x=P.x+v[0]*k,y=P.y-6+v[1]*k;if(isWet(x,y)){for(const k2 of [k+22,k+14,k+6]){const x2=P.x+v[0]*k2,y2=P.y-6+v[1]*k2;if(isWet(x2,y2))return {x:x2,y:y2}}return {x,y}}}
+ return null}
+function startFish(n){if(FISH.on)return;const me=ME();if(me&&me.fish&&me.fish.d===today()&&me.fish.n>=15){say('오늘은 물고기를 충분히 잡았어요. 내일 또 낚시해요!');return}
+ Object.assign(FISH,{on:true,phase:'cast',t:0,bx:n.x,by:n.y,wait:2.2+Math.random()*4.5,caught:null,msg:null});P.target=null;beep(520,.08)}
+function fishEnd(msg){FISH.on=false;FISH.phase=null;if(msg)toast(msg)}
+const fishPtr=()=>(Math.sin(FISH.t*FISH.sp*1.6-Math.PI/2)+1)/2;
+function fishPress(){const f=FISH;if(!f.on)return;
+ if(f.phase==='cast'||f.phase==='wait'){fishEnd('아직 입질이 없었어요');return}
+ if(f.phase==='bite'){f.phase='reel';f.t=0;f.zc=.2+Math.random()*.6;f.zw=.26;f.sp=2+Math.random()*1.4;beep(700,.05);return}
+ if(f.phase==='reel'){if(Math.abs(fishPtr()-f.zc)<=f.zw/2){f.phase='pull';f.t=0;beep(880,.06);catchFish()}else{f.phase='miss';f.t=0;f.msg='앗, 놓쳤어요!';beep(220,.15)}}}
+async function catchFish(){const r=await act('fish',{},{quiet:false});if(!FISH.on)return;
+ if(r&&r.picked){FISH.caught=r.picked;FISH.phase='done';FISH.t=0;const me=ME(),n=me&&me.fish&&me.fish.d===today()?me.fish.n:0;toast(`${jo(ITEMS[r.picked].n,'을','를')} 낚았어요!${n?` (오늘 ${n}/15)`:''}`);beep(1046,.08);beep(1318,.08,.1)}else fishEnd()}
+function fishUpdate(dt){const f=FISH;if(!f.on)return;f.t+=dt;
+ if(f.phase==='cast'&&f.t>.6){f.phase='wait';f.t=0;beep(300,.04)}
+ else if(f.phase==='wait'&&f.t>f.wait){f.phase='bite';f.t=0;beep(980,.05);beep(980,.05,.12)}
+ else if(f.phase==='bite'&&f.t>1.4){f.phase='miss';f.t=0;f.msg='물고기가 도망갔어요'}
+ else if(f.phase==='reel'&&f.t>6){f.phase='miss';f.t=0;f.msg='물고기가 도망갔어요'}
+ else if(f.phase==='miss'&&f.t>.9)fishEnd(f.msg);
+ else if(f.phase==='done'&&f.t>1.8)fishEnd()}
+function drawFish(cx,cy,S_){const f=FISH,sx=w=>(w-cx)*S_,sy=w=>(w-cy)*S_,d=FDIR();
+ const hx=P.x+d[0]*5+(d[1]?6:0),hy=P.y-14,tx=P.x+d[0]*17+(d[1]?11:0),ty=P.y-33+(d[1]>0?6:0);
+ ctx.lineCap='round';ctx.strokeStyle='#3a200e';ctx.lineWidth=Math.max(2,S_*1.6);ctx.beginPath();ctx.moveTo(sx(hx),sy(hy));ctx.lineTo(sx(tx),sy(ty));ctx.stroke();
+ ctx.strokeStyle='#b47c42';ctx.lineWidth=Math.max(1,S_*.8);ctx.beginPath();ctx.moveTo(sx(hx),sy(hy));ctx.lineTo(sx(tx),sy(ty));ctx.stroke();
+ let bx=f.bx,by=f.by;if(f.phase==='cast'){const k=Math.min(1,f.t/.6);bx=tx+(f.bx-tx)*k;by=ty+(f.by-ty)*k-Math.sin(k*Math.PI)*18}
+ if(f.phase==='pull'||f.phase==='done'){const k=Math.min(1,f.t/.35);bx=f.bx+(tx-f.bx)*k;by=f.by+(ty-f.by)*k}
+ const bob=f.phase==='wait'?Math.sin(f.t*3):f.phase==='bite'?(Math.sin(f.t*30)>0?2.5:0):f.phase==='reel'?Math.sin(f.t*20)*1.5:0;
+ ctx.strokeStyle='rgba(255,255,255,.85)';ctx.lineWidth=Math.max(1,S_*.5);ctx.beginPath();ctx.moveTo(sx(tx),sy(ty));ctx.quadraticCurveTo(sx((tx+bx)/2),sy(Math.max(ty,by)+6),sx(bx),sy(by+bob));ctx.stroke();
+ if(f.phase==='wait'||f.phase==='bite'||f.phase==='reel'){for(const o of [0,.5]){const q=(f.t*(f.phase==='wait'?.8:2)+o)%1;ctx.strokeStyle=`rgba(255,255,255,${.7*(1-q)})`;ctx.lineWidth=Math.max(1,S_*.6);ctx.beginPath();ctx.ellipse(sx(bx),sy(by+2),(3+q*9)*S_,(1.5+q*3.5)*S_,0,0,Math.PI*2);ctx.stroke()}}
+ if(f.phase!=='done'){const r=2.4*S_,X=sx(bx),Y=sy(by+bob);ctx.fillStyle='#ffffff';ctx.beginPath();ctx.arc(X,Y,r,0,Math.PI*2);ctx.fill();ctx.fillStyle='#e8443a';ctx.beginPath();ctx.arc(X,Y,r,Math.PI,0);ctx.fill();ctx.strokeStyle='#2a1418';ctx.lineWidth=Math.max(1,S_*.45);ctx.beginPath();ctx.arc(X,Y,r,0,Math.PI*2);ctx.stroke()}
+ const px=sx(P.x),py=sy(P.y-42),fs=Math.round(clamp(S_*4.5,13,17));
+ if(f.phase==='bite')bubbleIcon('exclaim',px,py-Math.abs(Math.sin(f.t*12))*5);
+ if(f.phase==='reel'){const W_=Math.max(150,S_*78),H_=Math.max(16,S_*9),x0=px-W_/2,y0=py-H_-8;
+  ctx.fillStyle='#2a1418';ctx.fillRect(x0-4,y0-4,W_+8,H_+8);ctx.fillStyle='#f4e6c2';ctx.fillRect(x0,y0,W_,H_);
+  ctx.fillStyle='#4eae4a';ctx.fillRect(x0+(f.zc-f.zw/2)*W_,y0,f.zw*W_,H_);ctx.fillStyle='#8fd07a';ctx.fillRect(x0+(f.zc-f.zw/2)*W_,y0,f.zw*W_,Math.max(2,H_/4));
+  const p=fishPtr(),X=x0+p*W_;ctx.fillStyle='#2a1418';ctx.fillRect(X-4,y0-7,8,H_+14);ctx.fillStyle='#e8443a';ctx.fillRect(X-2,y0-5,4,H_+10);
+  ctx.font=`${fs}px "Galmuri11", Jua, sans-serif`;ctx.textAlign='center';ctx.textBaseline='bottom';ctx.lineWidth=4;ctx.strokeStyle='#ffffff';ctx.strokeText('초록 칸에서 멈춰요!',px,y0-9);ctx.fillStyle='#2a1418';ctx.fillText('초록 칸에서 멈춰요!',px,y0-9)}
+ if(f.phase==='done'&&f.caught){const sp=itemSpr(f.caught),z=Math.max(2,S_*1.4),lift=Math.min(1,f.t/.3)*8*S_;ctx.imageSmoothingEnabled=false;ctx.drawImage(sp,px-8*z,py-14*z-lift,16*z,16*z)}}
 function nearest(){let best=null,bd=22;
  for(const d of doors){const k=Math.hypot(d.x-P.x,d.y-P.y);if(k<bd){bd=k;best={kind:'door',d}}}
  if(mode!=='tview'){const kt=Math.hypot(tori.x-P.x,tori.y-P.y);if(kt<24&&kt<bd+2){bd=kt;best={kind:'tori'}}}
  for(const f of friends){const k=Math.hypot(f.x-P.x,f.y-P.y);if(k<16&&k<bd){bd=k;best={kind:'friend',f}}}
+ if(!best){const fs=fishSpot();if(fs)best={kind:'fish',x:fs.x,y:fs.y}}
  return best}
 let curNear=null,aLabel='';
 function updA(n){curNear=n;let l='';
- if(n){if(n.kind==='tori')l=`${guideName()}께 말 걸기`;else if(n.kind==='friend')l='인사하기';else if(n.d.type==='house')l=(n.d.owner===ME_NO&&mode==='village')?'우리 집 들어가기':`${nickOf(S.students.find(s=>s.no===n.d.owner)||{no:n.d.owner})} 집 구경`;else l=mode==='tview'?({mission:'미션 관리',library:'도서관 관리',shop:'상점 관리',mayor:'이장실로 돌아가기'})[n.d.type]:'들어가기'}
+ if(n){if(n.kind==='fish')l='낚시하기';else if(n.kind==='fishing')l=({cast:'거두기',wait:'거두기',bite:'당기기!',reel:'지금 멈춰!'})[FISH.phase]||'';else if(n.kind==='tori')l=`${guideName()}께 말 걸기`;else if(n.kind==='friend')l='인사하기';else if(n.d.type==='house')l=(n.d.owner===ME_NO&&mode==='village')?'우리 집 들어가기':`${nickOf(S.students.find(s=>s.no===n.d.owner)||{no:n.d.owner})} 집 구경`;else l=mode==='tview'?({mission:'미션 관리',library:'도서관 관리',shop:'상점 관리',mayor:'이장실로 돌아가기'})[n.d.type]:'들어가기'}
  if(l!==aLabel){aLabel=l;const b=$('#bA');b.hidden=!l;b.textContent=l}}
 function interact(){const n=curNear;if(!n||modalOpen()||dlgOn||lockOn)return;beep(660);
- if(n.kind==='door')openDoor(n.d);else if(n.kind==='tori')toriTalk();else if(n.kind==='friend')greet(n.f)}
+ if(n.kind==='fish')startFish(n);else if(n.kind==='fishing')fishPress();else if(n.kind==='door')openDoor(n.d);else if(n.kind==='tori')toriTalk();else if(n.kind==='friend')greet(n.f)}
 function greet(f){const st=S.students.find(s=>s.no===f.no);P.bubble={txt:'안녕!',until:Date.now()+2500};if(S.cls.phrases.includes('안녕!'))bcast('emo',{no:myNo(),txt:'안녕!'});else{P.bubble={emo:'smile',until:Date.now()+2500};bcast('emo',{no:myNo(),emo:'smile'})}if(st)toast(`${nickOf(st)}에게 인사했어요`)}
 function toriTalk(){say(TIPS[(Math.random()*TIPS.length)|0])}
 function computeFlags(){const me=ME();if(!me)return;const t=today();
@@ -1975,6 +2044,7 @@ function draw(t){
   if(me)ents.push({y:P.y,d:()=>{shadow(P.x,P.y);dS(charSpr(me.av,me.wear.top,me.wear.hat,P.dir,P.fr),P.x,P.y)}});
  }
  ents.sort((a,b)=>a.y-b.y).forEach(e=>e.d());
+ if(FISH.on&&mode==='village')drawFish(cx,cy,S_);
  const fs=Math.round(clamp(S_*4,12,17));ctx.font=`${fs}px "Galmuri11", Jua, sans-serif`;ctx.textBaseline='middle';ctx.textAlign='center';
  if(S)for(const p of plates){let txt=p.t;if(p.k==='house'){const st=S.students.find(s=>s.no===p.no);if(!st)continue;txt=st.no===ME_NO&&mode==='village'?'우리 집':(st.created?nickOf(st):`${st.no}번 빈 집`)}
   const mine=p.k==='house'&&p.no===ME_NO&&mode==='village';plate(txt,(p.x-cx)*S_,(p.y-cy)*S_,fs,mine);
@@ -2176,7 +2246,7 @@ function rShop(b){const me=ME(),t=W.tab;let h=`<div class="row between wrap" sty
  else if(t==='farm')h+=`<div class="grid">${[...list('seed'),'petfood'].map(id=>itemCard(id,buyBtn(id),`<span class="help" style="margin:0">가진 개수 ${cnt(me,id)}</span>`)).join('')}</div><p class="help">펫 입양은 우리 집 [펫] 탭에서 할 수 있어요.</p>`;
  else if(t==='coupon'){h+=S.coupons.length?`<div class="grid">${S.coupons.map(c=>{const left=c.stock-c.sold,mine=me.coupons.filter(q=>q.cid===c.id).length;const why=left<=0?'다 팔렸어요':mine>=c.limit?`한 사람당 ${c.limit}장까지`:'';
    return `<div class="item"><b style="font-size:18px">${esc(c.name)}</b><span class="price">${cIco()} ${c.price}</span><span class="help" style="margin:0">남은 수량 ${Math.max(0,left)} · 1인 ${c.limit}장</span>${why?`<span class="tag">${why}</span>`:`<button class="btn sm coin" data-a="buyCp" data-v="${c.id}" ${me.coins<c.price?'disabled':''}>사기</button>`}</div>`}).join('')}</div><p class="help">산 쿠폰은 수첩에 들어가요. 쓸 때 선생님께 말씀드리면 사용 처리해 주세요.</p>`:'<p class="empty">선생님이 아직 쿠폰을 올리지 않았어요.</p>'}
- else{const ids=Object.keys(ITEMS).filter(k=>(ITEMS[k].c==='crop'||ITEMS[k].c==='col')&&cnt(me,k)>0);
+ else{const ids=Object.keys(ITEMS).filter(k=>(ITEMS[k].c==='crop'||ITEMS[k].c==='col'||ITEMS[k].c==='fish')&&cnt(me,k)>0);
   h+=ids.length?`<div class="grid">${ids.map(id=>itemCard(id,`<div class="row wrap" style="justify-content:center"><button class="btn sm" data-a="sell" data-v="${id}:1">1개 팔기</button><button class="btn sm" data-a="sell" data-v="${id}:all">모두</button></div>`,`<span class="help" style="margin:0">${cnt(me,id)}개 · 1개에 ${ITEMS[id].s}코인</span>`)).join('')}</div>`:'<p class="empty">팔 수 있는 작물이나 보물이 없어요. 숲을 산책하거나 농장에서 수확해 봐요.</p>'}
  b.innerHTML=h}
 
@@ -2219,7 +2289,7 @@ function rNote(b){const me=ME(),t=W.tab;let h=tabs([['wear','옷장'],['bag','�
   h+=`<div class="row wrap" style="gap:16px;margin-bottom:12px"><img src="${charURL(me)}" alt="내 캐릭터" style="width:66px;height:105px;background:#bfe6a8;border:3px solid var(--edge)"><button class="btn" data-a="restyle">외모·별명 바꾸기</button></div>
   <h4 style="margin-bottom:8px">모자</h4>${hats.length?`<div class="grid">${hats.map(id=>itemCard(id,me.wear.hat===id?'<button class="btn sm" data-a="wear" data-v="hat:">벗기</button>':`<button class="btn sm pri" data-a="wear" data-v="hat:${id}">쓰기</button>`)).join('')}</div>`:'<p class="help">아직 모자가 없어요.</p>'}
   <h4 style="margin:14px 0 8px">옷</h4><div class="grid">${tops.map(id=>itemCard(id,me.wear.top===id?'<span class="tag ok">입고 있어요</span>':`<button class="btn sm pri" data-a="wear" data-v="top:${id}">입기</button>`)).join('')}</div>`}
- else if(t==='bag'){const ids=Object.keys(ITEMS).filter(k=>['seed','crop','pfood','col'].includes(ITEMS[k].c)&&cnt(me,k)>0);h+=ids.length?`<div class="grid">${ids.map(id=>itemCard(id,`<span>${cnt(me,id)}개</span>`)).join('')}</div><p class="help">작물과 보물은 잡화점 [팔기]에서 코인으로 바꿀 수 있어요.</p>`:'<p class="empty">가방이 비어 있어요.</p>'}
+ else if(t==='bag'){const ids=Object.keys(ITEMS).filter(k=>['seed','crop','pfood','col','fish'].includes(ITEMS[k].c)&&cnt(me,k)>0);h+=ids.length?`<div class="grid">${ids.map(id=>itemCard(id,`<span>${cnt(me,id)}개</span>`)).join('')}</div><p class="help">작물과 보물은 잡화점 [팔기]에서 코인으로 바꿀 수 있어요.</p>`:'<p class="empty">가방이 비어 있어요.</p>'}
  else if(t==='coupon')h+=me.coupons.length?`<table class="log">${me.coupons.slice().reverse().map(c=>`<tr><td>${esc(c.name)}</td><td class="n">${c.status==='wait'?'<span class="tag new">사용 대기</span>':'<span class="tag ok">사용 완료</span>'}</td></tr>`).join('')}</table><p class="help">쓰고 싶을 때 선생님께 말씀드려요.</p>`:'<p class="empty">가진 쿠폰이 없어요.</p>';
  else if(t==='dex')h+=`<p style="margin-bottom:10px">${DEX.filter(k=>me.dex[k]).length} / ${DEX.length} 발견</p><div class="grid">${DEX.map(id=>me.dex[id]?itemCard(id,''):`<div class="item"><img class="ic" src="${ico(id)}" alt="" style="filter:brightness(0);opacity:.25"><b>???</b></div>`).join('')}</div><p class="help">숲과 강가를 산책하면 보물을, 농장에서 수확하면 작물을 도감에 모을 수 있어요.</p>`;
  else{const l=S.ledger.filter(x=>x.no===me.no).slice(-40).reverse();h+=l.length?`<table class="log">${l.map(x=>`<tr><td>${md(fmtD(new Date(x.at)))}</td><td>${esc(x.why)}</td><td class="n ${x.n>0?'pos':'neg'}">${x.n>0?'+':''}${x.n}</td></tr>`).join('')}</table>`:'<p class="empty">아직 코인 내역이 없어요.</p>'}
