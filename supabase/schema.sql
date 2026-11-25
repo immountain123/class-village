@@ -345,7 +345,7 @@ begin
   elsif p_act in ('create','look') then
     if p_act='create' and st.created then perform cv_err('이미 캐릭터가 있어요.'); end if;
     if p_args ? 'av' then
-      if coalesce((p_args#>>'{av,skin}')::int,-1) not between 0 and 2 or coalesce((p_args#>>'{av,hs}')::int,-1) not between 0 and 7 or coalesce((p_args#>>'{av,hc}')::int,-1) not between 0 and 4 or coalesce((p_args#>>'{av,os}')::int,0) not between 0 and 6 then perform cv_err('외모 값이 올바르지 않아요.'); end if;
+      if coalesce((p_args#>>'{av,skin}')::int,-1) not between 0 and 2 or coalesce((p_args#>>'{av,hs}')::int,-1) not between 0 and 7 or coalesce((p_args#>>'{av,hc}')::int,-1) not between 0 and 4 or coalesce((p_args#>>'{av,os}')::int,0) not between 0 and 7 then perform cv_err('외모 값이 올바르지 않아요.'); end if;
       update students set av = jsonb_build_object('skin',(p_args#>>'{av,skin}')::int,'hs',(p_args#>>'{av,hs}')::int,'hc',(p_args#>>'{av,hc}')::int,'os',coalesce((p_args#>>'{av,os}')::int,0)) where id=st.id;
     end if;
     if p_args ? 'nick' then
@@ -641,7 +641,7 @@ begin
       'free',coalesce((p_args#>>'{set,free}')::boolean,false),'fast',coalesce((p_args#>>'{set,fast}')::boolean,false),
       'live',coalesce((p_args#>>'{set,live}')::boolean,true),
       'tname',left(coalesce(nullif(trim(p_args#>>'{set,tname}'),''),c.settings->>'tname','선생님'),10),
-      'tav',jsonb_build_object('skin',least(2,greatest(0,coalesce((p_args#>>'{set,tav,skin}')::int,0))),'hs',least(7,greatest(0,coalesce((p_args#>>'{set,tav,hs}')::int,0))),'os',least(6,greatest(0,coalesce((p_args#>>'{set,tav,os}')::int,0))),
+      'tav',jsonb_build_object('skin',least(2,greatest(0,coalesce((p_args#>>'{set,tav,skin}')::int,0))),'hs',least(7,greatest(0,coalesce((p_args#>>'{set,tav,hs}')::int,0))),'os',least(7,greatest(0,coalesce((p_args#>>'{set,tav,os}')::int,0))),
         'hc',least(4,greatest(0,coalesce((p_args#>>'{set,tav,hc}')::int,0))),
         'top',case when p_args#>>'{set,tav,top}' in ('top_red','top_blue','top_yellow','top_green','top_purple','top_white') then p_args#>>'{set,tav,top}' else 'top_green' end,
         'gl',coalesce((p_args#>>'{set,tav,gl}')::boolean,true)));
