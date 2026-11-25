@@ -1720,12 +1720,14 @@ function buildMap(){
  {const rt=mulberry(31),clear=(x,y)=>{for(let j=-2;j<=2;j++)for(let i=-2;i<=2;i++){const v=tiles[y+j]&&tiles[y+j][x+i];if(v!=='g'&&v!=='f'&&v!=='t')return false}return true};
   for(let y=4;y<11;y++)for(let x=40;x<113;x++)if(rt()<.05&&clear(x,y))set(x,y,'t');
   for(let y=27;y<44;y++)for(let x=40;x<113;x++)if(rt()<.012&&clear(x,y))set(x,y,'t');}
+ for(const f of FENCE.values())set(f.x,f.y,'g');FENCE=new Map();
+ for(let y=0;y<MH0;y++)for(let x=0;x<MW0;x++){const v=tiles[y][x];if(v==='t'||v==='p')tiles[y][x]='g';else if(v==='q'&&!(x>=62&&x<88&&y>=17&&y<25))tiles[y][x]='g'}
  forestSpots=forestSpots.filter(([x,y])=>tiles[y][x]==='g');
  padMap();
 }
 function padMap(){const P=PAD,L=tiles,nt=[],nzb=makeNoise(41),sh=P*T;
  for(let Y=0;Y<MH;Y++){nt[Y]=[];for(let X=0;X<MW;X++){const x=X-P,y=Y-P,ox=Math.max(0,-x,x-(MW0-1)),oy=Math.max(0,-y,y-(MH0-1)),d=Math.hypot(ox,oy);let v;
-  if(d===0){v=L[y][x];if((x<2||y<2||x>MW0-3||y>MH0-3)&&v==='t')v='s'}
+  if(d===0){v=L[y][x];const di=Math.min(x,y,MW0-1-x,MH0-1-y);if((v==='g'||v==='f'||v==='t')&&di<.5+nzb(X*16+500,Y*16+300,70)*4.2)v='s'}
   else v=d<=3+nzb(X*16,Y*16,80)*4.5?'s':'o';
   nt[Y][X]=v}}
  const S_=(X,Y)=>nt[Y]&&nt[Y][X]==='s';
