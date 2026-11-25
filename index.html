@@ -60,6 +60,9 @@ p{margin:0}
 #sVillage{pointer-events:none}
 #sVillage>*{pointer-events:auto}
 #hud{position:absolute;left:0;right:0;top:0;display:flex;justify-content:space-between;gap:8px;padding:10px 12px;pointer-events:none;flex-wrap:wrap}
+#mini{position:absolute;right:12px;top:64px;z-index:6;border:3px solid #2a1d1a;border-radius:6px;background:#2a1d1a;image-rendering:pixelated;box-shadow:0 3px 0 rgba(0,0,0,.25);cursor:pointer;display:none}
+body.village #mini{display:block}
+body.village.tvw #mini{display:none}
 #hud>div{display:flex;gap:8px;align-items:center;pointer-events:auto;flex-wrap:wrap}
 .pill{display:flex;align-items:center;gap:6px;padding:4px 12px 4px 6px;min-height:44px;font-size:17px}
 .pill img{width:34px;height:34px;object-fit:contain}
@@ -228,6 +231,7 @@ body.tv #hud{display:none}
       <button class="btn sm" data-a="logout">나가기</button>
     </div>
   </div>
+  <canvas id="mini" aria-label="미니맵 (누르면 크게 보기)" title="누르면 크게/작게"></canvas>
   <div id="joy" role="application" aria-label="캐릭터 이동 조이스틱"><div id="joyK"></div></div>
   <div id="act">
     <button class="btn sm" data-a="emote">이모티콘</button>
@@ -1634,7 +1638,22 @@ function draw(t){
  else plate(guideName(),(P.x-cx)*S_,(P.y+6-cy)*S_+fs/2,Math.max(11,fs-2),true);
  for(const f of friends)if(f.bubble)bubble(f.bubble,(f.x-cx)*S_,(f.y-44-cy)*S_,fs);
  if(mode==='tview'&&S)for(const f of friends){const st=S.students.find(s=>s.no===f.no);if(st)plate(nickOf(st),(f.x-cx)*S_,(f.y+6-cy)*S_+fs/2,Math.max(11,fs-2),f.live)}
+ drawMini()
 }
+/* ===== minimap (top-right) ===== */
+const MINI={big:false,base:null,bw:0};
+function miniBase(w){if(MINI.base&&MINI.bw===w&&MINI.src===mapC)return MINI.base;const h=Math.round(w*MH/MW),c=document.createElement('canvas');c.width=w;c.height=h;const g=c.getContext('2d');g.imageSmoothingEnabled=true;g.imageSmoothingQuality='high';g.drawImage(mapC,0,0,w,h);MINI.base=c;MINI.bw=w;MINI.src=mapC;return c}
+function drawMini(){const el=$('#mini');if(!el||!mapC||!(mode==='village'||mode==='tview')||(mode==='tview'&&TVW)){return}
+ const vw=innerWidth,dpr=Math.min(2,devicePixelRatio||1),W=Math.round(clamp(vw*(MINI.big?.34:.17),120,MINI.big?420:210)),H=Math.round(W*MH/MW);
+ if(el.width!==W*dpr||el.height!==H*dpr){el.width=W*dpr;el.height=H*dpr;el.style.width=W+'px';el.style.height=H+'px'}
+ let top=64;const hb=mode==='tview'?$('#tvBar'):$('#hud>div:last-child');if(hb){const r=hb.getBoundingClientRect();if(r.height)top=Math.round(r.bottom+8)}el.style.top=top+'px';
+ const x=el.getContext('2d');x.setTransform(dpr,0,0,dpr,0,0);x.imageSmoothingEnabled=true;x.drawImage(miniBase(Math.round(W*dpr)),0,0,W,H);
+ const sx=W/(MW*T),sy=H/(MH*T),dot=(wx,wy,r,fill)=>{x.beginPath();x.arc(wx*sx,wy*sy,r,0,Math.PI*2);x.fillStyle='#2a1d1a';x.fill();x.beginPath();x.arc(wx*sx,wy*sy,r-1.2,0,Math.PI*2);x.fillStyle=fill;x.fill()};
+ x.strokeStyle='rgba(255,255,255,.9)';x.lineWidth=1.5;x.strokeRect(Math.max(0,V.cx)*sx+.5,Math.max(0,V.cy)*sy+.5,Math.min(MW*T,V.w/V.S)*sx-1,Math.min(MH*T,V.h/V.S)*sy-1);
+ if(mode==='village'){const h=houses.find(o=>o.no===ME_NO);if(h){x.fillStyle='#f5c542';x.fillRect(h.door.x*sx-2,h.door.y*sy-6,4,4)}}
+ for(const f of friends)if(f.live||mode==='tview')dot(f.x,f.y,MINI.big?4:3,f.live?'#8cc8f0':'rgba(200,200,210,.8)');
+ if(mode==='village')dot(tori.x,tori.y,MINI.big?5:4,'#5fb35a');
+ dot(P.x,P.y,MINI.big?6:4.5,mode==='tview'?'#5fb35a':'#ff5a4e')}
 function dS(img,wx,wy,bob=0,flip=false){const S_=V.S,k=S_/(img.res||1),w=img.width*k,h=img.height*k;const x=Math.round((wx-V.cx)*S_-w/2),y=Math.round((wy-V.cy)*S_-h+k-bob*S_);
  if(flip){ctx.save();ctx.translate(x+w,y);ctx.scale(-1,1);ctx.drawImage(img,0,0,w,h);ctx.restore()}else ctx.drawImage(img,x,y,w,h)}
 function shadow(wx,wy,rw=6){ctx.fillStyle='rgba(26,22,32,.28)';ctx.beginPath();ctx.ellipse((wx-V.cx)*V.S,(wy-V.cy)*V.S,rw*V.S,2*V.S,0,0,Math.PI*2);ctx.fill()}
@@ -1999,7 +2018,7 @@ const A={
  tView:()=>{mode='tview';TVW=false;document.body.className='village tv';buildMap();renderMap();friends=[];makeFriends(true);show('sVillage');$('#tvBar').classList.add('on');$('#tvInfo').textContent=`지금 접속 ${online.size}명`;$('#tvWholeBtn').textContent='전체 보기';
   const d=doors.find(x=>x.type==='mayor');P.x=d?d.x:tori.hx;P.y=d?d.y+4:tori.hy;P.dir='d';P.target=null;P.bubble=null;P.fr=0;keys.clear();aLabel='x';updA(null);closeEmote();setTimeout(()=>sendPos(true),200)},
  tvBack:()=>{if(mode==='tview')bcast('mv',{no:0,h:1});closeEmote();$('#tvBar').classList.remove('on');enterTeacher()},
- tvWhole:()=>{TVW=!TVW;$('#tvWholeBtn').textContent=TVW?'선생님 따라가기':'전체 보기'},
+ tvWhole:()=>{TVW=!TVW;document.body.classList.toggle('tvw',TVW);$('#tvWholeBtn').textContent=TVW?'선생님 따라가기':'전체 보기'},
  tSel:v=>{const n=+v;TS.sel.has(n)?TS.sel.delete(n):TS.sel.add(n);rT()},
  tSelAll:()=>{S.students.forEach(s=>TS.sel.add(s.no));rT()},tSelNone:()=>{TS.sel.clear();rT()},
  tPraise:async v=>{const p=S.praise.find(x=>x.id===v);if(!p)return;const n=TS.sel.size;ok(await tact('praise',{pid:v,nos:[...TS.sel]}),()=>{beep(988);beep(1318,.08,.07);toast(`${n}명에게 '${p.name}' +${p.coins}코인`)})},
@@ -2076,6 +2095,7 @@ window.addEventListener('pagehide',()=>{if(mode==='village')flushUsage()});
 
 /* ===== boot ===== */
 for(const k in ASSET_FILES){const im=new Image();im.onload=()=>{IMG[k]=im;for(const c in CACHE)delete CACHE[c];for(const u in URLC)delete URLC[u];if(mapC)renderMap()};im.src=ASSET_FILES[k]}
+$('#mini').addEventListener('click',e=>{e.stopPropagation();MINI.big=!MINI.big});
 buildMap();renderMap();
 requestAnimationFrame(loop);
 if(document.fonts&&document.fonts.load)document.fonts.load('16px Jua').catch(()=>{});
