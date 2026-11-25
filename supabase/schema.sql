@@ -146,7 +146,27 @@ insert into public.items(id,name,cat,price,sell,crop,w) values
  ('col_acorn','도토리','col',0,3,null,35),('col_pine','솔방울','col',0,4,null,28),('col_shell','분홍 조개','col',0,8,null,16),
  ('col_feather','파랑 깃털','col',0,10,null,12),('col_clover','네잎클로버','col',0,30,null,6),('col_star','별조각','col',0,50,null,3),
  ('fish_minnow','송사리','fish',0,4,null,34),('fish_carp','붕어','fish',0,7,null,28),('fish_catfish','메기','fish',0,15,null,16),
- ('fish_trout','무지개송어','fish',0,22,null,12),('fish_koi','비단잉어','fish',0,40,null,7),('fish_gold','황금 물고기','fish',0,100,null,3)
+ ('fish_trout','무지개송어','fish',0,22,null,12),('fish_koi','비단잉어','fish',0,40,null,7),('fish_gold','황금 물고기','fish',0,100,null,3),
+ ('hs_blue','푸른 판자집','home',400,0,null,0),
+ ('hs_cabin','숲속 통나무집','home',450,0,null,0),
+ ('hs_stump','나무 그루터기 집','home',900,0,null,0),
+ ('hs_redlog','빨간 비늘지붕 집','home',350,0,null,0),
+ ('hs_farm','시골 농가','home',700,0,null,0),
+ ('hs_glass','유리 온실집','home',1200,0,null,0),
+ ('hs_barn','빨간 헛간집','home',600,0,null,0),
+ ('hs_stone','이끼 돌집','home',500,0,null,0),
+ ('hs_brick','벽돌 2층집','home',800,0,null,0),
+ ('hs_beach','하얀 바닷가집','home',600,0,null,0),
+ ('hs_mushroom','버섯 집','home',900,0,null,0),
+ ('hs_castle','작은 성','home',1500,0,null,0),
+ ('hs_pink','분홍 동화집','home',500,0,null,0),
+ ('hs_hanok','한옥','home',1000,0,null,0),
+ ('hs_yellow','노란 오두막','home',300,0,null,0),
+ ('hs_wood2','2층 목조주택','home',750,0,null,0),
+ ('hs_light','등대 집','home',1300,0,null,0),
+ ('hs_tree','나무 위 집','home',1100,0,null,0),
+ ('hs_mill','풍차 집','home',1000,0,null,0),
+ ('hs_aframe','삼각 지붕 집','home',650,0,null,0)
 on conflict (id) do update set name=excluded.name,cat=excluded.cat,price=excluded.price,sell=excluded.sell,crop=excluded.crop,w=excluded.w;
 
 -- ---------- helpers ----------
@@ -387,7 +407,8 @@ begin
         if cv_cnt(cnts,p->>'id') > cv_cnt(st.inv,p->>'id') then perform cv_err('가진 개수보다 많이 놓을 수 없어요.'); end if;
       end loop;
       update students set house = jsonb_build_object('size',(st.house->>'size')::int,'wall',k,'floor',txt,
-        'placed',(select coalesce(jsonb_agg(jsonb_build_object('id',e->>'id','x',(e->>'x')::int,'y',(e->>'y')::int)),'[]') from jsonb_array_elements(p_args#>'{house,placed}') e)) where id=st.id;
+        'placed',(select coalesce(jsonb_agg(jsonb_build_object('id',e->>'id','x',(e->>'x')::int,'y',(e->>'y')::int)),'[]') from jsonb_array_elements(p_args#>'{house,placed}') e))
+        || jsonb_strip_nulls(jsonb_build_object('style',st.house->'style','owned',st.house->'owned')) where id=st.id;
     end if;
 
   elsif p_act = 'buy' then
@@ -475,6 +496,21 @@ begin
       update students set pet=v_pet where id=st.id;
     else
       update students set pet=jsonb_set(v_pet,'{walk}',to_jsonb(not coalesce((pet->>'walk')::boolean,true))) where id=st.id;
+    end if;
+
+  elsif p_act = 'buyhouse' then
+    k := p_args->>'id';
+    if k = 'default' then
+      update students set house=jsonb_set(house,'{style}','"default"'::jsonb) where id=st.id;
+    else
+      select * into it from items where id=k and cat='home';
+      if not found then perform cv_err('없는 집이에요.'); end if;
+      if not (coalesce(st.house->'owned','[]'::jsonb) ? k) then
+        if st.coins < it.price then perform cv_err('코인이 부족해요.'); end if;
+        perform cv_coins(st.id,-it.price,'집 구매: '||it.name,false);
+        update students set house=jsonb_set(house,'{owned}',coalesce(house->'owned','[]'::jsonb)||to_jsonb(k)) where id=st.id;
+      end if;
+      update students set house=jsonb_set(house,'{style}',to_jsonb(k)) where id=st.id;
     end if;
 
   elsif p_act = 'expand' then
