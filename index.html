@@ -1078,7 +1078,7 @@ function furnIcon(id){const sp=decoSpr('f_'+id),n=Math.max(sp.width,sp.height)+2
 // which placed item covers each cell ("x,y" -> index)
 function coverMap(placed){const m={};placed.forEach((p,i)=>{const [fw,fh]=footOf(p.id);for(let dx=0;dx<fw;dx++)for(let dy=0;dy<fh;dy++)m[(p.x+dx)+','+(p.y+dy)]=i});return m}
 /* ===== house interior (walkable room) ===== */
-const RC=32,RWALL=56,ROOMV={on:false,no:0,fade:0,fdir:0,next:null,back:null};
+const RC=40,RWALL=60,ROOMV={on:false,no:0,fade:0,fdir:0,next:null,back:null};
 const FLATF={rug:1};
 function roomSt(){return S&&S.students.find(s=>s.no===ROOMV.no)}
 function roomDims(st){const [c,r]=ROOM[((st&&st.house&&st.house.size)||1)-1]||ROOM[0];return {c,r,w:c*RC,h:r*RC}}
@@ -1104,6 +1104,13 @@ function roomTick(){const st=roomSt();if(!st){roomReset();return}const D=roomDim
  if(!ROOMV.fdir&&P.y>D.h+12)leaveRoom();
  if(!ROOMV.fdir&&!roomFree(P.x,P.y)&&!P.target){P.x=D.w/2;P.y=D.h-14}}
 const RTILE={};
+function woodFloor(w,h){const key='wf_'+w+'_'+h;if(RTILE[key])return RTILE[key];const c=document.createElement('canvas');c.width=w;c.height=h;const g=c.getContext('2d');
+ let sd=7;const rnd=()=>(sd=(sd*16807)%2147483647)/2147483647;const TONES=['#c98b50','#c08048','#d29558','#c4874d','#b97a44'];
+ for(let y=0;y<h;y+=8){let x=-Math.floor(rnd()*40);while(x<w){const len=40+Math.floor(rnd()*56),tone=TONES[Math.floor(rnd()*TONES.length)];
+   g.fillStyle=tone;g.fillRect(x,y,len,8);g.fillStyle='rgba(255,236,200,.22)';g.fillRect(x,y,len,1);g.fillStyle='#8a5530';g.fillRect(x,y+7,len,1);g.fillRect(x+len-1,y,1,7);
+   g.fillStyle='rgba(110,60,30,.35)';for(let i=0;i<3;i++){const gx=x+4+Math.floor(rnd()*(len-10)),gy=y+2+Math.floor(rnd()*4);g.fillRect(gx,gy,3+Math.floor(rnd()*5),1)}
+   x+=len}}
+ return RTILE[key]=c}
 function roomTile(id){if(RTILE[id])return RTILE[id];const c=document.createElement('canvas');c.width=c.height=32;const g=c.getContext('2d');g.imageSmoothingEnabled=false;
  const s=document.createElement('canvas');s.width=s.height=16;drawItem(s.getContext('2d'),id);g.drawImage(s,0,0,32,32);return RTILE[id]=c}
 function drawRoom(t,w,h){const st=roomSt();if(!st){roomReset();return}const D=roomDims(st),top=-RWALL-10,bot=D.h+26;
@@ -1112,8 +1119,9 @@ function drawRoom(t,w,h){const st=roomSt();if(!st){roomReset();return}const D=ro
  const X=x=>Math.round((x-cx)*S_),Y=y=>Math.round((y-cy)*S_),R=(c,x,y,ww,hh)=>{ctx.fillStyle=c;ctx.fillRect(X(x),Y(y),X(x+ww)-X(x),Y(y+hh)-Y(y))};
  ctx.fillStyle='#14111a';ctx.fillRect(0,0,w,h);
  const wt=roomTile(st.house.wall||'wall_cream'),ft=roomTile(st.house.floor||'floor_wood'),k=RC*S_;
- for(let x=0;x<D.w;x+=RC)for(let y=-RWALL;y<0;y+=RC){const hh=Math.min(RC,-y);ctx.drawImage(wt,0,0,32,hh,X(x),Y(y),Math.ceil(k),Math.ceil(hh*S_))}
- for(let x=0;x<D.w;x+=RC)for(let y=0;y<D.h;y+=RC)ctx.drawImage(ft,X(x),Y(y),Math.ceil(k),Math.ceil(k));
+ const k32=32*S_;for(let x=0;x<D.w;x+=32)for(let y=-RWALL;y<0;y+=32){const hh=Math.min(32,-y),ww=Math.min(32,D.w-x);ctx.drawImage(wt,0,0,ww,hh,X(x),Y(y),Math.ceil(ww*S_),Math.ceil(hh*S_))}
+ if((st.house.floor||'floor_wood')==='floor_wood')ctx.drawImage(woodFloor(D.w,D.h),X(0),Y(0),Math.round(D.w*S_),Math.round(D.h*S_));
+ else for(let x=0;x<D.w;x+=32)for(let y=0;y<D.h;y+=32){const ww=Math.min(32,D.w-x),hh=Math.min(32,D.h-y);ctx.drawImage(ft,0,0,ww,hh,X(x),Y(y),Math.ceil(ww*S_),Math.ceil(hh*S_))}
  // window on the back wall
  const wx0=Math.round(D.w*0.25)-14;R('#2b0806',wx0-1,-RWALL+10,30,26);R('#f4e6c8',wx0,-RWALL+11,28,24);R('#9fd8f5',wx0+2,-RWALL+13,24,20);R('#c8ecff',wx0+3,-RWALL+14,9,7);R('#f4e6c8',wx0+13,-RWALL+13,2,20);R('#f4e6c8',wx0+2,-RWALL+22,24,2);R('#8a5a36',wx0-3,-RWALL+35,34,3);
  // wall trims, baseboard, side walls, front ledge
