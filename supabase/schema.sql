@@ -147,26 +147,16 @@ insert into public.items(id,name,cat,price,sell,crop,w) values
  ('col_feather','파랑 깃털','col',0,10,null,12),('col_clover','네잎클로버','col',0,30,null,6),('col_star','별조각','col',0,50,null,3),
  ('fish_minnow','송사리','fish',0,4,null,34),('fish_carp','붕어','fish',0,7,null,28),('fish_catfish','메기','fish',0,15,null,16),
  ('fish_trout','무지개송어','fish',0,22,null,12),('fish_koi','비단잉어','fish',0,40,null,7),('fish_gold','황금 물고기','fish',0,100,null,3),
- ('hs_blue','푸른 판자집','home',400,0,null,0),
- ('hs_cabin','숲속 통나무집','home',450,0,null,0),
- ('hs_stump','나무 그루터기 집','home',900,0,null,0),
- ('hs_redlog','빨간 비늘지붕 집','home',350,0,null,0),
- ('hs_farm','시골 농가','home',700,0,null,0),
- ('hs_glass','유리 온실집','home',1200,0,null,0),
- ('hs_barn','빨간 헛간집','home',600,0,null,0),
- ('hs_stone','이끼 돌집','home',500,0,null,0),
- ('hs_brick','벽돌 2층집','home',800,0,null,0),
- ('hs_beach','하얀 바닷가집','home',600,0,null,0),
- ('hs_mushroom','버섯 집','home',900,0,null,0),
- ('hs_castle','작은 성','home',1500,0,null,0),
- ('hs_pink','분홍 동화집','home',500,0,null,0),
- ('hs_hanok','한옥','home',1000,0,null,0),
- ('hs_yellow','노란 오두막','home',300,0,null,0),
- ('hs_wood2','2층 목조주택','home',750,0,null,0),
- ('hs_light','등대 집','home',1300,0,null,0),
- ('hs_tree','나무 위 집','home',1100,0,null,0),
- ('hs_mill','풍차 집','home',1000,0,null,0),
- ('hs_aframe','삼각 지붕 집','home',650,0,null,0)
+ ('hs_med','지중해 집','home',600,0,null,0),
+ ('hs_victoria','보랏빛 저택','home',1200,0,null,0),
+ ('hs_tropic','열대 오두막','home',700,0,null,0),
+ ('hs_forest','숲속 오두막','home',800,0,null,0),
+ ('hs_adobe','사막 흙집','home',500,0,null,0),
+ ('hs_skyfarm','하늘색 농가','home',400,0,null,0),
+ ('hs_witch','마녀의 집','home',1500,0,null,0),
+ ('hs_marine','바닷가 노란 집','home',450,0,null,0),
+ ('hs_sakura','벚꽃 집','home',1300,0,null,0),
+ ('hs_rainbow','알록달록 2층집','home',1000,0,null,0)
 on conflict (id) do update set name=excluded.name,cat=excluded.cat,price=excluded.price,sell=excluded.sell,crop=excluded.crop,w=excluded.w;
 
 -- ---------- helpers ----------
@@ -707,3 +697,23 @@ do $$ declare f record; begin
       execute format('grant execute on function %s to anon, authenticated', f.sig);
     end if;
   end loop; end $$;
+
+-- ---------- house catalogue v2: refund retired house styles, then remove them ----------
+do $$
+declare s record; ref int; keep text[] := array['hs_med','hs_victoria','hs_tropic','hs_forest','hs_adobe','hs_skyfarm','hs_witch','hs_marine','hs_sakura','hs_rainbow'];
+begin
+  for s in select id, house from students where jsonb_typeof(house->'owned')='array' loop
+    select coalesce(sum(i.price),0) into ref from items i
+      where i.cat='home' and i.id in (select jsonb_array_elements_text(s.house->'owned')) and not (i.id = any(keep));
+    if ref > 0 then
+      perform cv_coins(s.id, ref, '집 목록이 바뀌어 돌려받은 코인', false);
+    end if;
+    update students set house = jsonb_set(jsonb_set(house,'{owned}',
+        (select coalesce(jsonb_agg(v),'[]'::jsonb) from jsonb_array_elements_text(house->'owned') v where v = any(keep))),
+        '{style}', case when house->>'style' = any(keep) then house->'style' else '"default"'::jsonb end)
+      where id = s.id and exists(select 1 from jsonb_array_elements_text(house->'owned') v where not (v = any(keep)));
+  end loop;
+  update students set house = jsonb_set(house,'{style}','"default"'::jsonb)
+    where house ? 'style' and house->>'style' <> 'default' and not (house->>'style' = any(keep));
+  delete from items where cat='home' and not (id = any(keep));
+end $$;
