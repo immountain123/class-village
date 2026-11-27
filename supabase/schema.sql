@@ -135,6 +135,7 @@ insert into public.items(id,name,cat,price,sell,crop,w) values
  ('bed','포근한 침대','furn',120,0,null,0),('table','나무 탁자','furn',80,0,null,0),('chair','나무 의자','furn',40,0,null,0),
  ('lamp','스탠드 조명','furn',50,0,null,0),('plant','초록 화분','furn',30,0,null,0),('shelf','책장','furn',100,0,null,0),
  ('sofa','빨간 소파','furn',150,0,null,0),('rug','보라 러그','furn',60,0,null,0),('clock','괘종시계','furn',70,0,null,0),('fishbowl','금붕어 어항','furn',90,0,null,0),
+ ('armchair','빨간 안락의자','furn',120,0,null,0),('sofa2','노란 소파','furn',150,0,null,0),('ctable','거실 탁자','furn',70,0,null,0),('bed2','원목 침대','furn',180,0,null,0),('wardrobe','옷장','furn',160,0,null,0),('pcdesk','컴퓨터 책상','furn',250,0,null,0),('dining','식탁 세트','furn',200,0,null,0),('fridge','냉장고','furn',220,0,null,0),('tv','TV장','furn',300,0,null,0),('mirror','전신 거울','furn',90,0,null,0),('dresser','서랍장','furn',130,0,null,0),('piano','피아노','furn',400,0,null,0),
  ('wall_cream','크림 벽지','wall',0,0,null,0),('wall_mint','민트 벽지','wall',60,0,null,0),('wall_pink','딸기 벽지','wall',60,0,null,0),('wall_wood','통나무 벽','wall',80,0,null,0),
  ('floor_wood','나무 바닥','floor',0,0,null,0),('floor_tile','체크 타일','floor',60,0,null,0),('floor_grass','잔디 카펫','floor',80,0,null,0),('floor_star','밤하늘 바닥','floor',120,0,null,0),
  ('hat_cap','야구 모자','hat',50,0,null,0),('hat_ribbon','분홍 리본','hat',50,0,null,0),('hat_beanie','초록 털모자','hat',60,0,null,0),('hat_flower','하얀 꽃핀','hat',40,0,null,0),('hat_crown','반짝 왕관','hat',300,0,null,0),
